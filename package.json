@@ -1,6 +1,6 @@
 {
   "name": "net-monitoring",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
@@ -8,22 +8,28 @@
     "build": "npx pkg . --debug"
   },
   "dependencies": {
+    "chalk": "^4.1.2",
     "cookie-parser": "~1.4.4",
-    "debug": "~2.6.9",
     "express": "~4.16.1",
-    "morgan": "~1.9.1",
     "ping": "^0.4.4"
   },
   "devDependencies": {
-    "dotenv": "^16.4.5",
     "concurrently": "^9.0.1",
+    "dotenv": "^16.4.5",
     "nodemon": "^3.1.7"
   },
   "bin": "./bin/www",
   "pkg": {
-    "scripts": ["bin"],
-    "targets": ["win"],
-    "assets": ["public/*.html", "public/stylesheets/*"],
+    "scripts": [
+      "bin"
+    ],
+    "targets": [
+      "win"
+    ],
+    "assets": [
+      "public/*.html",
+      "public/stylesheets/*"
+    ],
     "outputPath": "dist"
   }
 }
