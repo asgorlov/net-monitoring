@@ -7,9 +7,28 @@ const get = () => {
   return freeze(config);
 };
 
-const update = async (configData) => {
+const patchConfig = (source, target) => {
+  Object.keys(source).forEach(k => {
+    const sourceValue = source[k];
+    if (typeof sourceValue === 'object') {
+      const targetValue = target[k];
+      if (targetValue) {
+        patchConfig(sourceValue, targetValue);
+      } else {
+        target[k] = sourceValue;
+      }
+    } else {
+      target[k] = sourceValue;
+    }
+  });
+};
+
+const update = (configData) => {
   const config = require(configPath);
-  // toDo разработать парсер для пут запроса + парсер для расшифровки на клиенте
+  patchConfig(configData, config);
+  fs.writeFileSync(configPath, JSON.stringify(config));
+
+  return config;
 };
 
 const createDefault = () => {

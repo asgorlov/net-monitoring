@@ -1,5 +1,6 @@
 const ping = require('ping');
-const configUtil = require('../utils/config.util')
+const logger = require('../utils/logger.util');
+const configUtil = require('../utils/config.util');
 
 /**
  * @desc Домашняя страница
@@ -15,16 +16,26 @@ const homePage = (req, res, next) => {
  * @route GET /config
  * @access Public
  */
-const getConfig = async (req, res) => {
-  let data = configUtil.get();
+const getConfig = (req, res) => {
+  let data;
+  try {
+    data = configUtil.get();
+  } catch (e) {
+    logger.info('Can\'t get config file. It is probably missing');
+  }
+
   if (!data) {
-    data = await configUtil.createDefault();
+    try {
+      data = configUtil.createDefault();
+    } catch (e) {
+      logger.error('Can\'t create config file. Please close all applications using the file or delete it');
+    }
   }
 
   if (data) {
     res.status(200).json(data);
   } else {
-    res.status(500).json({ message: 'Файл настроек отсутствует'});
+    res.status(500).json({ message: 'Файл настроек отсутствует. Попробуйте удалить файл настроек вручную и перезагрузить приложение'});
   }
 };
 
@@ -33,8 +44,19 @@ const getConfig = async (req, res) => {
  * @route PATCH /config
  * @access Public
  */
-const changeConfig = async (req, res) => {
+const changeConfig = (req, res) => {
+  let data;
+  try {
+    data = configUtil.update(req.body);
+  } catch (e) {
+    logger.error('Can\'t update config file. Please close all applications using the file or delete it');
+  }
 
+  if (data) {
+    res.status(200);
+  } else {
+    res.status(500).json({ message: 'Не удалось сбросить настройки. Попробуйте удалить файл вручную и повторить запрос'});
+  }
 };
 
 /**
@@ -42,12 +64,18 @@ const changeConfig = async (req, res) => {
  * @route DELETE /config
  * @access Public
  */
-const clearConfig = async (req, res) => {
-  const data = await configUtil.createDefault();
+const clearConfig = (req, res) => {
+  let data;
+  try {
+    data = configUtil.createDefault();
+  } catch (e) {
+    logger.error('Can\'t create config file. Please close all applications using the file or delete it');
+  }
+
   if (data) {
     res.status(200).json(data);
   } else {
-    res.status(500).json({ message: 'Не удалось сбросить настройки'});
+    res.status(500).json({ message: 'Не удалось сбросить настройки. Попробуйте удалить файл вручную и повторить запрос'});
   }
 };
 
