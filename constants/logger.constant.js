@@ -1,10 +1,11 @@
 const path = require('path')
 
 const pathToLogDir = path.join(process.cwd(), '/logs');
-const pathToLogFile = path.join(pathToLogDir, `/log-${Date.now()}ms.log`);
+
+const numberOfLogFiles = 5;
+const logFileSizeInBytes = 52428800; // 50Mb
 
 const loggerLevels = Object.freeze({
-  ALL: "ALL",
   DEBUG: "DEBUG",
   INFO: "INFO",
   ERROR: "ERROR",
@@ -19,7 +20,8 @@ const loggerTypes = Object.freeze({
 
 module.exports = {
   pathToLogDir: pathToLogDir,
-  pathToLogFile: pathToLogFile,
+  numberOfLogFiles: numberOfLogFiles,
+  logFileSizeInBytes: logFileSizeInBytes,
   loggerLevels: loggerLevels,
   loggerTypes: loggerTypes
 };

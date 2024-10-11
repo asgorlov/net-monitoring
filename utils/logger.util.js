@@ -1,7 +1,8 @@
 const chalk = require('chalk');
 const fs = require('fs');
-const { loggerLevels, pathToLogFile, pathToLogDir, loggerTypes } = require('../constants/logger.constant');
+const { loggerLevels, pathToLogDir, loggerTypes, numberOfLogFiles, logFileSizeInBytes } = require('../constants/logger.constant');
 const { defaultConfig } = require('../constants/config.constant')
+const path = require('path')
 
 let logFileStream = null;
 
@@ -16,8 +17,6 @@ const show = (level, type) => {
   }
 
   switch (settings.level) {
-    case loggerLevels.ALL:
-      return true;
     case loggerLevels.DEBUG:
       return level === settings.level || level === loggerLevels.INFO || level === loggerLevels.ERROR;
     case loggerLevels.INFO:
@@ -39,8 +38,25 @@ const isDirExisted = () => {
   }
 };
 
+const removeFile = (file) => {
+  try {
+    fs.unlinkSync(pathToLogDir + `/${file.name}`);
+  } catch (e) {
+    logToConsole(loggerLevels.ERROR, e);
+  }
+}
+
 const createFile = (row) => {
   try {
+    const files = fs.readdirSync(pathToLogDir, { withFileTypes: true })
+      .filter(d => !d.isDirectory());
+    if (files.length >= numberOfLogFiles) {
+      files
+        .slice(0, (files.length - 4))
+        .forEach(removeFile);
+    }
+
+    const pathToLogFile = path.join(pathToLogDir, `/log-${Date.now()}.log`);
     logFileStream = fs.createWriteStream(pathToLogFile, { flags: 'a' });
     logFileStream.write(row);
   } catch (e) {
@@ -65,6 +81,11 @@ const logToFile = (level, message) => {
     const row = `[${level}] - ${new Date().toISOString()} - ${message}\n`;
 
     if (logFileStream) {
+      if (logFileStream.bytesWritten >= logFileSizeInBytes) {
+        logFileStream.end();
+        logFileStream = null;
+        createFile(row);
+      }
       recordRowToFile(row);
     } else if (isDirExisted()) {
       createFile(row);
@@ -140,7 +161,7 @@ const getStringifiedBody = (req) => {
 
 const apiMiddleware = (req, res, next) => {
   const level = getSettings().level;
-  if (level === loggerLevels.DEBUG || level === loggerLevels.ALL) {
+  if (level === loggerLevels.DEBUG) {
     const url = getUrl(req);
     const method = req.method;
     const color = getMethodColor(method);
