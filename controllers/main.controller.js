@@ -91,6 +91,24 @@ const clearConfig = (req, res) => {
 };
 
 /**
+ * @desc Очистка папки с логами
+ * @route DELETE /log
+ * @access Public
+ */
+const clearLogFiles = (req, res) => {
+  try {
+    logger.clearLogDir();
+    res.status(200).json({ isCleared: true });
+  } catch (e) {
+    logger.error('Can\'t clear the log folder. Please close all applications using the log files or delete log folder manually');
+    res.status(500).json({
+      isCleared: false,
+      message: 'Не удалось очистить папку с логами. Попробуйте удалить папку вручную или закрыть все приложения, использующие файлы логов, и повторить попытку'
+    });
+  }
+}
+
+/**
  * @desc Пинг списка IP-адресов
  * @route POST /ping
  * @access Public
@@ -129,5 +147,6 @@ module.exports = {
   getConfig: getConfig,
   clearConfig: clearConfig,
   replaceConfig: replaceConfig,
+  clearLogFiles: clearLogFiles,
   pingHosts: pingHosts
 };

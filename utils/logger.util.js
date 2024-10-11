@@ -181,9 +181,16 @@ const apiMiddleware = (req, res, next) => {
   next();
 };
 
+const clearLogDir = () => {
+  if (isDirExisted()) {
+    fs.readdirSync(pathToLogDir).forEach(f => fs.unlinkSync(path.join(pathToLogDir, f)));
+  }
+};
+
 module.exports = {
-  apiMiddleware: apiMiddleware,
   debug: debug,
   info: info,
-  error: error
+  error: error,
+  apiMiddleware: apiMiddleware,
+  clearLogDir: clearLogDir
 };
