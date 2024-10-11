@@ -39,24 +39,48 @@ const getConfig = (req, res) => {
   }
 };
 
+const updateConfig = (req, res, isPatch) => {
+  const config = req.body;
+  if (!configUtil.validate(config, isPatch)) {
+    res.status(400).json({
+      isUpdated: false,
+      message: 'Некорректные данные. Пожалуйста, убедитесь, что поля заполнены правильно'
+    });
+  } else {
+    let data;
+    try {
+      data = configUtil.update(config, isPatch);
+    } catch (e) {
+      logger.error('Can\'t update config file. Please close all applications using the file or delete it');
+    }
+
+    if (data) {
+      res.status(200).json({ isUpdated: true });
+    } else {
+      res.status(500).json({
+        isUpdated: false,
+        message: 'Не удалось сбросить настройки. Попробуйте удалить файл вручную и повторить запрос'
+      });
+    }
+  }
+}
+
 /**
  * @desc Обновить конфиг приложения
  * @route PATCH /config
  * @access Public
  */
 const changeConfig = (req, res) => {
-  let data;
-  try {
-    data = configUtil.update(req.body);
-  } catch (e) {
-    logger.error('Can\'t update config file. Please close all applications using the file or delete it');
-  }
+  updateConfig(req, res, true);
+};
 
-  if (data) {
-    res.status(200);
-  } else {
-    res.status(500).json({ message: 'Не удалось сбросить настройки. Попробуйте удалить файл вручную и повторить запрос'});
-  }
+/**
+ * @desc Заменить конфиг приложения
+ * @route PUT /config
+ * @access Public
+ */
+const replaceConfig = (req, res) => {
+  updateConfig(req, res);
 };
 
 /**
@@ -87,17 +111,21 @@ const clearConfig = (req, res) => {
 const pingHosts = async (req, res) => {
   const { hosts } = req.body;
   if (!Array.isArray(hosts)) {
+    logger.error('Field hosts is not array');
     res.status(400).json({ message: 'Поле hosts не является массивом'});
   } else {
     const hostStatuses = [];
     for (const host of hosts) {
       try {
-        const response = await ping.promise.probe(host);
+        const response = await ping.promise.probe(host, {
+          timeout: global.config?.request?.timeout
+        });
         hostStatuses.push({
           host,
           isAlive: response.alive
         });
       } catch (e) {
+        logger.info(`Can\'t ping host = ${host}`);
         hostStatuses.push({
           host,
           isAlive: null
@@ -114,5 +142,6 @@ module.exports = {
   getConfig: getConfig,
   clearConfig: clearConfig,
   changeConfig: changeConfig,
+  replaceConfig: replaceConfig,
   pingHosts: pingHosts
 };
