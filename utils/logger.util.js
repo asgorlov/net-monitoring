@@ -1,6 +1,6 @@
 const chalk = require('chalk');
 const fs = require('fs');
-const { loggerLevels, pathToLogDir, loggerTypes, numberOfLogFiles, logFileSizeInBytes } = require('../constants/logger.constant');
+const { loggerLevels, pathToLogDir, loggerTypes } = require('../constants/logger.constant');
 const { defaultConfig } = require('../constants/config.constant')
 const path = require('path')
 
@@ -50,7 +50,8 @@ const createFile = (row) => {
   try {
     const files = fs.readdirSync(pathToLogDir, { withFileTypes: true })
       .filter(d => !d.isDirectory());
-    if (files.length >= numberOfLogFiles) {
+    const numberOfLogFiles = getSettings().numberOfLogFiles;
+    if (numberOfLogFiles > 0 && files.length >= numberOfLogFiles) {
       files
         .slice(0, (files.length - 4))
         .forEach(removeFile);
@@ -81,7 +82,8 @@ const logToFile = (level, message) => {
     const row = `[${level}] - ${new Date().toISOString()} - ${message}\n`;
 
     if (logFileStream) {
-      if (logFileStream.bytesWritten >= logFileSizeInBytes) {
+      const logFileSizeInBytes = getSettings().logFileSizeInBytes;
+      if (logFileSizeInBytes > 0 && logFileStream.bytesWritten >= logFileSizeInBytes) {
         logFileStream.end();
         logFileStream = null;
         createFile(row);

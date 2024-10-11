@@ -21,29 +21,8 @@ const get = () => {
   return require(configPath);
 };
 
-const patchConfig = (source, target) => {
-  Object.keys(source)
-    .filter(k => target.hasOwnProperty(k))
-    .forEach(k => {
-      const sourceValue = source[k];
-      if (typeof sourceValue === 'object') {
-        patchConfig(sourceValue, target[k]);
-      } else {
-        target[k] = sourceValue;
-      }
-    });
-};
-
-const update = (configData, isPatch) => {
-  let config = configData;
-
-  if (isPatch) {
-    config = {...get()};
-    patchConfig(configData, config);
-  }
-
+const update = (config) => {
   fs.writeFileSync(configPath, JSON.stringify(config));
-
   return freeze(config);
 };
 
@@ -52,43 +31,59 @@ const createDefault = () => {
   return defaultConfig;
 };
 
-const validate = (config, isPatch) => {
+const validate = (config) => {
   if (!config) {
     logger.error(`Config can't be empty`);
     return false;
   }
 
-  const isPortValid = isFinite(config.port) || (isPatch && config.port === undefined);
+  const isPortValid = isFinite(config.port);
   if (!isPortValid) {
     logger.error(`Incorrect config field \'port\' = ${config.port}`);
     return false;
   }
 
-  const isLevelValid = Object.values(loggerLevels).includes(config.logger?.level) || (isPatch && config.logger?.level === undefined);
-  if (!isLevelValid) {
-    logger.error(`Incorrect config field \'logger.level\' = ${config.logger?.level}`);
+  if (config.logger) {
+    const isLevelValid = Object.values(loggerLevels).includes(config.logger.level);
+    if (!isLevelValid) {
+      logger.error(`Incorrect config field \'logger.level\' = ${config.logger.level}`);
+      return false;
+    }
+
+    const isTypeValid = Object.values(loggerTypes).includes(config.logger.type);
+    if (!isTypeValid) {
+      logger.error(`Incorrect config field \'logger.type\' = ${config.logger.type}`);
+      return false;
+    }
+
+    const isNumberOfLogFilesValid = isFinite(config.logger.numberOfLogFiles);
+    if (!isNumberOfLogFilesValid) {
+      logger.error(`Incorrect config field \'logger.numberOfLogFiles\' = ${config.logger.numberOfLogFiles}`);
+      return false;
+    }
+  } else {
+    logger.error(`Incorrect config field \'logger\' = ${config.logger}`);
     return false;
   }
 
-  const isTypeValid = Object.values(loggerTypes).includes(config.logger?.type) || (isPatch && config.logger?.type === undefined);
-  if (!isTypeValid) {
-    logger.error(`Incorrect config field \'logger.type\' = ${config.logger?.type}`);
+  if (config.request) {
+    const isIntervalValid = isFinite(config.request.interval);
+    if (!isIntervalValid) {
+      logger.error(`Incorrect config field \'request.interval\' = ${config.request.interval}`);
+      return false;
+    }
+
+    const isTimeoutValid = isFinite(config.request.timeout);
+    if (!isTimeoutValid) {
+      logger.error(`Incorrect config field \'request.timeout\' = ${config.request.timeout}`);
+      return false;
+    }
+  } else {
+    logger.error(`Incorrect config field \'request\' = ${config.request}`);
     return false;
   }
 
-  const isIntervalValid = isFinite(config.request?.interval) || (isPatch && config.request?.interval === undefined);
-  if (!isIntervalValid) {
-    logger.error(`Incorrect config field \'request.interval\' = ${config.request?.interval}`);
-    return false;
-  }
-
-  const isTimeoutValid = isFinite(config.request?.timeout) || (isPatch && config.request?.timeout === undefined);
-  if (!isTimeoutValid) {
-    logger.error(`Incorrect config field \'request.timeout\' = ${config.request?.timeout}`);
-    return false;
-  }
-
-  const isPingHostsValid = Array.isArray(config.pingHosts) || (isPatch && config.pingHosts === undefined);
+  const isPingHostsValid = Array.isArray(config.pingHosts);
   if (!isPingHostsValid) {
     logger.error(`Incorrect config field \'pingHosts\' = ${config.pingHosts}`);
     return false;

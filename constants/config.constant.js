@@ -15,7 +15,9 @@ const defaultConfig = freeze({
   port: 8008,
   logger: {
     level: loggerLevels.DEBUG,
-    type: loggerTypes.CONSOLE
+    type: loggerTypes.CONSOLE,
+    numberOfLogFiles: 5, // if it < 0 - infinite number of files
+    logFileSizeInBytes: 52428800 // 50Mb, if it < 0 - infinite size
   },
   request: {
     interval: 30000,

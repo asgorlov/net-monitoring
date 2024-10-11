@@ -39,9 +39,14 @@ const getConfig = (req, res) => {
   }
 };
 
-const updateConfig = (req, res, isPatch) => {
+/**
+ * @desc Заменить конфиг приложения
+ * @route PUT /config
+ * @access Public
+ */
+const replaceConfig = (req, res) => {
   const config = req.body;
-  if (!configUtil.validate(config, isPatch)) {
+  if (!configUtil.validate(config)) {
     res.status(400).json({
       isUpdated: false,
       message: 'Некорректные данные. Пожалуйста, убедитесь, что поля заполнены правильно'
@@ -49,7 +54,7 @@ const updateConfig = (req, res, isPatch) => {
   } else {
     let data;
     try {
-      data = configUtil.update(config, isPatch);
+      data = configUtil.update(config);
     } catch (e) {
       logger.error('Can\'t update config file. Please close all applications using the file or delete it');
     }
@@ -63,24 +68,6 @@ const updateConfig = (req, res, isPatch) => {
       });
     }
   }
-}
-
-/**
- * @desc Обновить конфиг приложения
- * @route PATCH /config
- * @access Public
- */
-const changeConfig = (req, res) => {
-  updateConfig(req, res, true);
-};
-
-/**
- * @desc Заменить конфиг приложения
- * @route PUT /config
- * @access Public
- */
-const replaceConfig = (req, res) => {
-  updateConfig(req, res);
 };
 
 /**
@@ -141,7 +128,6 @@ module.exports = {
   homePage: homePage,
   getConfig: getConfig,
   clearConfig: clearConfig,
-  changeConfig: changeConfig,
   replaceConfig: replaceConfig,
   pingHosts: pingHosts
 };
