@@ -1,0 +1,12 @@
+.settings-menu {
+  width: 0;
+  opacity: 0;
+  border-right: 1px solid;
+  transition: 0.3s linear;
+  padding: 12px;
+
+  &._opened {
+    width: 300px;
+    opacity: 1;
+  }
+}

@@ -1,0 +1,20 @@
+.app-layout {
+    height: 100vh;
+
+    &__header {
+        display: flex;
+        height: auto;
+        border-bottom: 1px solid;
+        padding: 12px;
+    }
+
+    &__content {
+        display: flex;
+    }
+
+    &__footer {
+        border-top: 1px solid;
+        padding: 16px;
+        text-align: center;
+    }
+}
