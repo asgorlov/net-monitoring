@@ -60,5 +60,6 @@
       "prettier --write",
       "git add"
     ]
-  }
+  },
+  "proxy": "http://localhost:8008"
 }

@@ -20,8 +20,8 @@ const defaultConfig = freeze({
     logFileSizeInBytes: 52428800 // 50Mb, if it < 0 - infinite size
   },
   request: {
-    interval: 30000,
-    timeout: 29000
+    interval: 30000, // can't be less 1
+    timeout: 30000 // can't be less 1 and more interval
   },
   pingHosts: []
 });

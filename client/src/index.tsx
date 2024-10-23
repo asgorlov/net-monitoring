@@ -1,9 +1,9 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
-import { store } from "./app/store";
-import AppLayout from "./components/app-layout/app-layout";
+import { store } from "./store/store";
 import reportWebVitals from "./reportWebVitals";
+import AppLayoutContainer from "./components/app-layout/app-layout.container";
 import "./index.scss";
 
 const container = document.getElementById("root")!;
@@ -12,7 +12,7 @@ const root = createRoot(container);
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <AppLayout />
+      <AppLayoutContainer />
     </Provider>
   </React.StrictMode>
 );

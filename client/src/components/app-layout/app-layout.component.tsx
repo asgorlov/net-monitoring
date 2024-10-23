@@ -1,12 +1,16 @@
-import React, { FC, useState } from "react";
+import React, { Dispatch, FC, SetStateAction } from "react";
 import { Button, Layout, theme } from "antd";
-import "./app-layout.scss";
 import SettingsMenu from "../settings-menu/settings-menu";
 import NetScheme from "../net-scheme/net-scheme";
+import "./app-layout.scss";
 
-const AppLayout: FC = () => {
+export interface AppLayoutComponentProps {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+const AppLayoutComponent: FC<AppLayoutComponentProps> = ({ open, setOpen }) => {
   const { token } = theme.useToken();
-  const [open, setOpen] = useState(false);
 
   return (
     <Layout className="app-layout">
@@ -36,4 +40,4 @@ const AppLayout: FC = () => {
   );
 };
 
-export default AppLayout;
+export default AppLayoutComponent;
