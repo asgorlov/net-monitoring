@@ -6,6 +6,25 @@
         height: auto;
         border-bottom: 1px solid;
         padding: 12px;
+
+        &__btns-block {
+            display: flex;
+            gap: 12px;
+
+            &__settings {
+                display: flex;
+                gap: 12px;
+                opacity: 0;
+                width: 0;
+                overflow: hidden;
+                transition: 0.3s;
+
+                &._touched {
+                    opacity: 1;
+                    width: 218px;
+                }
+            }
+        }
     }
 
     &__content {

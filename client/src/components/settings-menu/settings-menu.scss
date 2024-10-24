@@ -1,3 +1,5 @@
+@import "../../index";
+
 .settings-menu {
   width: 0;
   opacity: 0;
@@ -8,5 +10,45 @@
   &._opened {
     width: 300px;
     opacity: 1;
+  }
+
+  &__row {
+    h6 {
+      border-top: 1px solid;
+      border-bottom: 1px solid;
+      padding: 8px 0;
+      margin: 0;
+      font-size: 14px;
+      line-height: 18px;
+      font-weight: 500;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &__item {
+      margin: 0 0 8px 0;
+
+      &__skeleton {
+        &-input-number {
+          @include skeleton-dimensions(30px, 88px);
+        }
+
+        &-select {
+          @include skeleton-dimensions(30px, 100%);
+        }
+      }
+
+      &.ant-form-item>.ant-form-item-row>.ant-form-item-label {
+        padding: 0;
+        white-space: nowrap;
+
+        label {
+          font-size: 12px;
+          line-height: 16px;
+        }
+      }
+    }
   }
 }

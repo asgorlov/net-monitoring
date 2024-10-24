@@ -1,15 +1,26 @@
-import React, { Dispatch, FC, SetStateAction } from "react";
-import { Button, Layout, theme } from "antd";
-import SettingsMenu from "../settings-menu/settings-menu";
-import NetScheme from "../net-scheme/net-scheme";
 import "./app-layout.scss";
+import React, { FC } from "react";
+import { Button, Layout, theme } from "antd";
+import NetScheme from "../net-scheme/net-scheme";
+import SettingsMenuContainer from "../settings-menu/settings-menu.container";
+import { FormInstance } from "antd/es/form/hooks/useForm";
+import { SettingsForm } from "../../models/common.models";
+import { DeleteOutlined, MenuOutlined, SaveOutlined } from "@ant-design/icons";
+import clsx from "clsx";
 
 export interface AppLayoutComponentProps {
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  settingsForm: FormInstance<SettingsForm>;
+  saveSettings: () => void;
+  toggleOpenMenu: () => void;
 }
 
-const AppLayoutComponent: FC<AppLayoutComponentProps> = ({ open, setOpen }) => {
+const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
+  open,
+  settingsForm,
+  saveSettings,
+  toggleOpenMenu
+}) => {
   const { token } = theme.useToken();
 
   return (
@@ -21,13 +32,37 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({ open, setOpen }) => {
         }}
         className="app-layout__header"
       >
-        <Button
-          size="small"
-          onClick={() => setOpen(prevState => !prevState)}
-        ></Button>
+        <div className="app-layout__header__btns-block">
+          <Button size="small" onClick={toggleOpenMenu}>
+            <MenuOutlined />
+          </Button>
+          <div
+            className={clsx("app-layout__header__btns-block__settings", {
+              _touched: open && settingsForm.isFieldsTouched()
+            })}
+          >
+            <Button
+              size="small"
+              onClick={toggleOpenMenu}
+              disabled={!open || !settingsForm.isFieldsTouched()}
+            >
+              <DeleteOutlined />
+              Отменить
+            </Button>
+            <Button
+              size="small"
+              type="primary"
+              onClick={saveSettings}
+              disabled={!open || !settingsForm.isFieldsTouched()}
+            >
+              <SaveOutlined />
+              Сохранить
+            </Button>
+          </div>
+        </div>
       </Layout.Header>
       <Layout.Content className="app-layout__content">
-        <SettingsMenu open={open} />
+        <SettingsMenuContainer open={open} form={settingsForm} />
         <NetScheme />
       </Layout.Content>
       <Layout.Footer

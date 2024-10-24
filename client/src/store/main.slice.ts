@@ -1,4 +1,9 @@
-import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  isAnyOf,
+  PayloadAction
+} from "@reduxjs/toolkit";
 import { RootState } from "./store";
 import { defaultConfig } from "../constants/config.constants";
 import { LoggerLevel, LoggerType } from "../constants/logger.constants";
@@ -16,6 +21,7 @@ import Path from "../constants/path.constants";
 import { notification } from "antd";
 import {
   initializePingHostViewModel,
+  updateStateByBaseConfigData,
   updateStateByConfig
 } from "../utils/main.util";
 
@@ -76,23 +82,24 @@ export const updateConfigAsync = createAsyncThunk(
   "config/update",
   async (_, { getState }): Promise<void> => {
     return new Promise((resolve, reject) => {
-      const state = getState() as MainState;
+      const { main } = getState() as RootState;
       const config: Config = {
-        port: state.port,
+        port: main.port,
         logger: {
-          level: state.loggerLevel,
-          type: state.loggerType,
-          numberOfLogFiles: state.numberOfLogFiles,
-          logFileSizeInBytes: state.logFileSizeInBytes
+          level: main.loggerLevel,
+          type: main.loggerType,
+          numberOfLogFiles: main.numberOfLogFiles,
+          logFileSizeInBytes: main.logFileSizeInBytes
         },
         request: {
-          interval: state.interval,
-          timeout: state.timeout
+          interval: main.interval,
+          timeout: main.timeout
         },
-        pingHosts: state.pingHosts
+        pingHosts: main.pingHosts
       };
       const options: RequestInit = {
         method: "PUT",
+        headers: [["Content-Type", "application/json"]],
         body: JSON.stringify(config)
       };
 
@@ -140,7 +147,7 @@ export const resetConfigAsync = createAsyncThunk(
   }
 );
 
-export const clearLogFiles = createAsyncThunk(
+export const clearLogFilesAsync = createAsyncThunk(
   "log/clear",
   (): Promise<void> => {
     return new Promise((resolve, reject) => {
@@ -164,12 +171,13 @@ export const clearLogFiles = createAsyncThunk(
   }
 );
 
-export const ping = createAsyncThunk(
+export const pingAsync = createAsyncThunk(
   "app/ping",
   (hosts: string[]): Promise<HostStatus[]> => {
     return new Promise((resolve, reject) => {
       const options: RequestInit = {
         method: "POST",
+        headers: [["Content-Type", "application/json"]],
         body: JSON.stringify({ hosts })
       };
       fetch(Path.ping, options)
@@ -188,9 +196,13 @@ export const ping = createAsyncThunk(
 export const mainSlice = createSlice({
   name: "config",
   initialState,
-  reducers: {},
+  reducers: {
+    setBaseConfigData: (state, action: PayloadAction<MainStateBase>) => {
+      updateStateByBaseConfigData(state, action.payload);
+    }
+  },
   extraReducers: builder => {
-    builder.addCase(ping.fulfilled, (state, action) => {
+    builder.addCase(pingAsync.fulfilled, (state, action) => {
       const newPingHostViewModel = new Map(state.pingHostViewModel.entries());
       action.payload.forEach(s => {
         const model = newPingHostViewModel.get(s.host);
@@ -203,7 +215,7 @@ export const mainSlice = createSlice({
       state.pingHostViewModel = newPingHostViewModel;
     });
 
-    builder.addCase(ping.pending, (state, action) => {
+    builder.addCase(pingAsync.pending, (state, action) => {
       const newPingHostViewModel = new Map(state.pingHostViewModel.entries());
       action.meta.arg.forEach(h => {
         const model = newPingHostViewModel.get(h);
@@ -215,7 +227,7 @@ export const mainSlice = createSlice({
       state.pingHostViewModel = newPingHostViewModel;
     });
 
-    builder.addCase(ping.rejected, (state, action) => {
+    builder.addCase(pingAsync.rejected, (state, action) => {
       const newPingHostViewModel = new Map(state.pingHostViewModel.entries());
       action.meta.arg.forEach(h => {
         const model = newPingHostViewModel.get(h);
@@ -230,15 +242,15 @@ export const mainSlice = createSlice({
       state.pingHostViewModel = newPingHostViewModel;
     });
 
-    builder.addCase(clearLogFiles.fulfilled, state => {
+    builder.addCase(clearLogFilesAsync.fulfilled, state => {
       state.clearLogFilesLoading = false;
     });
 
-    builder.addCase(clearLogFiles.pending, state => {
+    builder.addCase(clearLogFilesAsync.pending, state => {
       state.clearLogFilesLoading = true;
     });
 
-    builder.addCase(clearLogFiles.rejected, (state, action) => {
+    builder.addCase(clearLogFilesAsync.rejected, (state, action) => {
       const message = action.error.message;
       notification.error({ message });
       state.clearLogFilesLoading = false;
@@ -282,6 +294,8 @@ export const mainSlice = createSlice({
     );
   }
 });
+
+export const { setBaseConfigData } = mainSlice.actions;
 
 export const selectPort = (state: RootState): number => state.main.port;
 export const selectLoggerLevel = (state: RootState): LoggerLevel =>

@@ -11,3 +11,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@mixin skeleton-dimensions($height, $width) {
+  &.ant-skeleton.ant-skeleton-element {
+    height: $height;
+    width: $width;
+
+    .ant-skeleton-image {
+      height: 100%;
+      width: 100%;
+    }
+  }
+}

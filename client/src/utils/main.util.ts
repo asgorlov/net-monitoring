@@ -31,18 +31,10 @@ export const initializePingHostViewModel = (
   return new Map(entries);
 };
 
-export const updateStateByConfig = (state: MainState, config: Config) => {
-  const payload: MainStateBase = {
-    port: config.port,
-    loggerLevel: config.logger.level,
-    loggerType: config.logger.type,
-    numberOfLogFiles: config.logger.numberOfLogFiles,
-    logFileSizeInBytes: config.logger.logFileSizeInBytes,
-    interval: config.request.interval,
-    timeout: config.request.timeout,
-    pingHosts: config.pingHosts
-  };
-
+export const updateStateByBaseConfigData = (
+  state: MainState,
+  payload: MainStateBase
+) => {
   state.port = payload.port;
   state.loggerLevel = payload.loggerLevel;
   state.loggerType = payload.loggerType;
@@ -51,4 +43,17 @@ export const updateStateByConfig = (state: MainState, config: Config) => {
   state.interval = payload.interval;
   state.timeout = payload.timeout;
   state.pingHosts = payload.pingHosts;
+};
+
+export const updateStateByConfig = (state: MainState, config: Config) => {
+  updateStateByBaseConfigData(state, {
+    port: config.port,
+    loggerLevel: config.logger.level,
+    loggerType: config.logger.type,
+    numberOfLogFiles: config.logger.numberOfLogFiles,
+    logFileSizeInBytes: config.logger.logFileSizeInBytes,
+    interval: config.request.interval,
+    timeout: config.request.timeout,
+    pingHosts: config.pingHosts
+  });
 };
