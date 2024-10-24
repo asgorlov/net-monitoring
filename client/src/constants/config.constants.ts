@@ -1,5 +1,5 @@
 import { LoggerLevel, LoggerType } from "./logger.constants";
-import { Config } from "../models/config.models";
+import { Config } from "../models/common.models";
 
 export const defaultConfig: Config = {
   port: 8008,
