@@ -13,10 +13,10 @@ export interface HostResponseBody {
   hostStatuses: HostStatus[];
 }
 
-export interface PingHosts extends HostBase {
+export interface PingHost extends HostBase {
   name: string;
   type: HostType;
-  children: PingHosts[];
+  children: PingHost[];
 }
 
 export interface HostViewModel extends HostStatus {
@@ -39,7 +39,7 @@ export interface Config {
   port: number;
   logger: ConfigLogger;
   request: ConfigRequest;
-  pingHosts: PingHosts[];
+  pingHosts: PingHost[];
 }
 
 export interface ConfigError {

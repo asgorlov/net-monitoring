@@ -13,16 +13,14 @@ import {
 import SettingsMenuComponent from "./settings-menu.component";
 import { FormInstance } from "antd/es/form/hooks/useForm";
 import { SettingsForm } from "../../models/common.models";
+import useOpenSettingsContext from "../../contexts/open-settings.context";
 
 export interface SettingsMenuContainerProps {
-  open: boolean;
   form: FormInstance<SettingsForm>;
 }
 
-const SettingsMenuContainer: FC<SettingsMenuContainerProps> = ({
-  open,
-  form
-}) => {
+const SettingsMenuContainer: FC<SettingsMenuContainerProps> = ({ form }) => {
+  const { open } = useOpenSettingsContext();
   const port = useSelector(selectPort);
   const timeout = useSelector(selectTimeout);
   const interval = useSelector(selectInterval);

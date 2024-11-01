@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import AppLayoutComponent from "./app-layout.component";
 import { useAppDispatch } from "../../hooks/store.hooks";
 import {
@@ -9,14 +9,14 @@ import {
 import { Form } from "antd";
 import { SettingsForm } from "../../models/common.models";
 import settingsUtil from "../../utils/settings.util";
+import useOpenSettingsContext from "../../contexts/open-settings.context";
 
 const AppLayoutContainer = () => {
+  const { open, setOpen } = useOpenSettingsContext();
   const isInitializedRef = useRef(false);
   const dispatch = useAppDispatch();
   const [settingsForm] = Form.useForm<SettingsForm>();
   const settingsFormValues = Form.useWatch([], settingsForm);
-
-  const [open, setOpen] = useState(false);
 
   const toggleOpenMenu = () => setOpen(prevState => !prevState);
 

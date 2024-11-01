@@ -5,6 +5,7 @@ import { store } from "./store/store";
 import reportWebVitals from "./reportWebVitals";
 import AppLayoutContainer from "./components/app-layout/app-layout.container";
 import "./index.scss";
+import { OpenSettingsContextProvider } from "./contexts/open-settings.context";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
@@ -12,7 +13,9 @@ const root = createRoot(container);
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <AppLayoutContainer />
+      <OpenSettingsContextProvider>
+        <AppLayoutContainer />
+      </OpenSettingsContextProvider>
     </Provider>
   </React.StrictMode>
 );

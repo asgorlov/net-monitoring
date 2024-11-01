@@ -13,7 +13,7 @@ import {
   HostViewModel,
   HostResponseBody,
   HostStatus,
-  PingHosts,
+  PingHost,
   UpdatingConfig,
   ClearingLogFiles
 } from "../models/common.models";
@@ -33,7 +33,7 @@ export interface MainStateBase {
   logFileSizeInBytes: number;
   interval: number;
   timeout: number;
-  pingHosts: PingHosts[];
+  pingHosts: PingHost[];
 }
 
 export interface MainState extends MainStateBase {
@@ -308,7 +308,7 @@ export const selectLogFileSizeInBytes = (state: RootState): number =>
   state.main.logFileSizeInBytes;
 export const selectInterval = (state: RootState): number => state.main.interval;
 export const selectTimeout = (state: RootState): number => state.main.timeout;
-export const selectPingHosts = (state: RootState): PingHosts[] =>
+export const selectPingHosts = (state: RootState): PingHost[] =>
   state.main.pingHosts;
 export const selectPingHostViewModels = (
   state: RootState

@@ -1,15 +1,19 @@
 @import "../../index";
 
 .settings-menu {
-  width: 0;
+  max-width: 0;
+  min-width: 0;
   opacity: 0;
   border-right: 1px solid;
   transition: 0.3s linear;
-  padding: 12px;
+  padding: 12px 0;
+  overflow: hidden;
 
   &._opened {
-    width: 300px;
+    max-width: 300px;
+    min-width: 300px;
     opacity: 1;
+    padding: 12px;
   }
 
   &__row {

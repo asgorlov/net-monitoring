@@ -1,7 +1,7 @@
-import { Config, HostViewModel, PingHosts } from "../models/common.models";
+import { Config, HostViewModel, PingHost } from "../models/common.models";
 import { MainState, MainStateBase } from "../store/main.slice";
 
-export const getHostValuesInOneLevel = (hosts: PingHosts[]): string[] => {
+export const getHostValuesInOneLevel = (hosts: PingHost[]): string[] => {
   const result: string[] = [];
 
   hosts.forEach(h => {
@@ -15,7 +15,7 @@ export const getHostValuesInOneLevel = (hosts: PingHosts[]): string[] => {
 };
 
 export const initializePingHostViewModel = (
-  hosts: PingHosts[]
+  hosts: PingHost[]
 ): Map<string, HostViewModel> => {
   const hostValues = getHostValuesInOneLevel(hosts);
   const entries: [string, HostViewModel][] = hostValues.map(v => {

@@ -62,7 +62,7 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
         </div>
       </Layout.Header>
       <Layout.Content className="app-layout__content">
-        <SettingsMenuContainer open={open} form={settingsForm} />
+        <SettingsMenuContainer form={settingsForm} />
         <NetScheme />
       </Layout.Content>
       <Layout.Footer
