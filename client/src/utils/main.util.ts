@@ -1,13 +1,21 @@
-import { Config, HostViewModel, PingHost } from "../models/common.models";
+import {
+  Config,
+  HostBase,
+  HostViewModel,
+  PingHost
+} from "../models/common.models";
 import { MainState, MainStateBase } from "../store/main.slice";
 
-export const getHostValuesInOneLevel = (hosts: PingHost[]): string[] => {
-  const result: string[] = [];
+export const getHostsBaseInOneLevel = (hosts: PingHost[]): HostBase[] => {
+  const result: HostBase[] = [];
 
   hosts.forEach(h => {
-    result.push(h.host);
+    result.push({
+      id: h.id,
+      host: h.host
+    });
     if (h.children.length) {
-      result.push(...getHostValuesInOneLevel(h.children));
+      result.push(...getHostsBaseInOneLevel(h.children));
     }
   });
 
@@ -16,19 +24,14 @@ export const getHostValuesInOneLevel = (hosts: PingHost[]): string[] => {
 
 export const initializePingHostViewModel = (
   hosts: PingHost[]
-): Map<string, HostViewModel> => {
-  const hostValues = getHostValuesInOneLevel(hosts);
-  const entries: [string, HostViewModel][] = hostValues.map(v => {
-    const model: HostViewModel = {
-      host: v,
-      pinging: false,
-      isAlive: null
-    };
-
-    return [v, model];
-  });
-
-  return new Map(entries);
+): HostViewModel[] => {
+  const hostValues = getHostsBaseInOneLevel(hosts);
+  return hostValues.map(v => ({
+    id: v.id,
+    host: v.host,
+    pinging: false,
+    isAlive: null
+  }));
 };
 
 export const updateStateByBaseConfigData = (

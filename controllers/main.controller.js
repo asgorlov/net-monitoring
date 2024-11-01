@@ -1,6 +1,6 @@
-const ping = require('ping');
-const logger = require('../utils/logger.util');
-const configUtil = require('../utils/config.util');
+const ping = require("ping");
+const logger = require("../utils/logger.util");
+const configUtil = require("../utils/config.util");
 
 /**
  * @desc Домашняя страница
@@ -8,7 +8,7 @@ const configUtil = require('../utils/config.util');
  * @access Public
  */
 const homePage = (req, res, next) => {
-  res.render('index', { title: 'Express' });
+  res.render("index", { title: "Express" });
 };
 
 /**
@@ -21,21 +21,28 @@ const getConfig = (req, res) => {
   try {
     data = configUtil.get();
   } catch (e) {
-    logger.info('Can\'t get config file. It is probably missing');
+    logger.info("Can't get config file. It is probably missing");
   }
 
   if (!data) {
     try {
       data = configUtil.createDefault();
     } catch (e) {
-      logger.error('Can\'t create config file. Please close all applications using the file or delete it');
+      logger.error(
+        "Can't create config file. Please close all applications using the file or delete it"
+      );
     }
   }
 
   if (data) {
     res.status(200).json(data);
   } else {
-    res.status(500).json({ message: 'Файл настроек отсутствует. Попробуйте удалить файл настроек вручную и перезагрузить приложение'});
+    res
+      .status(500)
+      .json({
+        message:
+          "Файл настроек отсутствует. Попробуйте удалить файл настроек вручную и перезагрузить приложение",
+      });
   }
 };
 
@@ -49,14 +56,17 @@ const replaceConfig = (req, res) => {
   if (!configUtil.validate(config)) {
     res.status(400).json({
       isUpdated: false,
-      message: 'Некорректные данные. Пожалуйста, убедитесь, что поля заполнены правильно'
+      message:
+        "Некорректные данные. Пожалуйста, убедитесь, что поля заполнены правильно",
     });
   } else {
     let data;
     try {
       data = configUtil.update(config);
     } catch (e) {
-      logger.error('Can\'t update config file. Please close all applications using the file or delete it');
+      logger.error(
+        "Can't update config file. Please close all applications using the file or delete it"
+      );
     }
 
     if (data) {
@@ -64,7 +74,8 @@ const replaceConfig = (req, res) => {
     } else {
       res.status(500).json({
         isUpdated: false,
-        message: 'Не удалось сбросить настройки. Попробуйте удалить файл вручную и повторить запрос'
+        message:
+          "Не удалось сбросить настройки. Попробуйте удалить файл вручную и повторить запрос",
       });
     }
   }
@@ -80,13 +91,20 @@ const clearConfig = (req, res) => {
   try {
     data = configUtil.createDefault();
   } catch (e) {
-    logger.error('Can\'t create config file. Please close all applications using the file or delete it');
+    logger.error(
+      "Can't create config file. Please close all applications using the file or delete it"
+    );
   }
 
   if (data) {
     res.status(200).json(data);
   } else {
-    res.status(500).json({ message: 'Не удалось сбросить настройки. Попробуйте удалить файл вручную и повторить запрос'});
+    res
+      .status(500)
+      .json({
+        message:
+          "Не удалось сбросить настройки. Попробуйте удалить файл вручную и повторить запрос",
+      });
   }
 };
 
@@ -100,13 +118,16 @@ const clearLogFiles = (req, res) => {
     logger.clearLogDir();
     res.status(200).json({ isCleared: true });
   } catch (e) {
-    logger.error('Can\'t clear the log folder. Please close all applications using the log files or delete log folder manually');
+    logger.error(
+      "Can't clear the log folder. Please close all applications using the log files or delete log folder manually"
+    );
     res.status(500).json({
       isCleared: false,
-      message: 'Не удалось очистить папку с логами. Попробуйте удалить папку вручную или закрыть все приложения, использующие файлы логов, и повторить попытку'
+      message:
+        "Не удалось очистить папку с логами. Попробуйте удалить папку вручную или закрыть все приложения, использующие файлы логов, и повторить попытку",
     });
   }
-}
+};
 
 /**
  * @desc Пинг списка IP-адресов
@@ -116,24 +137,24 @@ const clearLogFiles = (req, res) => {
 const pingHosts = async (req, res) => {
   const { hosts } = req.body;
   if (!Array.isArray(hosts)) {
-    logger.error('Field hosts is not array');
-    res.status(400).json({ message: 'Поле hosts не является массивом'});
+    logger.error("Field hosts is not array");
+    res.status(400).json({ message: "Поле hosts не является массивом" });
   } else {
     const hostStatuses = [];
     for (const host of hosts) {
       try {
-        const response = await ping.promise.probe(host, {
-          timeout: global.config?.request?.timeout
+        const response = await ping.promise.probe(host.host, {
+          timeout: global.config?.request?.timeout,
         });
         hostStatuses.push({
-          host,
-          isAlive: response.alive
+          ...host,
+          isAlive: response.alive,
         });
       } catch (e) {
-        logger.info(`Can\'t ping host = ${host}`);
+        logger.info(`Can\'t ping host = ${host.host}`);
         hostStatuses.push({
-          host,
-          isAlive: null
+          ...host,
+          isAlive: null,
         });
       }
     }
@@ -148,5 +169,5 @@ module.exports = {
   clearConfig: clearConfig,
   replaceConfig: replaceConfig,
   clearLogFiles: clearLogFiles,
-  pingHosts: pingHosts
+  pingHosts: pingHosts,
 };
