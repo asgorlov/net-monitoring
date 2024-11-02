@@ -1,12 +1,12 @@
 import "./app-layout.scss";
 import React, { FC } from "react";
 import { Button, Layout, theme } from "antd";
-import NetScheme from "../net-scheme/net-scheme";
 import SettingsMenuContainer from "../settings-menu/settings-menu.container";
 import { FormInstance } from "antd/es/form/hooks/useForm";
 import { SettingsForm } from "../../models/common.models";
 import { DeleteOutlined, MenuOutlined, SaveOutlined } from "@ant-design/icons";
 import clsx from "clsx";
+import NetSchemeContainer from "../net-scheme/net-scheme.container";
 
 export interface AppLayoutComponentProps {
   open: boolean;
@@ -63,7 +63,7 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
       </Layout.Header>
       <Layout.Content className="app-layout__content">
         <SettingsMenuContainer form={settingsForm} />
-        <NetScheme />
+        <NetSchemeContainer />
       </Layout.Content>
       <Layout.Footer
         className="app-layout__footer"
