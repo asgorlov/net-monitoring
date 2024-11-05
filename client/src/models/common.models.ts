@@ -56,10 +56,3 @@ export interface UpdatingConfig extends Partial<ConfigError> {
 export interface ClearingLogFiles extends Partial<ConfigError> {
   isCleared: boolean;
 }
-
-export interface SettingsForm
-  extends ConfigRequest,
-    Omit<ConfigLogger, "logFileSizeInBytes"> {
-  port: number;
-  logFileSize: number;
-}

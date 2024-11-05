@@ -1,96 +1,105 @@
 import "./settings-menu.scss";
-import React, { FC } from "react";
+import React, { FC, memo } from "react";
 import clsx from "clsx";
-import { Form, InputNumber, Select, theme } from "antd";
-import SkeletonNode from "antd/es/skeleton/Node";
+import { InputNumber, Select, theme } from "antd";
 import { LoggerLevel, LoggerType } from "../../constants/logger.constants";
-import settingsUtil from "../../utils/settings.util";
-import { FormInstance } from "antd/es/form/hooks/useForm";
-import { SettingsForm } from "../../models/common.models";
+import { SettingsForm } from "../../models/settings-form.models";
+import Skeleton from "../skeleton/skeleton";
 
 export interface MenuProps {
   open: boolean;
-  form: FormInstance<SettingsForm>;
   configLoading: boolean;
-  port: number;
-  loggerLevel: LoggerLevel;
-  loggerType: LoggerType;
-  numberOfLogFiles: number;
-  logFileSizeInBytes: number;
-  interval: number;
-  timeout: number;
+  formValues: SettingsForm;
+  onChangeFormValues: (values: SettingsForm) => void;
 }
 
 const SettingsMenuComponent: FC<MenuProps> = ({
   open,
-  form,
   configLoading,
-  port,
-  loggerLevel,
-  loggerType,
-  numberOfLogFiles,
-  logFileSizeInBytes,
-  interval,
-  timeout
+  formValues,
+  onChangeFormValues
 }) => {
   const { token } = theme.useToken();
 
+  const onPortChange = (port: number | null) => {
+    if (port !== null) {
+      onChangeFormValues({ ...formValues, port });
+    }
+  };
+
+  const onLevelChange = (level: LoggerLevel) => {
+    onChangeFormValues({ ...formValues, level });
+  };
+
+  const onTypeChange = (type: LoggerType) => {
+    onChangeFormValues({ ...formValues, type });
+  };
+
+  const onNumberOfLogFilesChange = (numberOfLogFiles: number | null) => {
+    if (numberOfLogFiles !== null) {
+      onChangeFormValues({ ...formValues, numberOfLogFiles });
+    }
+  };
+
+  const onLogFileSizeChange = (logFileSize: number | null) => {
+    if (logFileSize !== null) {
+      onChangeFormValues({ ...formValues, logFileSize });
+    }
+  };
+
+  const onTimeoutChange = (timeout: number | null) => {
+    if (timeout !== null) {
+      onChangeFormValues({ ...formValues, timeout });
+    }
+  };
+
+  const onIntervalChange = (interval: number | null) => {
+    if (interval !== null) {
+      onChangeFormValues({ ...formValues, interval });
+    }
+  };
+
   return (
-    <Form
-      form={form}
-      name="settings"
+    <div
       className={clsx("settings-menu", { _opened: open })}
       style={{
         background: token.colorBgLayout,
         borderColor: token.colorBorder
       }}
-      layout="vertical"
-      initialValues={{
-        port: port,
-        level: loggerLevel,
-        type: loggerType,
-        numberOfLogFiles: numberOfLogFiles,
-        logFileSize: settingsUtil.convertToMb(logFileSizeInBytes),
-        interval: settingsUtil.convertToSeconds(interval),
-        timeout: settingsUtil.convertToSeconds(timeout)
-      }}
-      disabled={!open || configLoading}
     >
       <div
         className="settings-menu__row"
         style={{ borderColor: token.colorBorder }}
       >
-        <Form.Item
-          label="Порт"
-          name="port"
-          className="settings-menu__row__item"
-        >
+        <h6 style={{ borderColor: token.colorBorder }}>Общие</h6>
+        <div className="settings-menu__row__item">
+          <label htmlFor="port">Порт:</label>
           {configLoading ? (
-            <SkeletonNode
-              className={`settings-menu__row__item__skeleton-input-number`}
-              children={<div />}
-              active
-            />
+            <Skeleton className="settings-menu__row__item__skeleton-input-number" />
           ) : (
-            <InputNumber min={0} max={65535} />
+            <InputNumber
+              id="port"
+              disabled={!open || configLoading}
+              value={formValues.port}
+              onChange={onPortChange}
+              min={0}
+              max={65535}
+            />
           )}
-        </Form.Item>
+        </div>
       </div>
       <div className="settings-menu__row">
         <h6 style={{ borderColor: token.colorBorder }}>Логирование</h6>
-        <Form.Item
-          label="Уровень"
-          name="level"
-          className="settings-menu__row__item"
-        >
+        <div className="settings-menu__row__item">
+          <label htmlFor="level">Уровень:</label>
           {configLoading ? (
-            <SkeletonNode
-              className={`settings-menu__row__item__skeleton-select`}
-              children={<div />}
-              active
-            />
+            <Skeleton className="settings-menu__row__item__skeleton-select" />
           ) : (
             <Select
+              id="level"
+              disabled={!open || configLoading}
+              value={formValues.level}
+              onChange={onLevelChange}
               options={[
                 { value: LoggerLevel.DEBUG, label: LoggerLevel.DEBUG },
                 { value: LoggerLevel.INFO, label: LoggerLevel.INFO },
@@ -99,16 +108,17 @@ const SettingsMenuComponent: FC<MenuProps> = ({
               ]}
             />
           )}
-        </Form.Item>
-        <Form.Item label="Тип" name="type" className="settings-menu__row__item">
+        </div>
+        <div className="settings-menu__row__item">
+          <label htmlFor="type">Тип:</label>
           {configLoading ? (
-            <SkeletonNode
-              className={`settings-menu__row__item__skeleton-select`}
-              children={<div />}
-              active
-            />
+            <Skeleton className="settings-menu__row__item__skeleton-select" />
           ) : (
             <Select
+              id="type"
+              disabled={!open || configLoading}
+              value={formValues.type}
+              onChange={onTypeChange}
               options={[
                 { value: LoggerType.CONSOLE, label: LoggerType.CONSOLE },
                 { value: LoggerType.FILE, label: LoggerType.FILE },
@@ -116,73 +126,74 @@ const SettingsMenuComponent: FC<MenuProps> = ({
               ]}
             />
           )}
-        </Form.Item>
-        <Form.Item
-          label="Максимальное количество файлов"
-          name="numberOfLogFiles"
-          className="settings-menu__row__item"
-        >
+        </div>
+        <div className="settings-menu__row__item">
+          <label htmlFor="numberOfLogFiles">
+            Максимальное количество файлов:
+          </label>
           {configLoading ? (
-            <SkeletonNode
-              className={`settings-menu__row__item__skeleton-input-number`}
-              children={<div />}
-              active
-            />
+            <Skeleton className="settings-menu__row__item__skeleton-input-number" />
           ) : (
-            <InputNumber min={0} />
+            <InputNumber
+              id="numberOfLogFiles"
+              disabled={!open || configLoading}
+              value={formValues.numberOfLogFiles}
+              onChange={onNumberOfLogFilesChange}
+              min={0}
+            />
           )}
-        </Form.Item>
-        <Form.Item
-          label="Максимальный размер файла"
-          name="logFileSize"
-          className="settings-menu__row__item"
-        >
+        </div>
+        <div className="settings-menu__row__item">
+          <label htmlFor="logFileSize">Максимальный размер файла:</label>
           {configLoading ? (
-            <SkeletonNode
-              className={`settings-menu__row__item__skeleton-input-number`}
-              children={<div />}
-              active
-            />
+            <Skeleton className="settings-menu__row__item__skeleton-input-number" />
           ) : (
-            <InputNumber min={0} suffix="Мб" />
+            <InputNumber
+              id="logFileSize"
+              disabled={!open || configLoading}
+              value={formValues.logFileSize}
+              onChange={onLogFileSizeChange}
+              min={0}
+              suffix="Мб"
+            />
           )}
-        </Form.Item>
+        </div>
       </div>
       <div className="settings-menu__row">
         <h6 style={{ borderColor: token.colorBorder }}>Запросы</h6>
-        <Form.Item
-          label="Период между запросами"
-          name="interval"
-          className="settings-menu__row__item"
-        >
+        <div className="settings-menu__row__item">
+          <label htmlFor="interval">Период между запросами:</label>
           {configLoading ? (
-            <SkeletonNode
-              className={`settings-menu__row__item__skeleton-input-number`}
-              children={<div />}
-              active
-            />
+            <Skeleton className="settings-menu__row__item__skeleton-input-number" />
           ) : (
-            <InputNumber min={1} suffix="сек." />
+            <InputNumber
+              id="interval"
+              disabled={!open || configLoading}
+              value={formValues.interval}
+              onChange={onIntervalChange}
+              min={1}
+              suffix="сек."
+            />
           )}
-        </Form.Item>
-        <Form.Item
-          label="Таймаут"
-          name="timeout"
-          className="settings-menu__row__item"
-        >
+        </div>
+        <div className="settings-menu__row__item">
+          <label htmlFor="timeout">Таймаут:</label>
           {configLoading ? (
-            <SkeletonNode
-              className={`settings-menu__row__item__skeleton-input-number`}
-              children={<div />}
-              active
-            />
+            <Skeleton className="settings-menu__row__item__skeleton-input-number" />
           ) : (
-            <InputNumber min={1} suffix="сек." />
+            <InputNumber
+              id="timeout"
+              disabled={!open || configLoading}
+              value={formValues.timeout}
+              onChange={onTimeoutChange}
+              min={1}
+              suffix="сек."
+            />
           )}
-        </Form.Item>
+        </div>
       </div>
-    </Form>
+    </div>
   );
 };
 
-export default SettingsMenuComponent;
+export default memo(SettingsMenuComponent);

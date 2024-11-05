@@ -2,22 +2,21 @@ import "./app-layout.scss";
 import React, { FC } from "react";
 import { Button, Layout, theme } from "antd";
 import SettingsMenuContainer from "../settings-menu/settings-menu.container";
-import { FormInstance } from "antd/es/form/hooks/useForm";
-import { SettingsForm } from "../../models/common.models";
+
 import { DeleteOutlined, MenuOutlined, SaveOutlined } from "@ant-design/icons";
 import clsx from "clsx";
 import NetSchemeContainer from "../net-scheme/net-scheme.container";
 
 export interface AppLayoutComponentProps {
   open: boolean;
-  settingsForm: FormInstance<SettingsForm>;
+  isFormsTouched: boolean;
   saveSettings: () => void;
   toggleOpenMenu: () => void;
 }
 
 const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
   open,
-  settingsForm,
+  isFormsTouched,
   saveSettings,
   toggleOpenMenu
 }) => {
@@ -38,13 +37,13 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
           </Button>
           <div
             className={clsx("app-layout__header__btns-block__settings", {
-              _touched: open && settingsForm.isFieldsTouched()
+              _touched: open && isFormsTouched
             })}
           >
             <Button
               size="small"
               onClick={toggleOpenMenu}
-              disabled={!open || !settingsForm.isFieldsTouched()}
+              disabled={!open || !isFormsTouched}
             >
               <DeleteOutlined />
               Отменить
@@ -53,7 +52,7 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
               size="small"
               type="primary"
               onClick={saveSettings}
-              disabled={!open || !settingsForm.isFieldsTouched()}
+              disabled={!open || !isFormsTouched}
             >
               <SaveOutlined />
               Сохранить
@@ -62,7 +61,7 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
         </div>
       </Layout.Header>
       <Layout.Content className="app-layout__content">
-        <SettingsMenuContainer form={settingsForm} />
+        <SettingsMenuContainer />
         <NetSchemeContainer />
       </Layout.Content>
       <Layout.Footer
