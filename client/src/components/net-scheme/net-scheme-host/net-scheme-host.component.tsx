@@ -1,9 +1,5 @@
 import "./net-scheme-host.scss";
 import React, { ChangeEvent, forwardRef, memo, ReactNode } from "react";
-import { DefaultOptionType } from "rc-select/lib/Select";
-import { PingHost } from "../../../models/common.models";
-import { HostType } from "../../../constants/common.constants";
-import Skeleton from "../../skeleton/skeleton";
 import { Button, Input, Modal, Select } from "antd";
 import {
   CheckCircleOutlined,
@@ -14,7 +10,11 @@ import {
   PlusOutlined,
   StopOutlined
 } from "@ant-design/icons";
+import { DefaultOptionType } from "rc-select/lib/Select";
 import clsx from "clsx";
+import Skeleton from "../../skeleton/skeleton";
+import { HostType } from "../../../constants/common.constants";
+import { PingHost } from "../../../models/host.models";
 
 export interface NetSchemeHostComponentProps {
   configLoading: boolean;
@@ -23,8 +23,8 @@ export interface NetSchemeHostComponentProps {
   isAlive: boolean | null;
   formValue: PingHost;
   onFormValueChange: (value: PingHost) => void;
-  addHost: () => void;
-  removeHost: () => void;
+  onAddHost: () => void;
+  onRemoveHost: () => void;
 }
 
 const typeOptions: DefaultOptionType[] = Object.values(HostType).map(v => ({
@@ -44,8 +44,8 @@ const NetSchemeHostComponent = forwardRef<
       isAlive,
       formValue,
       onFormValueChange,
-      addHost,
-      removeHost
+      onAddHost,
+      onRemoveHost
     },
     ref
   ) => {
@@ -71,7 +71,7 @@ const NetSchemeHostComponent = forwardRef<
         content,
         okText: "Да",
         cancelText: "Нет",
-        onOk: removeHost
+        onOk: onRemoveHost
       });
     };
 
@@ -185,7 +185,7 @@ const NetSchemeHostComponent = forwardRef<
               <Button
                 title="Добавить дочерний объект"
                 disabled={isController}
-                onClick={addHost}
+                onClick={onAddHost}
               >
                 <PlusOutlined />
               </Button>

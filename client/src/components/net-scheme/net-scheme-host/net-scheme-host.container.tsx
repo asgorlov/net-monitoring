@@ -6,12 +6,12 @@ import React, {
   useRef,
   useState
 } from "react";
-import NetSchemeHostComponent from "./net-scheme-host.component";
-import { PingHost } from "../../../models/common.models";
 import { useSelector } from "react-redux";
 import { selectConfigLoading } from "../../../store/main.slice";
 import useSettingsForms from "../../../contexts/settings-forms.context";
 import useOpenSettingsContext from "../../../contexts/open-settings.context";
+import NetSchemeHostComponent from "./net-scheme-host.component";
+import { PingHost } from "../../../models/host.models";
 
 export interface NetSchemeHostContainerProps {
   pingHost: PingHost;
@@ -40,6 +40,17 @@ const NetSchemeHostContainer = forwardRef<
     setFormValue(pingHost);
   }, [pingHost]);
 
+  const handleAddHost = useCallback(() => {
+    isHostFormTouchedRef.current = true;
+    addHost();
+  }, [addHost]);
+
+  const handleRemoveHost = useCallback(() => {
+    isHostFormTouchedRef.current = true;
+    removeHost();
+    // toDo: нужно переносить логику с формой в item(на компонент выше) здесь оставить только компонент, контейнер не нужен
+  }, [removeHost]);
+
   useEffect(() => {
     if (!configLoading) {
       setFormValue(pingHost);
@@ -63,8 +74,8 @@ const NetSchemeHostContainer = forwardRef<
       isAlive={null}
       formValue={formValue}
       onFormValueChange={changeFormValue}
-      addHost={addHost}
-      removeHost={removeHost}
+      onAddHost={handleAddHost}
+      onRemoveHost={handleRemoveHost}
     />
   );
 });

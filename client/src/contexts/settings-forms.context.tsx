@@ -6,10 +6,10 @@ import {
   useContext,
   useState
 } from "react";
-import { PingHost, uuid } from "../models/common.models";
 import { NamePath } from "rc-field-form/es/interface";
 import { defaultConfig } from "../constants/config.constants";
 import { SettingsForm } from "../models/settings-form.models";
+import { PingHost, uuid } from "../models/host.models";
 
 export interface FormContext<T> {
   values: T;

@@ -1,6 +1,6 @@
 import React, { forwardRef, useCallback } from "react";
 import NetSchemeItemComponent from "./net-scheme-item.component";
-import { PingHost } from "../../../models/common.models";
+import { PingHost } from "../../../models/host.models";
 
 export interface NetSchemeItemContainerProps {
   pingHost: PingHost;

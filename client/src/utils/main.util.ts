@@ -1,10 +1,6 @@
-import {
-  Config,
-  HostBase,
-  HostViewModel,
-  PingHost
-} from "../models/common.models";
+import { Config } from "../models/common.models";
 import { MainState, MainStateBase } from "../store/main.slice";
+import { HostBase, HostViewModel, PingHost } from "../models/host.models";
 
 export const getHostsBaseInOneLevel = (hosts: PingHost[]): HostBase[] => {
   const result: HostBase[] = [];

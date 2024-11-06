@@ -1,8 +1,8 @@
 import "./net-scheme.scss";
 import React, { FC, memo, useMemo } from "react";
 import NetSchemeItemContainer from "./net-scheme-item/net-scheme-item.container";
-import { PingHost } from "../../models/common.models";
 import NetSchemeLine from "./net-scheme-line/net-scheme-line";
+import { PingHost } from "../../models/host.models";
 
 export interface NetSchemeComponentProps {
   pingHosts: PingHost[];

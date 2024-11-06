@@ -1,10 +1,10 @@
 import "./net-scheme-item.scss";
 import React, { forwardRef, memo, useMemo, useState } from "react";
-import { PingHost } from "../../../models/common.models";
 import NetSchemeHostContainer from "../net-scheme-host/net-scheme-host.container";
 import NetSchemeItemContainer from "./net-scheme-item.container";
 import NetSchemeLine from "../net-scheme-line/net-scheme-line";
 import { LineProperties } from "../../../models/line.models";
+import { PingHost } from "../../../models/host.models";
 
 export interface NetSchemeItemComponentProps {
   pingHost: PingHost;

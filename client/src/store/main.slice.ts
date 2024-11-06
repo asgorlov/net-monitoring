@@ -10,13 +10,8 @@ import { LoggerLevel, LoggerType } from "../constants/logger.constants";
 import {
   Config,
   ConfigError,
-  HostViewModel,
-  HostResponseBody,
-  HostStatus,
-  PingHost,
   UpdatingConfig,
-  ClearingLogFiles,
-  HostBase
+  ClearingLogFiles
 } from "../models/common.models";
 import Path from "../constants/path.constants";
 import { notification } from "antd";
@@ -25,6 +20,13 @@ import {
   updateStateByBaseConfigData,
   updateStateByConfig
 } from "../utils/main.util";
+import {
+  HostBase,
+  HostResponseBody,
+  HostStatus,
+  HostViewModel,
+  PingHost
+} from "../models/host.models";
 
 export interface MainStateBase {
   port: number;
