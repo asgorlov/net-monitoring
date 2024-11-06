@@ -9,12 +9,14 @@ import { LineProperties } from "../../../models/line.models";
 export interface NetSchemeItemComponentProps {
   pingHost: PingHost;
   isMain?: boolean;
+  addHost: () => void;
+  removeHost: () => void;
 }
 
 const NetSchemeItemComponent = forwardRef<
   HTMLDivElement,
   NetSchemeItemComponentProps
->(({ pingHost, isMain }, ref) => {
+>(({ pingHost, isMain, addHost, removeHost }, ref) => {
   const [lineProps, setLineProps] = useState<LineProperties>({
     hostBlock: {
       height: 0,
@@ -72,8 +74,10 @@ const NetSchemeItemComponent = forwardRef<
     <div className="net-scheme-item" ref={ref}>
       {isMain && <NetSchemeLine dimensions={mainLineDimensions} />}
       <NetSchemeHostContainer
-        pingHost={pingHost}
         ref={setHostBlockDimensions}
+        pingHost={pingHost}
+        addHost={addHost}
+        removeHost={removeHost}
       />
       {pingHost.children.length > 0 && (
         <div className="net-scheme-item__children-container">

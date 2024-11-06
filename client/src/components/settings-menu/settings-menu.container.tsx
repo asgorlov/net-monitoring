@@ -58,18 +58,15 @@ const SettingsMenuContainer: FC = () => {
   );
   const [formValues, setFormValues] = useState<SettingsForm>(initialFormValues);
 
-  const changeFormValues = useCallback(
-    (values: SettingsForm) => {
-      isFieldsTouchedRef.current = true;
-      setFormValues(values);
-    },
-    [isFieldsTouchedRef]
-  );
+  const changeFormValues = useCallback((values: SettingsForm) => {
+    isFieldsTouchedRef.current = true;
+    setFormValues(values);
+  }, []);
 
   const resetFormValues = useCallback(() => {
     isFieldsTouchedRef.current = false;
     setFormValues(initialFormValues);
-  }, [isFieldsTouchedRef, initialFormValues]);
+  }, [initialFormValues]);
 
   useEffect(() => {
     if (!configLoading) {
@@ -83,7 +80,7 @@ const SettingsMenuContainer: FC = () => {
       isTouched: isFieldsTouchedRef.current,
       resetFields: resetFormValues
     });
-  }, [setSettingsForm, formValues, isFieldsTouchedRef, resetFormValues]);
+  }, [setSettingsForm, formValues, resetFormValues]);
 
   return (
     <SettingsMenuComponent
