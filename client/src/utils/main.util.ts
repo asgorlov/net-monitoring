@@ -1,6 +1,6 @@
 import { Config } from "../models/common.models";
 import { MainState, MainStateBase } from "../store/main.slice";
-import { HostBase, HostViewModel, PingHost } from "../models/host.models";
+import { HostBase, HostViewModel, PingHost, uuid } from "../models/host.models";
 
 export const getHostsBaseInOneLevel = (hosts: PingHost[]): HostBase[] => {
   const result: HostBase[] = [];
@@ -20,14 +20,19 @@ export const getHostsBaseInOneLevel = (hosts: PingHost[]): HostBase[] => {
 
 export const initializePingHostViewModel = (
   hosts: PingHost[]
-): HostViewModel[] => {
-  const hostValues = getHostsBaseInOneLevel(hosts);
-  return hostValues.map(v => ({
-    id: v.id,
-    host: v.host,
-    pinging: false,
-    isAlive: null
-  }));
+): Record<uuid, HostViewModel> => {
+  const result: Record<uuid, HostViewModel> = {};
+
+  getHostsBaseInOneLevel(hosts).forEach(v => {
+    result[v.id] = {
+      id: v.id,
+      host: v.host,
+      pinging: false,
+      isAlive: null
+    };
+  });
+
+  return result;
 };
 
 export const updateStateByBaseConfigData = (

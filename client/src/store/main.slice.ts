@@ -25,7 +25,8 @@ import {
   HostResponseBody,
   HostStatus,
   HostViewModel,
-  PingHost
+  PingHost,
+  uuid
 } from "../models/host.models";
 
 export interface MainStateBase {
@@ -42,7 +43,7 @@ export interface MainStateBase {
 export interface MainState extends MainStateBase {
   configLoading: boolean;
   clearLogFilesLoading: boolean;
-  pingHostViewModel: HostViewModel[];
+  pingHostViewModel: Record<uuid, HostViewModel>;
 }
 
 const initialState: MainState = {
@@ -207,30 +208,30 @@ export const mainSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(pingAsync.fulfilled, (state, action) => {
       action.payload.forEach(s => {
-        const model = state.pingHostViewModel.find(m => m.id === s.id);
+        const model = state.pingHostViewModel[s.id];
         if (model) {
           model.isAlive = s.isAlive;
           model.pinging = false;
         }
       });
 
-      state.pingHostViewModel = [...state.pingHostViewModel];
+      state.pingHostViewModel = { ...state.pingHostViewModel };
     });
 
     builder.addCase(pingAsync.pending, (state, action) => {
       action.meta.arg.forEach(h => {
-        const model = state.pingHostViewModel.find(m => m.id === h.id);
+        const model = state.pingHostViewModel[h.id];
         if (model) {
           model.pinging = true;
         }
       });
 
-      state.pingHostViewModel = [...state.pingHostViewModel];
+      state.pingHostViewModel = { ...state.pingHostViewModel };
     });
 
     builder.addCase(pingAsync.rejected, (state, action) => {
       action.meta.arg.forEach(h => {
-        const model = state.pingHostViewModel.find(m => m.id === h.id);
+        const model = state.pingHostViewModel[h.id];
         if (model) {
           model.pinging = false;
           if (model.isAlive !== null) {
@@ -239,7 +240,7 @@ export const mainSlice = createSlice({
         }
       });
 
-      state.pingHostViewModel = [...state.pingHostViewModel];
+      state.pingHostViewModel = { ...state.pingHostViewModel };
     });
 
     builder.addCase(clearLogFilesAsync.fulfilled, state => {
@@ -310,8 +311,9 @@ export const selectInterval = (state: RootState): number => state.main.interval;
 export const selectTimeout = (state: RootState): number => state.main.timeout;
 export const selectPingHosts = (state: RootState): PingHost[] =>
   state.main.pingHosts;
-export const selectPingHostViewModels = (state: RootState): HostViewModel[] =>
-  state.main.pingHostViewModel;
+export const selectPingHostViewModels = (
+  state: RootState
+): Record<uuid, HostViewModel> => state.main.pingHostViewModel;
 export const selectConfigLoading = (state: RootState): boolean =>
   state.main.configLoading;
 export const selectClearLogFilesLoading = (state: RootState): boolean =>
