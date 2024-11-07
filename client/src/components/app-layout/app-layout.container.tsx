@@ -12,9 +12,15 @@ import {
   useSchemeFormContext,
   useSettingsFormContext
 } from "../../contexts/form.context";
-import { getValidHostViewModels } from "../../utils/host.util";
+import {
+  validateAndChangeHostViewModels,
+  getOnlyValidHostViewModels
+} from "../../utils/host.util";
+import { Modal } from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 const AppLayoutContainer = () => {
+  const [modal, contextHolder] = Modal.useModal();
   const { open, setOpen } = useOpenSettingsContext();
   const settingsForm = useSettingsFormContext();
   const schemeForm = useSchemeFormContext();
@@ -26,14 +32,11 @@ const AppLayoutContainer = () => {
     [setOpen]
   );
 
-  const isInvalidSettings = useCallback((): boolean => {
-    return schemeForm.validateData();
-  }, [schemeForm]);
-
-  const saveSettings = useCallback(
-    (hasErrors: boolean = false) => {
-      const settingsData = settingsForm.data;
-      const schemeData = schemeForm.data;
+  const saveSettings = useCallback(() => {
+    const settingsData = settingsForm.data;
+    const schemeData = validateAndChangeHostViewModels(schemeForm.data);
+    const hasErrors = schemeData !== schemeForm.data;
+    const save = () => {
       dispatch(
         setBaseConfigData({
           port: settingsData.port,
@@ -46,15 +49,34 @@ const AppLayoutContainer = () => {
           interval: settingsUtil.convertToMilliseconds(settingsData.interval),
           timeout: settingsUtil.convertToMilliseconds(settingsData.timeout),
           hostViewModels: hasErrors
-            ? getValidHostViewModels(schemeData)
+            ? getOnlyValidHostViewModels(schemeData)
             : schemeData
         })
       );
       dispatch(updateConfigAsync());
       setOpen(false);
-    },
-    [settingsForm, schemeForm, dispatch, setOpen]
-  );
+    };
+
+    if (hasErrors) {
+      const title = "Продолжить операцию сохранения?";
+      const content =
+        "В данной конфигурации имеются незаполненные хосты, которые будут автоматически удалены. Вы можете отменить операцию, чтобы проверить какие поля не заполнены.";
+
+      modal.confirm({
+        title,
+        icon: <ExclamationCircleOutlined />,
+        centered: true,
+        content,
+        okText: "Продолжить",
+        cancelText: "Отменить",
+        onOk: save
+      });
+
+      schemeForm.setData(schemeData);
+    } else {
+      save();
+    }
+  }, [settingsForm, schemeForm, dispatch, setOpen, modal]);
 
   useEffect(() => {
     if (open || !isInitializedRef.current) {
@@ -71,13 +93,15 @@ const AppLayoutContainer = () => {
   }, [open, settingsForm, schemeForm]);
 
   return (
-    <AppLayoutComponent
-      open={open}
-      isInvalidSettings={isInvalidSettings}
-      isFormsTouched={settingsForm.isTouched || schemeForm.isTouched}
-      saveSettings={saveSettings}
-      toggleOpenMenu={toggleOpenMenu}
-    />
+    <>
+      <AppLayoutComponent
+        open={open}
+        isFormsTouched={settingsForm.isTouched || schemeForm.isTouched}
+        saveSettings={saveSettings}
+        toggleOpenMenu={toggleOpenMenu}
+      />
+      {contextHolder}
+    </>
   );
 };
 

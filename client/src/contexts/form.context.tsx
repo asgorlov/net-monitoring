@@ -24,19 +24,21 @@ import {
   selectTimeout
 } from "../store/main.slice";
 import settingsUtil from "../utils/settings.util";
-import { HostFieldError, SchemeFormAction } from "../constants/form.constants";
+import { SchemeFormAction } from "../constants/form.constants";
 import {
   addHostViewModel,
   modifyHostViewModel,
   removeHostViewModel
 } from "../utils/host.util";
 
-export interface SettingsFormInstance {
-  data: SettingsForm;
-  setData: (data: SettingsForm) => void;
+export interface FormInstance<T> {
+  data: T;
+  setData: (data: T) => void;
   resetData: () => void;
   isTouched: boolean;
 }
+
+export interface SettingsFormInstance extends FormInstance<SettingsForm> {}
 
 const SettingsFormContext = createContext<SettingsFormInstance>({
   data: {
@@ -53,17 +55,14 @@ const SettingsFormContext = createContext<SettingsFormInstance>({
   isTouched: false
 });
 
-export interface SchemeFormInstance {
-  data: Record<uuid, HostViewModel>;
-  validateData: () => boolean;
+export interface SchemeFormInstance
+  extends FormInstance<Record<uuid, HostViewModel>> {
   setField: (model: HostViewModel, action?: SchemeFormAction) => void;
-  resetData: () => void;
-  isTouched: boolean;
 }
 
 const SchemeFormContext = createContext<SchemeFormInstance>({
   data: {},
-  validateData: () => true,
+  setData: () => {},
   setField: () => {},
   resetData: () => {},
   isTouched: false
@@ -115,38 +114,6 @@ export const FormsContextProvider: FC<PropsWithChildren> = ({ children }) => {
     setSettings(initialSettings);
   }, [initialSettings]);
 
-  const validateScheme = useCallback(() => {
-    const schemeFormErrors: Record<uuid, HostFieldError[]> = {};
-
-    Object.values(scheme).forEach(m => {
-      const errors: HostFieldError[] = [];
-
-      if (!m.name) {
-        errors.push(HostFieldError.NAME);
-      }
-
-      if (!m.host) {
-        errors.push(HostFieldError.HOST);
-      }
-
-      if (errors.length) {
-        schemeFormErrors[m.id] = errors;
-      }
-    });
-
-    const resultEntries = Object.entries(schemeFormErrors);
-    const hasErrors = resultEntries.length > 0;
-    if (hasErrors) {
-      const newScheme = { ...scheme };
-      resultEntries.forEach(
-        ([id, errors]) => (newScheme[id] = { ...newScheme[id], errors })
-      );
-      setScheme(newScheme);
-    }
-
-    return hasErrors;
-  }, [scheme]);
-
   const changeScheme = useCallback(
     (
       value: HostViewModel,
@@ -194,10 +161,10 @@ export const FormsContextProvider: FC<PropsWithChildren> = ({ children }) => {
       <SchemeFormContext.Provider
         value={{
           data: scheme,
-          validateData: validateScheme,
-          setField: changeScheme,
+          setData: setScheme,
           resetData: resetScheme,
-          isTouched: isSchemeTouched.current
+          isTouched: isSchemeTouched.current,
+          setField: changeScheme
         }}
       >
         {children}

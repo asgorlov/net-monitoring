@@ -1,55 +1,26 @@
 import "./app-layout.scss";
 import React, { FC, memo } from "react";
-import { Button, Layout, Modal, theme } from "antd";
+import { Button, Layout, theme } from "antd";
 import SettingsMenuContainer from "../settings-menu/settings-menu.container";
 
-import {
-  DeleteOutlined,
-  ExclamationCircleOutlined,
-  MenuOutlined,
-  SaveOutlined
-} from "@ant-design/icons";
+import { DeleteOutlined, MenuOutlined, SaveOutlined } from "@ant-design/icons";
 import clsx from "clsx";
 import NetSchemeContainer from "../net-scheme/net-scheme.container";
 
 export interface AppLayoutComponentProps {
   open: boolean;
   isFormsTouched: boolean;
-  saveSettings: (hasErrors?: boolean) => void;
-  isInvalidSettings: () => boolean;
+  saveSettings: () => void;
   toggleOpenMenu: () => void;
 }
 
 const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
   open,
-  isInvalidSettings,
   isFormsTouched,
   saveSettings,
   toggleOpenMenu
 }) => {
   const { token } = theme.useToken();
-  const [modal, contextHolder] = Modal.useModal();
-
-  const confirmSaving = () => {
-    const haveFormsErrors = isInvalidSettings();
-    if (haveFormsErrors) {
-      const title = "Продолжить операцию сохранения?";
-      const content =
-        "В данной конфигурации имеются незаполненные хосты, которые будут автоматически удалены. Вы можете отменить операцию, чтобы проверить какие поля не заполнены.";
-
-      modal.confirm({
-        title,
-        icon: <ExclamationCircleOutlined />,
-        centered: true,
-        content,
-        okText: "Продолжить",
-        cancelText: "Отменить",
-        onOk: () => saveSettings(true)
-      });
-    } else {
-      saveSettings();
-    }
-  };
 
   return (
     <Layout className="app-layout">
@@ -80,13 +51,12 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
             <Button
               size="small"
               type="primary"
-              onClick={confirmSaving}
+              onClick={saveSettings}
               disabled={!open || !isFormsTouched}
             >
               <SaveOutlined />
               Сохранить
             </Button>
-            {contextHolder}
           </div>
         </div>
       </Layout.Header>

@@ -4,6 +4,7 @@ import {
   PingHost,
   uuid
 } from "../models/host.models";
+import { HostFieldError } from "../constants/form.constants";
 
 export const getFlattedPingHosts = (
   hosts: PingHost[],
@@ -160,14 +161,49 @@ export const removeHostViewModel = (
   }
 };
 
-export const getValidHostViewModels = (
+export const getOnlyValidHostViewModels = (
   hostViewModels: Record<uuid, HostViewModel>
 ) => {
   const newHostViewModel = { ...hostViewModels };
-  // toDo: не работает удаление, не обновляются errors после валидации. Скорее всего проблема в замыкании метода saveSettings
+
   Object.values(newHostViewModel)
-    .filter(m => m.errors.length || !m.name || !m.host)
+    .filter(m => m.errors.length)
     .forEach(m => removeHostViewModel(newHostViewModel, m));
 
   return newHostViewModel;
+};
+
+export const validateAndChangeHostViewModels = (
+  hostViewModels: Record<uuid, HostViewModel>
+): Record<uuid, HostViewModel> => {
+  const schemeFormErrors: Record<uuid, HostFieldError[]> = {};
+
+  Object.values(hostViewModels).forEach(m => {
+    const errors: HostFieldError[] = [];
+
+    if (!m.name) {
+      errors.push(HostFieldError.NAME);
+    }
+
+    if (!m.host) {
+      errors.push(HostFieldError.HOST);
+    }
+
+    if (errors.length) {
+      schemeFormErrors[m.id] = errors;
+    }
+  });
+
+  const resultEntries = Object.entries(schemeFormErrors);
+  if (resultEntries.length > 0) {
+    const newHostViewModels = { ...hostViewModels };
+    resultEntries.forEach(
+      ([id, errors]) =>
+        (newHostViewModels[id] = { ...newHostViewModels[id], errors })
+    );
+
+    return newHostViewModels;
+  }
+
+  return hostViewModels;
 };
