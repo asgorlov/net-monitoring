@@ -8,35 +8,35 @@ import {
 } from "../../store/main.slice";
 import settingsUtil from "../../utils/settings.util";
 import useOpenSettingsContext from "../../contexts/open-settings.context";
-import useSettingsForms from "../../contexts/settings-forms.context";
+import {
+  useSchemeFormContext,
+  useSettingsFormContext
+} from "../../contexts/form.context";
 
 const AppLayoutContainer = () => {
-  const { settingsForm, schemeForm } = useSettingsForms();
   const { open, setOpen } = useOpenSettingsContext();
-  const isInitializedRef = useRef(false);
+  const settingsForm = useSettingsFormContext();
+  const schemeForm = useSchemeFormContext();
   const dispatch = useAppDispatch();
-
-  const isFormsTouched =
-    settingsForm.isTouched || Object.values(schemeForm).some(s => s.isTouched);
+  const isInitializedRef = useRef(false);
 
   const toggleOpenMenu = () => setOpen(prevState => !prevState);
 
   const saveSettings = () => {
-    const settingsFormValues = settingsForm.values;
+    const settingsData = settingsForm.data;
+    const schemeData = schemeForm.data;
     dispatch(
       setBaseConfigData({
-        port: settingsFormValues.port,
-        loggerLevel: settingsFormValues.level,
-        loggerType: settingsFormValues.type,
-        numberOfLogFiles: settingsFormValues.numberOfLogFiles,
+        port: settingsData.port,
+        loggerLevel: settingsData.level,
+        loggerType: settingsData.type,
+        numberOfLogFiles: settingsData.numberOfLogFiles,
         logFileSizeInBytes: settingsUtil.convertToBytes(
-          settingsFormValues.logFileSize
+          settingsData.logFileSize
         ),
-        interval: settingsUtil.convertToMilliseconds(
-          settingsFormValues.interval
-        ),
-        timeout: settingsUtil.convertToMilliseconds(settingsFormValues.timeout),
-        pingHosts: [] //toDo: отдельно получать данные от редактирвоания схемы
+        interval: settingsUtil.convertToMilliseconds(settingsData.interval),
+        timeout: settingsUtil.convertToMilliseconds(settingsData.timeout),
+        hostViewModels: schemeData // toDo: добавить валидацию для пустых полей (имя, хост) с подсветкой красным
       })
     );
     dispatch(updateConfigAsync());
@@ -52,15 +52,15 @@ const AppLayoutContainer = () => {
 
   useEffect(() => {
     if (!open) {
-      settingsForm.resetFields();
-      Object.values(schemeForm).forEach(s => s.resetFields());
+      settingsForm.resetData();
+      schemeForm.resetData();
     }
   }, [open, settingsForm, schemeForm]);
 
   return (
     <AppLayoutComponent
       open={open}
-      isFormsTouched={isFormsTouched}
+      isFormsTouched={settingsForm.isTouched || schemeForm.isTouched}
       saveSettings={saveSettings}
       toggleOpenMenu={toggleOpenMenu}
     />

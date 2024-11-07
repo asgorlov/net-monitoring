@@ -1,30 +1,57 @@
-import React, { forwardRef, useCallback } from "react";
+import React, { forwardRef, memo, useCallback } from "react";
 import NetSchemeItemComponent from "./net-scheme-item.component";
-import { PingHost } from "../../../models/host.models";
+import { HostViewModel, uuid } from "../../../models/host.models";
+import { HostType } from "../../../constants/common.constants";
+import { useSchemeFormContext } from "../../../contexts/form.context";
+import { SchemeFormAction } from "../../../constants/form.constants";
 
 export interface NetSchemeItemContainerProps {
-  pingHost: PingHost;
-  isMain?: boolean;
+  hostId: uuid;
+  parentId?: uuid | null;
 }
 
 const NetSchemeItemContainer = forwardRef<
   HTMLDivElement,
   NetSchemeItemContainerProps
->(({ pingHost, isMain }, ref) => {
-  //toDo: подумать как добавлять и удалять хосты, также не забыть про вью модель
-  const addHost = useCallback(() => {}, []);
+>(({ hostId, parentId = null }, ref) => {
+  const { data, setField } = useSchemeFormContext();
 
-  const removeHost = useCallback(() => {}, []);
+  const hostViewModel = data[hostId];
+
+  const changeHostViewModel = useCallback(
+    (value: HostViewModel, remove: boolean = false) => {
+      setField(
+        value,
+        remove ? SchemeFormAction.REMOVE : SchemeFormAction.MODIFY
+      );
+    },
+    [setField]
+  );
+
+  const addChildHostViewModel = useCallback(() => {
+    const child: HostViewModel = {
+      id: crypto.randomUUID(),
+      type: HostType.SW,
+      name: "",
+      host: "",
+      parentId: hostId,
+      childIds: [],
+      pinging: false,
+      isAlive: null
+    };
+
+    setField(child, SchemeFormAction.ADD);
+  }, [hostId, setField]);
 
   return (
     <NetSchemeItemComponent
-      pingHost={pingHost}
-      isMain={isMain}
+      parentId={parentId}
+      hostViewModel={hostViewModel}
+      changeHostViewModel={changeHostViewModel}
+      addChildHostViewModel={addChildHostViewModel}
       ref={ref}
-      addHost={addHost}
-      removeHost={removeHost}
     />
   );
 });
 
-export default NetSchemeItemContainer;
+export default memo(NetSchemeItemContainer);

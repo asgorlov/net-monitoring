@@ -2,13 +2,15 @@ import "./net-scheme.scss";
 import React, { FC, memo, useMemo } from "react";
 import NetSchemeItemContainer from "./net-scheme-item/net-scheme-item.container";
 import NetSchemeLine from "./net-scheme-line/net-scheme-line";
-import { PingHost } from "../../models/host.models";
+import { HostViewModel, uuid } from "../../models/host.models";
 
 export interface NetSchemeComponentProps {
-  pingHosts: PingHost[];
+  hostViewModels: Record<uuid, HostViewModel>;
 }
 
-const NetSchemeComponent: FC<NetSchemeComponentProps> = ({ pingHosts }) => {
+const NetSchemeComponent: FC<NetSchemeComponentProps> = ({
+  hostViewModels
+}) => {
   const lineDimensions = useMemo(
     () => ({
       width: "12px",
@@ -22,9 +24,11 @@ const NetSchemeComponent: FC<NetSchemeComponentProps> = ({ pingHosts }) => {
     <div className="net-scheme">
       <NetSchemeLine dimensions={lineDimensions} />
       <div className="net-scheme__hosts">
-        {pingHosts.map(h => {
-          return <NetSchemeItemContainer key={h.id} pingHost={h} isMain />;
-        })}
+        {Object.values(hostViewModels)
+          .filter(h => h.parentId === null)
+          .map(h => {
+            return <NetSchemeItemContainer key={h.id} hostId={h.id} />;
+          })}
       </div>
     </div>
   );

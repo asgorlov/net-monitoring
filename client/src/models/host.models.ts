@@ -15,12 +15,20 @@ export interface HostResponseBody {
   hostStatuses: HostStatus[];
 }
 
-export interface PingHost extends HostBase {
+export interface CommonPingHost extends HostBase {
   name: string;
   type: HostType;
+}
+
+export interface PingHost extends CommonPingHost {
   children: PingHost[];
 }
 
-export interface HostViewModel extends HostStatus {
+export interface FlattedPingHost extends CommonPingHost {
+  parentId: uuid | null;
+  childIds: uuid[];
+}
+
+export interface HostViewModel extends HostStatus, FlattedPingHost {
   pinging: boolean;
 }

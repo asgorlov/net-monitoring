@@ -16,8 +16,8 @@ import {
 import Path from "../constants/path.constants";
 import { notification } from "antd";
 import {
-  initializePingHostViewModel,
-  updateStateByBaseConfigData,
+  convertStateToConfig,
+  updateState,
   updateStateByConfig
 } from "../utils/main.util";
 import {
@@ -25,9 +25,9 @@ import {
   HostResponseBody,
   HostStatus,
   HostViewModel,
-  PingHost,
   uuid
 } from "../models/host.models";
+import { initializePingHostViewModel } from "../utils/host.util";
 
 export interface MainStateBase {
   port: number;
@@ -37,13 +37,12 @@ export interface MainStateBase {
   logFileSizeInBytes: number;
   interval: number;
   timeout: number;
-  pingHosts: PingHost[];
+  hostViewModels: Record<uuid, HostViewModel>;
 }
 
 export interface MainState extends MainStateBase {
   configLoading: boolean;
   clearLogFilesLoading: boolean;
-  pingHostViewModel: Record<uuid, HostViewModel>;
 }
 
 const initialState: MainState = {
@@ -56,8 +55,7 @@ const initialState: MainState = {
   logFileSizeInBytes: defaultConfig.logger.logFileSizeInBytes,
   interval: defaultConfig.request.interval,
   timeout: defaultConfig.request.timeout,
-  pingHosts: defaultConfig.pingHosts,
-  pingHostViewModel: initializePingHostViewModel(defaultConfig.pingHosts)
+  hostViewModels: initializePingHostViewModel(defaultConfig.pingHosts)
 };
 
 export const getConfigAsync = createAsyncThunk(
@@ -87,24 +85,10 @@ export const updateConfigAsync = createAsyncThunk(
   async (_, { getState }): Promise<void> => {
     return new Promise((resolve, reject) => {
       const { main } = getState() as RootState;
-      const config: Config = {
-        port: main.port,
-        logger: {
-          level: main.loggerLevel,
-          type: main.loggerType,
-          numberOfLogFiles: main.numberOfLogFiles,
-          logFileSizeInBytes: main.logFileSizeInBytes
-        },
-        request: {
-          interval: main.interval,
-          timeout: main.timeout
-        },
-        pingHosts: main.pingHosts
-      };
       const options: RequestInit = {
         method: "PUT",
         headers: [["Content-Type", "application/json"]],
-        body: JSON.stringify(config)
+        body: JSON.stringify(convertStateToConfig(main))
       };
 
       fetch(Path.config, options)
@@ -202,45 +186,62 @@ export const mainSlice = createSlice({
   initialState,
   reducers: {
     setBaseConfigData: (state, action: PayloadAction<MainStateBase>) => {
-      updateStateByBaseConfigData(state, action.payload);
+      updateState(state, action.payload);
     }
   },
   extraReducers: builder => {
     builder.addCase(pingAsync.fulfilled, (state, action) => {
-      action.payload.forEach(s => {
-        const model = state.pingHostViewModel[s.id];
-        if (model) {
-          model.isAlive = s.isAlive;
-          model.pinging = false;
-        }
-      });
+      if (action.payload.length) {
+        const newHostViewModels = { ...state.hostViewModels };
 
-      state.pingHostViewModel = { ...state.pingHostViewModel };
+        action.payload.forEach(s => {
+          const model = newHostViewModels[s.id];
+          if (model) {
+            const newModel = JSON.parse(JSON.stringify(model));
+            newModel.isAlive = s.isAlive;
+            newModel.pinging = false;
+
+            newHostViewModels[s.id] = newModel;
+          }
+        });
+
+        state.hostViewModels = newHostViewModels;
+      }
     });
 
     builder.addCase(pingAsync.pending, (state, action) => {
-      action.meta.arg.forEach(h => {
-        const model = state.pingHostViewModel[h.id];
-        if (model) {
-          model.pinging = true;
-        }
-      });
+      if (action.meta.arg.length) {
+        const newHostViewModels = { ...state.hostViewModels };
 
-      state.pingHostViewModel = { ...state.pingHostViewModel };
+        action.meta.arg.forEach(h => {
+          const model = newHostViewModels[h.id];
+          if (model) {
+            const newModel = JSON.parse(JSON.stringify(model));
+            newModel.pinging = true;
+
+            newHostViewModels[h.id] = newModel;
+          }
+        });
+
+        state.hostViewModels = newHostViewModels;
+      }
     });
 
     builder.addCase(pingAsync.rejected, (state, action) => {
+      const newHostViewModels = { ...state.hostViewModels };
+
       action.meta.arg.forEach(h => {
-        const model = state.pingHostViewModel[h.id];
+        const model = newHostViewModels[h.id];
         if (model) {
-          model.pinging = false;
-          if (model.isAlive !== null) {
-            model.isAlive = false;
-          }
+          const newModel = JSON.parse(JSON.stringify(model));
+          newModel.pinging = false;
+          newModel.isAlive = newModel.isAlive !== null ? false : null;
+
+          newHostViewModels[h.id] = newModel;
         }
       });
 
-      state.pingHostViewModel = { ...state.pingHostViewModel };
+      state.hostViewModels = newHostViewModels;
     });
 
     builder.addCase(clearLogFilesAsync.fulfilled, state => {
@@ -288,6 +289,10 @@ export const mainSlice = createSlice({
         resetConfigAsync.rejected
       ),
       (state, action) => {
+        const stack = action.error.stack;
+        if (stack) {
+          console.error(stack);
+        }
         const message = action.error.message;
         notification.error({ message });
         state.configLoading = false;
@@ -309,11 +314,9 @@ export const selectLogFileSizeInBytes = (state: RootState): number =>
   state.main.logFileSizeInBytes;
 export const selectInterval = (state: RootState): number => state.main.interval;
 export const selectTimeout = (state: RootState): number => state.main.timeout;
-export const selectPingHosts = (state: RootState): PingHost[] =>
-  state.main.pingHosts;
-export const selectPingHostViewModels = (
+export const selectHostViewModels = (
   state: RootState
-): Record<uuid, HostViewModel> => state.main.pingHostViewModel;
+): Record<uuid, HostViewModel> => state.main.hostViewModels;
 export const selectConfigLoading = (state: RootState): boolean =>
   state.main.configLoading;
 export const selectClearLogFilesLoading = (state: RootState): boolean =>
