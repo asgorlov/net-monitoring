@@ -1,4 +1,5 @@
 import { HostType } from "../constants/common.constants";
+import { HostFieldError } from "../constants/form.constants";
 
 export type uuid = string;
 
@@ -31,4 +32,5 @@ export interface FlattedPingHost extends CommonPingHost {
 
 export interface HostViewModel extends HostStatus, FlattedPingHost {
   pinging: boolean;
+  errors: HostFieldError[];
 }

@@ -24,7 +24,7 @@ import {
   selectTimeout
 } from "../store/main.slice";
 import settingsUtil from "../utils/settings.util";
-import { SchemeFormAction } from "../constants/form.constants";
+import { HostFieldError, SchemeFormAction } from "../constants/form.constants";
 import {
   addHostViewModel,
   modifyHostViewModel,
@@ -55,13 +55,15 @@ const SettingsFormContext = createContext<SettingsFormInstance>({
 
 export interface SchemeFormInstance {
   data: Record<uuid, HostViewModel>;
-  setField: (data: HostViewModel, action?: SchemeFormAction) => void;
+  validateData: () => boolean;
+  setField: (model: HostViewModel, action?: SchemeFormAction) => void;
   resetData: () => void;
   isTouched: boolean;
 }
 
 const SchemeFormContext = createContext<SchemeFormInstance>({
   data: {},
+  validateData: () => true,
   setField: () => {},
   resetData: () => {},
   isTouched: false
@@ -113,6 +115,38 @@ export const FormsContextProvider: FC<PropsWithChildren> = ({ children }) => {
     setSettings(initialSettings);
   }, [initialSettings]);
 
+  const validateScheme = useCallback(() => {
+    const schemeFormErrors: Record<uuid, HostFieldError[]> = {};
+
+    Object.values(scheme).forEach(m => {
+      const errors: HostFieldError[] = [];
+
+      if (!m.name) {
+        errors.push(HostFieldError.NAME);
+      }
+
+      if (!m.host) {
+        errors.push(HostFieldError.HOST);
+      }
+
+      if (errors.length) {
+        schemeFormErrors[m.id] = errors;
+      }
+    });
+
+    const resultEntries = Object.entries(schemeFormErrors);
+    const hasErrors = resultEntries.length > 0;
+    if (hasErrors) {
+      const newScheme = { ...scheme };
+      resultEntries.forEach(
+        ([id, errors]) => (newScheme[id] = { ...newScheme[id], errors })
+      );
+      setScheme(newScheme);
+    }
+
+    return hasErrors;
+  }, [scheme]);
+
   const changeScheme = useCallback(
     (
       value: HostViewModel,
@@ -160,6 +194,7 @@ export const FormsContextProvider: FC<PropsWithChildren> = ({ children }) => {
       <SchemeFormContext.Provider
         value={{
           data: scheme,
+          validateData: validateScheme,
           setField: changeScheme,
           resetData: resetScheme,
           isTouched: isSchemeTouched.current

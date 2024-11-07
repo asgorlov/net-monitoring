@@ -3,3 +3,8 @@ export enum SchemeFormAction {
   ADD,
   REMOVE
 }
+
+export enum HostFieldError {
+  NAME,
+  HOST
+}

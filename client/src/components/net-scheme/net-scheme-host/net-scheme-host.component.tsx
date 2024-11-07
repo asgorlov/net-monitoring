@@ -15,6 +15,7 @@ import clsx from "clsx";
 import Skeleton from "../../skeleton/skeleton";
 import { HostType } from "../../../constants/common.constants";
 import { HostViewModel } from "../../../models/host.models";
+import { HostFieldError } from "../../../constants/form.constants";
 
 export interface NetSchemeHostComponentProps {
   configLoading: boolean;
@@ -74,11 +75,25 @@ const NetSchemeHostComponent = forwardRef<
     };
 
     const onNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-      changeHostViewModel({ ...hostViewModel, name: e.target.value });
+      const name = e.target.value;
+      const errors = hostViewModel.errors.filter(
+        err => err !== HostFieldError.NAME
+      );
+      changeHostViewModel({ ...hostViewModel, name, errors });
     };
 
     const onAddressChange = (e: ChangeEvent<HTMLInputElement>) => {
-      changeHostViewModel({ ...hostViewModel, host: e.target.value });
+      const host = e.target.value;
+      const errors = hostViewModel.errors.filter(
+        err => err !== HostFieldError.HOST
+      );
+      changeHostViewModel({ ...hostViewModel, host, errors });
+    };
+
+    const validateInput = (type: HostFieldError): "error" | undefined => {
+      return hostViewModel.errors.some(err => err === type)
+        ? "error"
+        : undefined;
     };
 
     const renderStatus = (): ReactNode => {
@@ -145,6 +160,8 @@ const NetSchemeHostComponent = forwardRef<
                   size="small"
                   variant="filled"
                   title="Имя"
+                  status={validateInput(HostFieldError.NAME)}
+                  autoComplete="off"
                 />
               ) : (
                 <span className="net-scheme-host__item__text">
@@ -167,6 +184,8 @@ const NetSchemeHostComponent = forwardRef<
                   size="small"
                   variant="filled"
                   title="Адрес"
+                  status={validateInput(HostFieldError.HOST)}
+                  autoComplete="off"
                 />
               ) : (
                 <span className="net-scheme-host__item__text">

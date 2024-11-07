@@ -37,7 +37,8 @@ export const initializePingHostViewModel = (
     result[h.id] = {
       ...h,
       pinging: false,
-      isAlive: null
+      isAlive: null,
+      errors: []
     };
   });
 
@@ -58,7 +59,8 @@ export const getUpdatedHostViewModels = (
         : {
             ...h,
             pinging: false,
-            isAlive: null
+            isAlive: null,
+            errors: []
           };
     });
 
@@ -113,12 +115,35 @@ export const addHostViewModel = (
   }
 };
 
+export const getFlattedChildHostViewModels = (
+  models: Record<uuid, HostViewModel>,
+  model: HostViewModel
+): HostViewModel[] => {
+  const result: HostViewModel[] = [];
+
+  model.childIds.forEach(id => {
+    const current = models[id];
+    if (current) {
+      result.push(current);
+
+      if (current.childIds.length) {
+        result.push(...getFlattedChildHostViewModels(models, current));
+      }
+    }
+  });
+
+  return result;
+};
+
 export const removeHostViewModel = (
   models: Record<uuid, HostViewModel>,
   removedModel: HostViewModel
 ) => {
   const removedId = removedModel.id;
   delete models[removedId];
+
+  const children = getFlattedChildHostViewModels(models, removedModel);
+  children.forEach(c => delete models[c.id]);
 
   const parentId = removedModel.parentId;
   if (parentId) {
@@ -133,4 +158,16 @@ export const removeHostViewModel = (
       }
     }
   }
+};
+
+export const getValidHostViewModels = (
+  hostViewModels: Record<uuid, HostViewModel>
+) => {
+  const newHostViewModel = { ...hostViewModels };
+  // toDo: не работает удаление, не обновляются errors после валидации. Скорее всего проблема в замыкании метода saveSettings
+  Object.values(newHostViewModel)
+    .filter(m => m.errors.length || !m.name || !m.host)
+    .forEach(m => removeHostViewModel(newHostViewModel, m));
+
+  return newHostViewModel;
 };

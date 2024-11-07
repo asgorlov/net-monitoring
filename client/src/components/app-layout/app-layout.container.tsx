@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import AppLayoutComponent from "./app-layout.component";
 import { useAppDispatch } from "../../hooks/store.hooks";
 import {
@@ -12,6 +12,7 @@ import {
   useSchemeFormContext,
   useSettingsFormContext
 } from "../../contexts/form.context";
+import { getValidHostViewModels } from "../../utils/host.util";
 
 const AppLayoutContainer = () => {
   const { open, setOpen } = useOpenSettingsContext();
@@ -20,28 +21,40 @@ const AppLayoutContainer = () => {
   const dispatch = useAppDispatch();
   const isInitializedRef = useRef(false);
 
-  const toggleOpenMenu = () => setOpen(prevState => !prevState);
+  const toggleOpenMenu = useCallback(
+    () => setOpen(prevState => !prevState),
+    [setOpen]
+  );
 
-  const saveSettings = () => {
-    const settingsData = settingsForm.data;
-    const schemeData = schemeForm.data;
-    dispatch(
-      setBaseConfigData({
-        port: settingsData.port,
-        loggerLevel: settingsData.level,
-        loggerType: settingsData.type,
-        numberOfLogFiles: settingsData.numberOfLogFiles,
-        logFileSizeInBytes: settingsUtil.convertToBytes(
-          settingsData.logFileSize
-        ),
-        interval: settingsUtil.convertToMilliseconds(settingsData.interval),
-        timeout: settingsUtil.convertToMilliseconds(settingsData.timeout),
-        hostViewModels: schemeData // toDo: добавить валидацию для пустых полей (имя, хост) с подсветкой красным
-      })
-    );
-    dispatch(updateConfigAsync());
-    toggleOpenMenu();
-  };
+  const isInvalidSettings = useCallback((): boolean => {
+    return schemeForm.validateData();
+  }, [schemeForm]);
+
+  const saveSettings = useCallback(
+    (hasErrors: boolean = false) => {
+      const settingsData = settingsForm.data;
+      const schemeData = schemeForm.data;
+      dispatch(
+        setBaseConfigData({
+          port: settingsData.port,
+          loggerLevel: settingsData.level,
+          loggerType: settingsData.type,
+          numberOfLogFiles: settingsData.numberOfLogFiles,
+          logFileSizeInBytes: settingsUtil.convertToBytes(
+            settingsData.logFileSize
+          ),
+          interval: settingsUtil.convertToMilliseconds(settingsData.interval),
+          timeout: settingsUtil.convertToMilliseconds(settingsData.timeout),
+          hostViewModels: hasErrors
+            ? getValidHostViewModels(schemeData)
+            : schemeData
+        })
+      );
+      dispatch(updateConfigAsync());
+      setOpen(false);
+    },
+    [settingsForm, schemeForm, dispatch, setOpen]
+  );
 
   useEffect(() => {
     if (open || !isInitializedRef.current) {
@@ -60,6 +73,7 @@ const AppLayoutContainer = () => {
   return (
     <AppLayoutComponent
       open={open}
+      isInvalidSettings={isInvalidSettings}
       isFormsTouched={settingsForm.isTouched || schemeForm.isTouched}
       saveSettings={saveSettings}
       toggleOpenMenu={toggleOpenMenu}

@@ -37,7 +37,8 @@ const NetSchemeItemContainer = forwardRef<
       parentId: hostId,
       childIds: [],
       pinging: false,
-      isAlive: null
+      isAlive: null,
+      errors: []
     };
 
     setField(child, SchemeFormAction.ADD);

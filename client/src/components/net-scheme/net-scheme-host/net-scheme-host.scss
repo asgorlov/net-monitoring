@@ -93,6 +93,16 @@
       &:focus-visible {
         background-color: transparent;
       }
+
+      &:not(.ant-input-disabled).ant-input-status-error {
+        background-color: #ff220024;
+
+        &:hover,
+        &:focus,
+        &:focus-visible {
+          background-color: #ff220024;
+        }
+      }
     }
   }
 
