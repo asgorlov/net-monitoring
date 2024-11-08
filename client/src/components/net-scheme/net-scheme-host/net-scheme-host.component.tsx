@@ -13,7 +13,12 @@ import {
 import { DefaultOptionType } from "rc-select/lib/Select";
 import clsx from "clsx";
 import Skeleton from "../../skeleton/skeleton";
-import { HostType } from "../../../constants/common.constants";
+import {
+  HOST_TITLE,
+  HostType,
+  NAME_TITLE,
+  TYPE_TITLE
+} from "../../../constants/common.constants";
 import { HostViewModel } from "../../../models/host.models";
 import { HostFieldError } from "../../../constants/form.constants";
 
@@ -131,7 +136,6 @@ const NetSchemeHostComponent = forwardRef<
             <>
               {isEditable ? (
                 <Select
-                  id="type"
                   value={hostViewModel.type}
                   onChange={onTypeChange}
                   options={typeOptions}
@@ -139,7 +143,8 @@ const NetSchemeHostComponent = forwardRef<
                   popupClassName="net-scheme-host__item__select__popup"
                   size="small"
                   variant="filled"
-                  title="Тип"
+                  title={TYPE_TITLE}
+                  placeholder={TYPE_TITLE}
                 />
               ) : (
                 <span className="net-scheme-host__item__text">
@@ -156,14 +161,14 @@ const NetSchemeHostComponent = forwardRef<
             <>
               {isEditable ? (
                 <Input
-                  id="name"
                   value={hostViewModel.name}
                   onChange={onNameChange}
                   size="small"
                   variant="filled"
-                  title="Имя"
+                  title={NAME_TITLE}
                   status={validateInput(HostFieldError.NAME)}
                   autoComplete="off"
+                  placeholder={NAME_TITLE}
                 />
               ) : (
                 <span className="net-scheme-host__item__text">
@@ -180,14 +185,14 @@ const NetSchemeHostComponent = forwardRef<
             <>
               {isEditable ? (
                 <Input
-                  id="address"
                   value={hostViewModel.host}
                   onChange={onAddressChange}
                   size="small"
                   variant="filled"
-                  title="Адрес"
+                  title={HOST_TITLE}
                   status={validateInput(HostFieldError.HOST)}
                   autoComplete="off"
+                  placeholder={HOST_TITLE}
                 />
               ) : (
                 <span className="net-scheme-host__item__text">
