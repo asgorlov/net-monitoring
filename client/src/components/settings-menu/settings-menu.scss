@@ -59,6 +59,10 @@
           @include skeleton-dimensions(30px, 100%);
         }
       }
+
+      &__clear-logs-btn {
+        width: max-content;
+      }
     }
   }
 }

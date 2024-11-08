@@ -245,6 +245,9 @@ export const mainSlice = createSlice({
     });
 
     builder.addCase(clearLogFilesAsync.fulfilled, state => {
+      notification.success({
+        message: "Папка с файлами логирования очищена"
+      });
       state.clearLogFilesLoading = false;
     });
 
@@ -260,7 +263,7 @@ export const mainSlice = createSlice({
 
     builder.addCase(updateConfigAsync.fulfilled, state => {
       notification.success({
-        message: "Конфигурация обновлена. Требуется перезагрузка приложения."
+        message: "Конфигурация обновлена. Требуется перезагрузка приложения"
       });
       state.configLoading = false;
     });

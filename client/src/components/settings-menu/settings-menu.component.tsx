@@ -1,23 +1,28 @@
 import "./settings-menu.scss";
 import React, { FC, memo } from "react";
 import clsx from "clsx";
-import { InputNumber, Select, theme } from "antd";
+import { Button, InputNumber, Select, theme } from "antd";
 import { LoggerLevel, LoggerType } from "../../constants/logger.constants";
 import { SettingsForm } from "../../models/settings-form.models";
 import Skeleton from "../skeleton/skeleton";
+import { ClearOutlined, LoadingOutlined } from "@ant-design/icons";
 
 export interface MenuProps {
   open: boolean;
   configLoading: boolean;
   formValues: SettingsForm;
   onChangeFormValues: (values: SettingsForm) => void;
+  onClickClearLogs: () => void;
+  clearLogsLoading: boolean;
 }
 
 const SettingsMenuComponent: FC<MenuProps> = ({
   open,
   configLoading,
   formValues,
-  onChangeFormValues
+  onChangeFormValues,
+  onClickClearLogs,
+  clearLogsLoading
 }) => {
   const { token } = theme.useToken();
 
@@ -157,6 +162,19 @@ const SettingsMenuComponent: FC<MenuProps> = ({
               suffix="Мб"
             />
           )}
+        </div>
+        <div className="settings-menu__row__item">
+          <label htmlFor="logFileSize">
+            Очистить папку с файлами логирования:
+          </label>
+          <Button
+            className="settings-menu__row__item__clear-logs-btn"
+            onClick={onClickClearLogs}
+            disabled={!open || clearLogsLoading}
+          >
+            {clearLogsLoading ? <LoadingOutlined /> : <ClearOutlined />}
+            Очистить
+          </Button>
         </div>
       </div>
       <div className="settings-menu__row">
