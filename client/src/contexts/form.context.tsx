@@ -83,8 +83,8 @@ export const FormsContextProvider: FC<PropsWithChildren> = ({ children }) => {
       type: loggerType,
       numberOfLogFiles,
       logFileSize: settingsUtil.convertToMb(logFileSizeInBytes),
-      interval: settingsUtil.convertToSeconds(interval),
-      timeout: settingsUtil.convertToSeconds(timeout)
+      interval,
+      timeout
     }),
     [
       port,

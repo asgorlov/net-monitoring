@@ -20,8 +20,6 @@ const NetSchemeContainer: FC = () => {
         host: "",
         parentId: null,
         childIds: [],
-        pinging: false,
-        isAlive: null,
         errors: []
       },
       SchemeFormAction.ADD

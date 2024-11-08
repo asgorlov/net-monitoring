@@ -1,10 +1,14 @@
 import {
   FlattedPingHost,
+  HostBase,
+  HostResponseBody,
   HostViewModel,
   PingHost,
   uuid
 } from "../models/host.models";
 import { HostFieldError } from "../constants/form.constants";
+import Path from "../constants/path.constants";
+import { notification } from "antd";
 
 export const getFlattedPingHosts = (
   hosts: PingHost[],
@@ -37,8 +41,6 @@ export const initializePingHostViewModel = (
   getFlattedPingHosts(hosts).forEach(h => {
     result[h.id] = {
       ...h,
-      pinging: false,
-      isAlive: null,
       errors: []
     };
   });
@@ -59,8 +61,6 @@ export const getUpdatedHostViewModels = (
         ? { ...model, ...h }
         : {
             ...h,
-            pinging: false,
-            isAlive: null,
             errors: []
           };
     });
@@ -206,4 +206,32 @@ export const validateAndChangeHostViewModels = (
   }
 
   return hostViewModels;
+};
+
+export const pingHostAsync = async (
+  host: HostBase,
+  controller: AbortController
+): Promise<boolean | null> => {
+  try {
+    const options: RequestInit = {
+      method: "POST",
+      headers: [["Content-Type", "application/json"]],
+      body: JSON.stringify({ hosts: [host] }),
+      signal: controller.signal
+    };
+    const response = await fetch(Path.ping, options);
+    const data: HostResponseBody = await response.json();
+
+    return data.hostStatuses[0].isAlive;
+  } catch (e) {
+    const error = e as Error;
+    if (error.name !== "AbortError") {
+      notification.error({
+        message: `Не удалось выполнить пинг подключения с адресом: ${host.host}`
+      });
+      console.error(error);
+    }
+  }
+
+  return null;
 };

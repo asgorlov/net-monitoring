@@ -1,5 +1,5 @@
 import { LoggerLevel, LoggerType } from "./logger.constants";
-import { Config } from "../models/common.models";
+import { Config } from "../models/config.models";
 
 export const defaultConfig: Config = {
   port: 8008,
@@ -10,8 +10,8 @@ export const defaultConfig: Config = {
     logFileSizeInBytes: 52428800 // 50Mb, if it < 0 - infinite size
   },
   request: {
-    interval: 30000, // can't be less 1
-    timeout: 30000 // can't be less 1 and more interval
+    interval: 30, // can't be less 1
+    timeout: 30 // can't be less 1 and more interval
   },
   pingHosts: []
 };

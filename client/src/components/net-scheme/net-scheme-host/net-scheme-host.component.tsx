@@ -24,7 +24,9 @@ import { HostFieldError } from "../../../constants/form.constants";
 
 export interface NetSchemeHostComponentProps {
   configLoading: boolean;
+  pinging: boolean;
   isEditable: boolean;
+  isAlive: boolean | null;
   hostViewModel: HostViewModel;
   changeHostViewModel: (value: HostViewModel, remove?: boolean) => void;
   addChildHostViewModel: () => void;
@@ -42,7 +44,9 @@ const NetSchemeHostComponent = forwardRef<
   (
     {
       configLoading,
+      pinging,
       isEditable,
+      isAlive,
       hostViewModel,
       changeHostViewModel,
       addChildHostViewModel
@@ -104,15 +108,15 @@ const NetSchemeHostComponent = forwardRef<
     };
 
     const renderStatus = (): ReactNode => {
-      if (hostViewModel.pinging) {
+      if (pinging) {
         return <LoadingOutlined title="Пингуется" className="pinging" />;
       }
 
-      if (hostViewModel.isAlive) {
+      if (isAlive) {
         return <CheckCircleOutlined title="Доступен" className="pinged-ok" />;
       }
 
-      if (hostViewModel.isAlive === null) {
+      if (isAlive === null) {
         return (
           <MinusCircleOutlined title="Не пинговался" className="no-ping" />
         );

@@ -4,6 +4,7 @@ import NetSchemeItemContainer from "./net-scheme-item/net-scheme-item.container"
 import NetSchemeLine from "./net-scheme-line/net-scheme-line";
 import { HostViewModel, uuid } from "../../models/host.models";
 import NetSchemeEmptyItem from "./net-scheme-empty-item/net-scheme-empty-item";
+import { Button } from "antd";
 
 export interface NetSchemeComponentProps {
   hostViewModels: Record<uuid, HostViewModel>;
@@ -39,7 +40,10 @@ const NetSchemeComponent: FC<NetSchemeComponentProps> = ({
             <span>Нет подключений для отображения.</span>
             <span>
               Для редактирования схемы перейдите в{" "}
-              <a onClick={openSettings}>настройки</a>.
+              <Button type="link" onClick={openSettings}>
+                настройки
+              </Button>
+              .
             </span>
           </div>
         </div>

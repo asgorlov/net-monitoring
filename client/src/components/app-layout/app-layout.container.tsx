@@ -46,8 +46,8 @@ const AppLayoutContainer = () => {
           logFileSizeInBytes: settingsUtil.convertToBytes(
             settingsData.logFileSize
           ),
-          interval: settingsUtil.convertToMilliseconds(settingsData.interval),
-          timeout: settingsUtil.convertToMilliseconds(settingsData.timeout),
+          interval: settingsData.interval,
+          timeout: settingsData.timeout,
           hostViewModels: hasErrors
             ? getOnlyValidHostViewModels(schemeData)
             : schemeData

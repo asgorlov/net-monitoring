@@ -12,7 +12,7 @@ import {
   ConfigError,
   UpdatingConfig,
   ClearingLogFiles
-} from "../models/common.models";
+} from "../models/config.models";
 import Path from "../constants/path.constants";
 import { notification } from "antd";
 import {
@@ -20,13 +20,7 @@ import {
   updateState,
   updateStateByConfig
 } from "../utils/main.util";
-import {
-  HostBase,
-  HostResponseBody,
-  HostStatus,
-  HostViewModel,
-  uuid
-} from "../models/host.models";
+import { HostViewModel, uuid } from "../models/host.models";
 import { initializePingHostViewModel } from "../utils/host.util";
 
 export interface MainStateBase {
@@ -159,28 +153,6 @@ export const clearLogFilesAsync = createAsyncThunk(
   }
 );
 
-export const pingAsync = createAsyncThunk(
-  "app/ping",
-  (hosts: HostBase[]): Promise<HostStatus[]> => {
-    return new Promise((resolve, reject) => {
-      const options: RequestInit = {
-        method: "POST",
-        headers: [["Content-Type", "application/json"]],
-        body: JSON.stringify({ hosts })
-      };
-      fetch(Path.ping, options)
-        .then(async response => {
-          const data: HostResponseBody = await response.json();
-          resolve(data.hostStatuses);
-        })
-        .catch(e => {
-          reject("Не удалось выполнить пинг запрашиваемых адресов");
-          console.error(e);
-        });
-    });
-  }
-);
-
 export const mainSlice = createSlice({
   name: "config",
   initialState,
@@ -190,60 +162,6 @@ export const mainSlice = createSlice({
     }
   },
   extraReducers: builder => {
-    builder.addCase(pingAsync.fulfilled, (state, action) => {
-      if (action.payload.length) {
-        const newHostViewModels = { ...state.hostViewModels };
-
-        action.payload.forEach(s => {
-          const model = newHostViewModels[s.id];
-          if (model) {
-            const newModel = JSON.parse(JSON.stringify(model));
-            newModel.isAlive = s.isAlive;
-            newModel.pinging = false;
-
-            newHostViewModels[s.id] = newModel;
-          }
-        });
-
-        state.hostViewModels = newHostViewModels;
-      }
-    });
-
-    builder.addCase(pingAsync.pending, (state, action) => {
-      if (action.meta.arg.length) {
-        const newHostViewModels = { ...state.hostViewModels };
-
-        action.meta.arg.forEach(h => {
-          const model = newHostViewModels[h.id];
-          if (model) {
-            const newModel = JSON.parse(JSON.stringify(model));
-            newModel.pinging = true;
-
-            newHostViewModels[h.id] = newModel;
-          }
-        });
-
-        state.hostViewModels = newHostViewModels;
-      }
-    });
-
-    builder.addCase(pingAsync.rejected, (state, action) => {
-      const newHostViewModels = { ...state.hostViewModels };
-
-      action.meta.arg.forEach(h => {
-        const model = newHostViewModels[h.id];
-        if (model) {
-          const newModel = JSON.parse(JSON.stringify(model));
-          newModel.pinging = false;
-          newModel.isAlive = newModel.isAlive !== null ? false : null;
-
-          newHostViewModels[h.id] = newModel;
-        }
-      });
-
-      state.hostViewModels = newHostViewModels;
-    });
-
     builder.addCase(clearLogFilesAsync.fulfilled, state => {
       notification.success({
         message: "Папка с файлами логирования очищена"
@@ -263,7 +181,8 @@ export const mainSlice = createSlice({
 
     builder.addCase(updateConfigAsync.fulfilled, state => {
       notification.success({
-        message: "Конфигурация обновлена. Требуется перезагрузка приложения"
+        message:
+          "Конфигурация обновлена. Для корректной работы приложения требуется перезагрузка"
       });
       state.configLoading = false;
     });

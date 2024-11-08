@@ -1,15 +1,15 @@
-const path = require('path');
-const { loggerLevels, loggerTypes } = require('./logger.constant')
+const path = require("path");
+const { loggerLevels, loggerTypes } = require("./logger.constant");
 
 const freeze = (obj) => {
   Object.keys(obj)
-    .filter(k => typeof obj[k] === 'object')
-    .forEach(k => obj[k] = freeze(obj[k]));
+    .filter((k) => typeof obj[k] === "object")
+    .forEach((k) => (obj[k] = freeze(obj[k])));
 
   return Object.freeze(obj);
 };
 
-const configPath = path.join(process.cwd(), '/config.json');
+const configPath = path.join(process.cwd(), "/config.json");
 
 const defaultConfig = freeze({
   port: 8008,
@@ -17,17 +17,17 @@ const defaultConfig = freeze({
     level: loggerLevels.DEBUG,
     type: loggerTypes.CONSOLE,
     numberOfLogFiles: 5, // if it < 0 - infinite number of files
-    logFileSizeInBytes: 52428800 // 50Mb, if it < 0 - infinite size
+    logFileSizeInBytes: 52428800, // 50Mb, if it < 0 - infinite size
   },
   request: {
-    interval: 30000, // can't be less 1
-    timeout: 30000 // can't be less 1 and more interval
+    interval: 30, // can't be less 1
+    timeout: 30, // can't be less 1 and more interval
   },
-  pingHosts: []
+  pingHosts: [],
 });
 
 module.exports = {
   freeze: freeze,
   configPath: configPath,
-  defaultConfig: defaultConfig
-}
+  defaultConfig: defaultConfig,
+};

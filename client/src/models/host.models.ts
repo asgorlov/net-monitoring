@@ -30,7 +30,6 @@ export interface FlattedPingHost extends CommonPingHost {
   childIds: uuid[];
 }
 
-export interface HostViewModel extends HostStatus, FlattedPingHost {
-  pinging: boolean;
+export interface HostViewModel extends FlattedPingHost {
   errors: HostFieldError[];
 }

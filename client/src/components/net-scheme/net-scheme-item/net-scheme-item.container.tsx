@@ -36,8 +36,6 @@ const NetSchemeItemContainer = forwardRef<
       host: "",
       parentId: hostId,
       childIds: [],
-      pinging: false,
-      isAlive: null,
       errors: []
     };
 

@@ -1,4 +1,4 @@
-import { Config } from "../models/common.models";
+import { Config } from "../models/config.models";
 import { MainState, MainStateBase } from "../store/main.slice";
 import {
   convertHostViewModelsToPingHosts,
