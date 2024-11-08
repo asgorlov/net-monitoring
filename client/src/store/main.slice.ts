@@ -259,6 +259,9 @@ export const mainSlice = createSlice({
     });
 
     builder.addCase(updateConfigAsync.fulfilled, state => {
+      notification.success({
+        message: "Конфигурация обновлена. Требуется перезагрузка приложения."
+      });
       state.configLoading = false;
     });
 
