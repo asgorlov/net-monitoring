@@ -51,12 +51,14 @@ const NetSchemeHostComponent = forwardRef<
     const confirmToRemove = () => {
       const title =
         "Удалить " +
-        (hostViewModel.name ? `"${hostViewModel.name}"` : "выбранный хост") +
+        (hostViewModel.name
+          ? `"${hostViewModel.name}"`
+          : "выбранное подключение") +
         (hostViewModel.host ? ` с адресом "${hostViewModel.host}"` : "") +
         "?";
       const content =
         !isController && hostViewModel.childIds.length
-          ? "Данное действие приведет к удалению всех дочерних подключений выбранного хоста."
+          ? "Данное действие приведет к удалению всех дочерних подключений выбранного объекта."
           : "";
 
       modal.confirm({

@@ -9,13 +9,20 @@ export interface NetSchemeComponentProps {
   hostViewModels: Record<uuid, HostViewModel>;
   addHostViewModel: () => void;
   isEditable: boolean;
+  openSettings: () => void;
 }
 
 const NetSchemeComponent: FC<NetSchemeComponentProps> = ({
   hostViewModels,
   addHostViewModel,
-  isEditable
+  isEditable,
+  openSettings
 }) => {
+  const parentHostViewModels = Object.values(hostViewModels).filter(
+    h => h.parentId === null
+  );
+  const showEmptyMessage = !isEditable && !parentHostViewModels.length;
+
   const lineDimensions = useMemo(
     () => ({
       width: "12px",
@@ -26,17 +33,27 @@ const NetSchemeComponent: FC<NetSchemeComponentProps> = ({
 
   return (
     <div className="net-scheme__wrapper">
-      <div className="net-scheme">
-        <NetSchemeLine dimensions={lineDimensions} />
-        <div className="net-scheme__hosts">
-          {Object.values(hostViewModels)
-            .filter(h => h.parentId === null)
-            .map(h => {
+      {showEmptyMessage ? (
+        <div className="net-scheme__empty">
+          <div className="net-scheme__empty__message">
+            <span>Нет подключений для отображения.</span>
+            <span>
+              Для редактирования схемы перейдите в{" "}
+              <a onClick={openSettings}>настройки</a>.
+            </span>
+          </div>
+        </div>
+      ) : (
+        <div className="net-scheme">
+          <NetSchemeLine dimensions={lineDimensions} />
+          <div className="net-scheme__hosts">
+            {parentHostViewModels.map(h => {
               return <NetSchemeItemContainer key={h.id} hostId={h.id} />;
             })}
-          {isEditable && <NetSchemeEmptyItem add={addHostViewModel} />}
+            {isEditable && <NetSchemeEmptyItem add={addHostViewModel} />}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

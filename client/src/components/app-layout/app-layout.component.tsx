@@ -68,7 +68,7 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
         className="app-layout__footer"
         style={{ borderColor: token.colorBorder }}
       >
-        Net Monitoring ©{new Date().getFullYear()} Created by{" "}
+        Net Monitoring ©2024-{new Date().getFullYear()} Created by{" "}
         <a href="https://github.com/asgorlov" target="_blank" rel="noreferrer">
           asgorlov
         </a>

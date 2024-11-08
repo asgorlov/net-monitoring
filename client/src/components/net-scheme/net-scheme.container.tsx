@@ -7,7 +7,9 @@ import { HostType } from "../../constants/common.constants";
 
 const NetSchemeContainer: FC = () => {
   const { data, setField } = useSchemeFormContext();
-  const { open } = useOpenSettingsContext();
+  const { open, setOpen } = useOpenSettingsContext();
+
+  const openSettings = useCallback(() => setOpen(true), [setOpen]);
 
   const addHostViewModel = useCallback(() => {
     setField(
@@ -31,6 +33,7 @@ const NetSchemeContainer: FC = () => {
       hostViewModels={data}
       addHostViewModel={addHostViewModel}
       isEditable={open}
+      openSettings={openSettings}
     />
   );
 };
