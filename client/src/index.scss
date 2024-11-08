@@ -12,6 +12,10 @@ code {
     monospace;
 }
 
+$host-height: 120px;
+$host-width: 120px;
+$host-border-weight: 3px;
+
 @mixin skeleton-dimensions($height, $width) {
   &.ant-skeleton.ant-skeleton-element {
     height: $height;

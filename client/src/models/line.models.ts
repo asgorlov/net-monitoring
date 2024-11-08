@@ -1,6 +1,6 @@
 export interface LineDimensions {
   width: string;
-  height: string;
+  height?: string;
   isVertical?: boolean;
 }
 

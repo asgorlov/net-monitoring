@@ -199,13 +199,16 @@ const NetSchemeHostComponent = forwardRef<
           {isEditable ? (
             <div className="net-scheme-host__footer__btns">
               <Button
-                title="Добавить дочерний объект"
+                title="Добавить дочернее подключение"
                 disabled={isController}
                 onClick={addChildHostViewModel}
               >
                 <PlusOutlined />
               </Button>
-              <Button title="Удалить текущий объект" onClick={confirmToRemove}>
+              <Button
+                title="Удалить текущее подключение"
+                onClick={confirmToRemove}
+              >
                 <MinusOutlined />
               </Button>
               {contextHolder}

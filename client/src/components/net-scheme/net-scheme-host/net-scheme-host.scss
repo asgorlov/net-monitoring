@@ -1,13 +1,13 @@
 @import "../../../index";
 
 .net-scheme-host {
-  height: 120px;
-  width: 120px;
+  height: $host-height;
+  width: $host-width;
   display: flex;
   flex-direction: column;
   gap: 4px;
   padding: 6px;
-  border: 3px solid;
+  border: $host-border-weight solid;
   border-radius: 4px;
   background-color: #B8B8B8;
 
