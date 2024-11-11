@@ -7,8 +7,8 @@ const configUtil = require("../utils/config.util");
  * @route GET /
  * @access Public
  */
-const homePage = (req, res, next) => {
-  res.render("index", { title: "Express" });
+const homePage = (req, res) => {
+  res.render("index");
 };
 
 /**
@@ -37,12 +37,10 @@ const getConfig = (req, res) => {
   if (data) {
     res.status(200).json(data);
   } else {
-    res
-      .status(500)
-      .json({
-        message:
-          "Файл настроек отсутствует. Попробуйте удалить файл настроек вручную и перезагрузить приложение",
-      });
+    res.status(500).json({
+      message:
+        "Файл настроек отсутствует. Попробуйте удалить файл настроек вручную и перезагрузить приложение",
+    });
   }
 };
 
@@ -99,12 +97,10 @@ const clearConfig = (req, res) => {
   if (data) {
     res.status(200).json(data);
   } else {
-    res
-      .status(500)
-      .json({
-        message:
-          "Не удалось сбросить настройки. Попробуйте удалить файл вручную и повторить запрос",
-      });
+    res.status(500).json({
+      message:
+        "Не удалось сбросить настройки. Попробуйте удалить файл вручную и повторить запрос",
+    });
   }
 };
 
