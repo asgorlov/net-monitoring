@@ -121,7 +121,9 @@ const SettingsMenuComponent: FC<MenuProps> = ({
           ) : (
             <Select
               id="type"
-              disabled={!open || configLoading}
+              disabled={
+                !open || configLoading || formValues.level === LoggerLevel.OFF
+              }
               value={formValues.type}
               onChange={onTypeChange}
               options={[
@@ -141,7 +143,12 @@ const SettingsMenuComponent: FC<MenuProps> = ({
           ) : (
             <InputNumber
               id="numberOfLogFiles"
-              disabled={!open || configLoading}
+              disabled={
+                !open ||
+                configLoading ||
+                formValues.type === LoggerType.CONSOLE ||
+                formValues.level === LoggerLevel.OFF
+              }
               value={formValues.numberOfLogFiles}
               onChange={onNumberOfLogFilesChange}
               min={0}
@@ -155,7 +162,12 @@ const SettingsMenuComponent: FC<MenuProps> = ({
           ) : (
             <InputNumber
               id="logFileSize"
-              disabled={!open || configLoading}
+              disabled={
+                !open ||
+                configLoading ||
+                formValues.type === LoggerType.CONSOLE ||
+                formValues.level === LoggerLevel.OFF
+              }
               value={formValues.logFileSize}
               onChange={onLogFileSizeChange}
               min={0}
