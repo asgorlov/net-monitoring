@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "server": "nodemon ./bin/www",
-    "cleanup": "rimraf public && rimraf dist",
+    "cleanup": "rimraf client/build && rimraf dist",
     "build": "npm run cleanup && npm run build --prefix client && npx pkg . --debug",
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\""
@@ -31,9 +31,9 @@
       "win"
     ],
     "assets": [
-      "public/*",
-      "public/static/js/*",
-      "public/static/css/*"
+      "client/build/*",
+      "client/build/static/js/*",
+      "client/build/static/css/*"
     ],
     "outputPath": "dist"
   }
