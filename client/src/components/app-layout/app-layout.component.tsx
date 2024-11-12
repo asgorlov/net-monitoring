@@ -2,6 +2,7 @@ import "./app-layout.scss";
 import React, { FC, memo } from "react";
 import { Button, Layout, theme } from "antd";
 import SettingsMenuContainer from "../settings-menu/settings-menu.container";
+import packageJson from "../../../package.json";
 
 import { DeleteOutlined, MenuOutlined, SaveOutlined } from "@ant-design/icons";
 import clsx from "clsx";
@@ -68,10 +69,17 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
         className="app-layout__footer"
         style={{ borderColor: token.colorBorder }}
       >
-        Net Monitoring ©2024-{new Date().getFullYear()} Created by{" "}
-        <a href="https://github.com/asgorlov" target="_blank" rel="noreferrer">
-          asgorlov
-        </a>
+        <span>Net Monitoring v{packageJson.version}</span>
+        <span>
+          ©2024-{new Date().getFullYear()} Created by{" "}
+          <a
+            href="https://github.com/asgorlov"
+            target="_blank"
+            rel="noreferrer"
+          >
+            asgorlov
+          </a>
+        </span>
       </Layout.Footer>
     </Layout>
   );
