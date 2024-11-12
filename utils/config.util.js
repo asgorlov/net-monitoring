@@ -23,8 +23,13 @@ const init = () => {
   }
 };
 
+const requireUncached = (module) => {
+  delete require.cache[require.resolve(module)];
+  return require(module);
+};
+
 const get = () => {
-  return require(configPath);
+  return requireUncached(configPath);
 };
 
 const update = (config) => {

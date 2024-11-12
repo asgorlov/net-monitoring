@@ -35,5 +35,12 @@
         border-top: 1px solid;
         padding: 16px;
         text-align: center;
+        font-size: 12px;
+        display: flex;
+        flex-direction: column;
+
+        span:first-child {
+            font-weight: 500;
+        }
     }
 }
