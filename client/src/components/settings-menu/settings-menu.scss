@@ -10,7 +10,8 @@
   gap: 8px;
   border-right: 1px solid;
   transition: 0.3s linear;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 
   &._opened {
     max-width: 300px;
