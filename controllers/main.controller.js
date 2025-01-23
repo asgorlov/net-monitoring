@@ -21,7 +21,7 @@ const getConfig = (req, res) => {
   try {
     data = configUtil.get();
   } catch (e) {
-    logger.info("Can't get config file. It is probably missing");
+    logger.info(`[${req.id}] - Can't get config file. It is probably missing`);
   }
 
   if (!data) {
@@ -29,7 +29,7 @@ const getConfig = (req, res) => {
       data = configUtil.createDefault();
     } catch (e) {
       logger.error(
-        "Can't create config file. Please close all applications using the file or delete it"
+        `[${req.id}] - Can't create config file. Please close all applications using the file or delete it`
       );
     }
   }
@@ -63,7 +63,7 @@ const replaceConfig = (req, res) => {
       data = configUtil.update(config);
     } catch (e) {
       logger.error(
-        "Can't update config file. Please close all applications using the file or delete it"
+        `[${req.id}] - Can't update config file. Please close all applications using the file or delete it`
       );
     }
 
@@ -90,7 +90,7 @@ const clearConfig = (req, res) => {
     data = configUtil.createDefault();
   } catch (e) {
     logger.error(
-      "Can't create config file. Please close all applications using the file or delete it"
+      `[${req.id}] - Can't create config file. Please close all applications using the file or delete it`
     );
   }
 
@@ -115,7 +115,7 @@ const clearLogFiles = (req, res) => {
     res.status(200).json({ isCleared: true });
   } catch (e) {
     logger.error(
-      "Can't clear the log folder. Please close all applications using the log files or delete log folder manually"
+      `[${req.id}] - Can't clear the log folder. Please close all applications using the log files or delete log folder manually`
     );
     res.status(500).json({
       isCleared: false,
@@ -133,7 +133,7 @@ const clearLogFiles = (req, res) => {
 const pingHosts = async (req, res) => {
   const { hosts } = req.body;
   if (!Array.isArray(hosts)) {
-    logger.error("Field hosts is not array");
+    logger.error(`[${req.id}] - Field hosts is not array`);
     res.status(400).json({ message: "Поле hosts не является массивом" });
   } else {
     const hostStatuses = [];
@@ -146,8 +146,11 @@ const pingHosts = async (req, res) => {
           ...host,
           isAlive: response.alive,
         });
+        logger.debug(
+          `[${req.id}] - Ping response: ${JSON.stringify(response)}`
+        );
       } catch (e) {
-        logger.info(`Can\'t ping host = ${host.host}`);
+        logger.info(`[${req.id}] - Can\'t ping host = ${host.host}`);
         hostStatuses.push({
           ...host,
           isAlive: null,
