@@ -46,7 +46,7 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
             <MenuOutlined />
           </Button>
           {showManualPingBtn && (
-            <Button size="small" onClick={pingManually} title="Пинг">
+            <Button size="small" onClick={pingManually} title="Ручной пинг">
               <SyncOutlined />
             </Button>
           )}

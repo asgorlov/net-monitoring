@@ -60,6 +60,17 @@ const SettingsMenuComponent: FC<MenuProps> = ({
     }
   };
 
+  const getCorrectedTimeout = () => {
+    let timeout = formValues.timeout;
+    let interval = formValues.interval;
+    if (timeout > interval) {
+      onTimeoutChange(interval);
+      return interval;
+    }
+
+    return timeout;
+  };
+
   const onIntervalChange = (interval: number | null) => {
     if (interval !== null) {
       onChangeFormValues({ ...formValues, interval });
@@ -234,7 +245,7 @@ const SettingsMenuComponent: FC<MenuProps> = ({
             <InputNumber
               id="timeout"
               disabled={!open || configLoading || !formValues.autoPing}
-              value={formValues.timeout}
+              value={getCorrectedTimeout()}
               onChange={onTimeoutChange}
               min={1}
               max={formValues.interval}
