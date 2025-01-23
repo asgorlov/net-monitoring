@@ -217,6 +217,7 @@ const SettingsMenuComponent: FC<MenuProps> = ({
               value={formValues.timeout}
               onChange={onTimeoutChange}
               min={1}
+              max={formValues.interval}
               suffix="сек."
             />
           )}

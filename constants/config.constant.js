@@ -21,7 +21,7 @@ const defaultConfig = freeze({
   },
   request: {
     interval: 30, // can't be less 1
-    timeout: 30, // can't be less 1 and more interval
+    timeout: 29, // can't be less 1 and more interval
   },
   pingHosts: [],
 });
