@@ -1,6 +1,11 @@
 import React, { forwardRef, memo, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { selectConfigLoading, selectInterval } from "../../../store/main.slice";
+import {
+  selectAutoPing,
+  selectConfigLoading,
+  selectInterval,
+  selectManualPingTrigger
+} from "../../../store/main.slice";
 import useOpenSettingsContext from "../../../contexts/open-settings.context";
 import NetSchemeHostComponent from "./net-scheme-host.component";
 import { HostViewModel } from "../../../models/host.models";
@@ -17,8 +22,10 @@ const NetSchemeHostContainer = forwardRef<
   HTMLDivElement,
   NetSchemeHostContainerProps
 >(({ hostViewModel, changeHostViewModel, addChildHostViewModel }, ref) => {
+  const manualPingTrigger = useSelector(selectManualPingTrigger);
   const configLoading = useSelector(selectConfigLoading);
   const interval = useSelector(selectInterval);
+  const autoPing = useSelector(selectAutoPing);
 
   const { open } = useOpenSettingsContext();
   const controllerRef = useRef(new AbortController());
@@ -28,15 +35,17 @@ const NetSchemeHostContainer = forwardRef<
   const [isAlive, setIsAlive] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (!configLoading) {
-      const stopPing = () => {
-        controllerRef.current.abort();
-        clearInterval(timerRef.current);
-      };
+    const stopPing = () => {
+      controllerRef.current.abort();
+      clearInterval(timerRef.current);
+      timerRef.current = undefined;
+    };
+    stopPing();
 
-      stopPing();
-
-      if (!open && hostViewModel.host) {
+    if (!configLoading && hostViewModel.host) {
+      const isAutoPing = autoPing && !open;
+      const isManualPing = !autoPing && manualPingTrigger > 0;
+      if (isAutoPing || isManualPing) {
         controllerRef.current = new AbortController();
         const ping = () => {
           setPinging(true);
@@ -44,17 +53,26 @@ const NetSchemeHostContainer = forwardRef<
             .then(setIsAlive)
             .finally(() => setPinging(false));
         };
-
         ping();
-        timerRef.current = setInterval(
-          () => ping(),
-          settingsUtil.convertToMilliseconds(interval)
-        );
+
+        if (isAutoPing) {
+          timerRef.current = setInterval(
+            ping,
+            settingsUtil.convertToMilliseconds(interval)
+          );
+        }
 
         return stopPing;
       }
     }
-  }, [configLoading, open, hostViewModel, interval]);
+  }, [
+    autoPing,
+    manualPingTrigger,
+    hostViewModel,
+    configLoading,
+    open,
+    interval
+  ]);
 
   return (
     <NetSchemeHostComponent

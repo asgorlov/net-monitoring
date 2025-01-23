@@ -1,7 +1,7 @@
 import "./settings-menu.scss";
 import React, { FC, memo } from "react";
 import clsx from "clsx";
-import { Button, InputNumber, Select, theme } from "antd";
+import { Button, InputNumber, Select, Switch, theme } from "antd";
 import { LoggerLevel, LoggerType } from "../../constants/logger.constants";
 import { SettingsForm } from "../../models/settings-form.models";
 import Skeleton from "../skeleton/skeleton";
@@ -12,6 +12,7 @@ export interface MenuProps {
   configLoading: boolean;
   formValues: SettingsForm;
   onChangeFormValues: (values: SettingsForm) => void;
+  resetPingTrigger: (value: boolean) => void;
   onClickClearLogs: () => void;
   clearLogsLoading: boolean;
 }
@@ -21,6 +22,7 @@ const SettingsMenuComponent: FC<MenuProps> = ({
   configLoading,
   formValues,
   onChangeFormValues,
+  resetPingTrigger,
   onClickClearLogs,
   clearLogsLoading
 }) => {
@@ -62,6 +64,11 @@ const SettingsMenuComponent: FC<MenuProps> = ({
     if (interval !== null) {
       onChangeFormValues({ ...formValues, interval });
     }
+  };
+
+  const onAutoPingChange = (autoPing: boolean) => {
+    onChangeFormValues({ ...formValues, autoPing });
+    resetPingTrigger(autoPing);
   };
 
   return (
@@ -192,13 +199,26 @@ const SettingsMenuComponent: FC<MenuProps> = ({
       <div className="settings-menu__row">
         <h6 style={{ borderColor: token.colorBorder }}>Запросы</h6>
         <div className="settings-menu__row__item">
+          <label htmlFor="autoPing">Периодическая автоотправка запросов:</label>
+          {configLoading ? (
+            <Skeleton className="settings-menu__row__item__skeleton-switch" />
+          ) : (
+            <Switch
+              id="autoPing"
+              checked={formValues.autoPing}
+              onChange={onAutoPingChange}
+              className="settings-menu__row__item__auto-ping"
+            />
+          )}
+        </div>
+        <div className="settings-menu__row__item">
           <label htmlFor="interval">Период между запросами:</label>
           {configLoading ? (
             <Skeleton className="settings-menu__row__item__skeleton-input-number" />
           ) : (
             <InputNumber
               id="interval"
-              disabled={!open || configLoading}
+              disabled={!open || configLoading || !formValues.autoPing}
               value={formValues.interval}
               onChange={onIntervalChange}
               min={1}
@@ -213,7 +233,7 @@ const SettingsMenuComponent: FC<MenuProps> = ({
           ) : (
             <InputNumber
               id="timeout"
-              disabled={!open || configLoading}
+              disabled={!open || configLoading || !formValues.autoPing}
               value={formValues.timeout}
               onChange={onTimeoutChange}
               min={1}

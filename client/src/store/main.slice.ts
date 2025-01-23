@@ -29,6 +29,7 @@ export interface MainStateBase {
   loggerType: LoggerType;
   numberOfLogFiles: number;
   logFileSizeInBytes: number;
+  autoPing: boolean;
   interval: number;
   timeout: number;
   hostViewModels: Record<uuid, HostViewModel>;
@@ -36,17 +37,20 @@ export interface MainStateBase {
 
 export interface MainState extends MainStateBase {
   configLoading: boolean;
+  manualPingTrigger: number;
   clearLogFilesLoading: boolean;
 }
 
 const initialState: MainState = {
   configLoading: false,
+  manualPingTrigger: 0,
   clearLogFilesLoading: false,
   port: defaultConfig.port,
   loggerLevel: defaultConfig.logger.level,
   loggerType: defaultConfig.logger.type,
   numberOfLogFiles: defaultConfig.logger.numberOfLogFiles,
   logFileSizeInBytes: defaultConfig.logger.logFileSizeInBytes,
+  autoPing: defaultConfig.request.autoPing,
   interval: defaultConfig.request.interval,
   timeout: defaultConfig.request.timeout,
   hostViewModels: initializePingHostViewModel(defaultConfig.pingHosts)
@@ -159,6 +163,12 @@ export const mainSlice = createSlice({
   reducers: {
     setBaseConfigData: (state, action: PayloadAction<MainStateBase>) => {
       updateState(state, action.payload);
+    },
+    resetManualPingTrigger: state => {
+      state.manualPingTrigger = 0;
+    },
+    incrementManualPingTrigger: state => {
+      state.manualPingTrigger++;
     }
   },
   extraReducers: builder => {
@@ -226,7 +236,11 @@ export const mainSlice = createSlice({
   }
 });
 
-export const { setBaseConfigData } = mainSlice.actions;
+export const {
+  setBaseConfigData,
+  resetManualPingTrigger,
+  incrementManualPingTrigger
+} = mainSlice.actions;
 
 export const selectPort = (state: RootState): number => state.main.port;
 export const selectLoggerLevel = (state: RootState): LoggerLevel =>
@@ -237,6 +251,8 @@ export const selectNumberOfLogFiles = (state: RootState): number =>
   state.main.numberOfLogFiles;
 export const selectLogFileSizeInBytes = (state: RootState): number =>
   state.main.logFileSizeInBytes;
+export const selectAutoPing = (state: RootState): boolean =>
+  state.main.autoPing;
 export const selectInterval = (state: RootState): number => state.main.interval;
 export const selectTimeout = (state: RootState): number => state.main.timeout;
 export const selectHostViewModels = (
@@ -244,6 +260,8 @@ export const selectHostViewModels = (
 ): Record<uuid, HostViewModel> => state.main.hostViewModels;
 export const selectConfigLoading = (state: RootState): boolean =>
   state.main.configLoading;
+export const selectManualPingTrigger = (state: RootState): number =>
+  state.main.manualPingTrigger;
 export const selectClearLogFilesLoading = (state: RootState): boolean =>
   state.main.clearLogFilesLoading;
 

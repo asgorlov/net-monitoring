@@ -51,6 +51,11 @@
         white-space: nowrap;
       }
 
+      &__auto-ping {
+        width: 44px;
+        height: 22px;
+      }
+
       &__skeleton {
         &-input-number {
           @include skeleton-dimensions(30px, 88px);
@@ -58,6 +63,10 @@
 
         &-select {
           @include skeleton-dimensions(30px, 100%);
+        }
+
+        &-switch {
+          @include skeleton-dimensions(22px, 44px);
         }
       }
 

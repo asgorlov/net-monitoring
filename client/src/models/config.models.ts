@@ -4,6 +4,7 @@ import { PingHost } from "./host.models";
 export interface ConfigRequest {
   interval: number;
   timeout: number;
+  autoPing: boolean;
 }
 
 export interface ConfigLogger {

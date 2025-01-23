@@ -11,6 +11,7 @@ export const updateState = (state: MainState, payload: MainStateBase) => {
   state.loggerType = payload.loggerType;
   state.numberOfLogFiles = payload.numberOfLogFiles;
   state.logFileSizeInBytes = payload.logFileSizeInBytes;
+  state.autoPing = payload.autoPing;
   state.interval = payload.interval;
   state.timeout = payload.timeout;
   state.hostViewModels = payload.hostViewModels;
@@ -23,6 +24,7 @@ export const updateStateByConfig = (state: MainState, config: Config) => {
     loggerType: config.logger.type,
     numberOfLogFiles: config.logger.numberOfLogFiles,
     logFileSizeInBytes: config.logger.logFileSizeInBytes,
+    autoPing: config.request.autoPing,
     interval: config.request.interval,
     timeout: config.request.timeout,
     hostViewModels: getUpdatedHostViewModels(
@@ -42,6 +44,7 @@ export const convertStateToConfig = (state: MainState): Config => {
       logFileSizeInBytes: state.logFileSizeInBytes
     },
     request: {
+      autoPing: state.autoPing,
       interval: state.interval,
       timeout: state.timeout
     },

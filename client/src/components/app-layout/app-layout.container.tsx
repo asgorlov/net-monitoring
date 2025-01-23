@@ -3,6 +3,9 @@ import AppLayoutComponent from "./app-layout.component";
 import { useAppDispatch } from "../../hooks/store.hooks";
 import {
   getConfigAsync,
+  incrementManualPingTrigger,
+  selectAutoPing,
+  selectConfigLoading,
   setBaseConfigData,
   updateConfigAsync
 } from "../../store/main.slice";
@@ -18,6 +21,7 @@ import {
 } from "../../utils/host.util";
 import { Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { useSelector } from "react-redux";
 
 const AppLayoutContainer = () => {
   const [modal, contextHolder] = Modal.useModal();
@@ -26,6 +30,14 @@ const AppLayoutContainer = () => {
   const schemeForm = useSchemeFormContext();
   const dispatch = useAppDispatch();
   const isInitializedRef = useRef(false);
+
+  const autoPing = useSelector(selectAutoPing);
+  const configLoading = useSelector(selectConfigLoading);
+
+  const pingManually = useCallback(
+    () => dispatch(incrementManualPingTrigger()),
+    [dispatch]
+  );
 
   const toggleOpenMenu = useCallback(
     () => setOpen(prevState => !prevState),
@@ -46,6 +58,7 @@ const AppLayoutContainer = () => {
           logFileSizeInBytes: settingsUtil.convertToBytes(
             settingsData.logFileSize
           ),
+          autoPing: settingsData.autoPing,
           interval: settingsData.interval,
           timeout: settingsData.timeout,
           hostViewModels: hasErrors
@@ -96,9 +109,11 @@ const AppLayoutContainer = () => {
     <>
       <AppLayoutComponent
         open={open}
+        showManualPingBtn={!autoPing && !open && !configLoading}
         isFormsTouched={settingsForm.isTouched || schemeForm.isTouched}
         saveSettings={saveSettings}
         toggleOpenMenu={toggleOpenMenu}
+        pingManually={pingManually}
       />
       {contextHolder}
     </>

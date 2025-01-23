@@ -2,6 +2,7 @@ import React, { FC, useCallback } from "react";
 import { useSelector } from "react-redux";
 import {
   clearLogFilesAsync,
+  resetManualPingTrigger,
   selectClearLogFilesLoading,
   selectConfigLoading
 } from "../../store/main.slice";
@@ -23,12 +24,22 @@ const SettingsMenuContainer: FC = () => {
     [dispatch]
   );
 
+  const resetPingTrigger = useCallback(
+    (autoPing: boolean) => {
+      if (autoPing) {
+        dispatch(resetManualPingTrigger());
+      }
+    },
+    [dispatch]
+  );
+
   return (
     <SettingsMenuComponent
       open={open}
       configLoading={configLoading}
       formValues={data}
       onChangeFormValues={setData}
+      resetPingTrigger={resetPingTrigger}
       onClickClearLogs={onClickClearLogs}
       clearLogsLoading={clearLogFilesLoading}
     />

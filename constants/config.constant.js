@@ -20,6 +20,7 @@ const defaultConfig = freeze({
     logFileSizeInBytes: 52428800, // 50Mb, if it < 0 - infinite size
   },
   request: {
+    autoPing: true,
     interval: 30, // can't be less 1
     timeout: 29, // can't be less 1 and more interval
   },
