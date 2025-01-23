@@ -4,6 +4,7 @@ import {
   convertHostViewModelsToPingHosts,
   getUpdatedHostViewModels
 } from "./host.util";
+import { defaultConfig } from "../constants/config.constants";
 
 export const updateState = (state: MainState, payload: MainStateBase) => {
   state.port = payload.port;
@@ -11,7 +12,7 @@ export const updateState = (state: MainState, payload: MainStateBase) => {
   state.loggerType = payload.loggerType;
   state.numberOfLogFiles = payload.numberOfLogFiles;
   state.logFileSizeInBytes = payload.logFileSizeInBytes;
-  state.autoPing = payload.autoPing;
+  state.autoPing = payload.autoPing ?? defaultConfig.request.autoPing;
   state.interval = payload.interval;
   state.timeout = payload.timeout;
   state.hostViewModels = payload.hostViewModels;
