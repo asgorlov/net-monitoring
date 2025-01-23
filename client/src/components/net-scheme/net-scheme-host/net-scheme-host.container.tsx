@@ -29,8 +29,12 @@ const NetSchemeHostContainer = forwardRef<
 
   useEffect(() => {
     if (!configLoading) {
-      controllerRef.current.abort();
-      clearInterval(timerRef.current);
+      const stopPing = () => {
+        controllerRef.current.abort();
+        clearInterval(timerRef.current);
+      };
+
+      stopPing();
 
       if (!open && hostViewModel.host) {
         controllerRef.current = new AbortController();
@@ -46,6 +50,8 @@ const NetSchemeHostContainer = forwardRef<
           () => ping(),
           settingsUtil.convertToMilliseconds(interval)
         );
+
+        return stopPing;
       }
     }
   }, [configLoading, open, hostViewModel, interval]);
