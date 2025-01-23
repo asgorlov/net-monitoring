@@ -13,7 +13,7 @@
   "dependencies": {
     "chalk": "^4.1.2",
     "cookie-parser": "~1.4.4",
-    "express": "~4.16.1",
+    "express": "^4.20.0",
     "ping": "^0.4.4"
   },
   "devDependencies": {
