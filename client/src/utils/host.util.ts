@@ -9,6 +9,7 @@ import {
 import { HostFieldError } from "../constants/form.constants";
 import Path from "../constants/path.constants";
 import { notification } from "antd";
+import { HostType } from "../constants/common.constants";
 
 export const getFlattedPingHosts = (
   hosts: PingHost[],
@@ -234,4 +235,18 @@ export const pingHostAsync = async (
   }
 
   return null;
+};
+
+export const createEmptyHost = (
+  parentId: uuid | null = null
+): HostViewModel => {
+  return {
+    id: crypto.randomUUID(),
+    type: HostType.SW,
+    name: "",
+    host: "",
+    parentId,
+    childIds: [],
+    errors: []
+  };
 };
