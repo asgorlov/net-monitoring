@@ -15,6 +15,7 @@ import NetSchemeContainer from "../net-scheme/net-scheme.container";
 
 export interface AppLayoutComponentProps {
   open: boolean;
+  configLoading: boolean;
   showManualPingBtn: boolean;
   isFormsTouched: boolean;
   saveSettings: () => void;
@@ -24,6 +25,7 @@ export interface AppLayoutComponentProps {
 
 const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
   open,
+  configLoading,
   showManualPingBtn,
   isFormsTouched,
   saveSettings,
@@ -42,11 +44,16 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
         className="app-layout__header"
       >
         <div className="app-layout__header__btns-block">
-          <Button size="small" onClick={toggleOpenMenu} title="Меню">
+          <Button size="small" onClick={toggleOpenMenu} title="Меню настроек">
             <MenuOutlined />
           </Button>
           {showManualPingBtn && (
-            <Button size="small" onClick={pingManually} title="Ручной пинг">
+            <Button
+              size="small"
+              disabled={configLoading}
+              onClick={pingManually}
+              title="Ручной пинг"
+            >
               <SyncOutlined />
             </Button>
           )}

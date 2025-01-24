@@ -4,6 +4,7 @@ import { useAppDispatch } from "../../hooks/store.hooks";
 import {
   getConfigAsync,
   incrementManualPingTrigger,
+  resetManualPingTrigger,
   selectAutoPing,
   selectConfigLoading,
   setBaseConfigData,
@@ -40,8 +41,16 @@ const AppLayoutContainer = () => {
   );
 
   const toggleOpenMenu = useCallback(
-    () => setOpen(prevState => !prevState),
-    [setOpen]
+    () =>
+      setOpen(prevState => {
+        const newState = !prevState;
+        if (newState) {
+          dispatch(resetManualPingTrigger());
+        }
+
+        return newState;
+      }),
+    [setOpen, dispatch]
   );
 
   const saveSettings = useCallback(() => {
@@ -109,7 +118,8 @@ const AppLayoutContainer = () => {
     <>
       <AppLayoutComponent
         open={open}
-        showManualPingBtn={!autoPing && !open && !configLoading}
+        configLoading={configLoading}
+        showManualPingBtn={!autoPing && !open}
         isFormsTouched={settingsForm.isTouched || schemeForm.isTouched}
         saveSettings={saveSettings}
         toggleOpenMenu={toggleOpenMenu}
