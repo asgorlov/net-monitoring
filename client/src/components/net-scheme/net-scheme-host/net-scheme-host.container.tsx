@@ -37,31 +37,37 @@ const NetSchemeHostContainer = forwardRef<
   useEffect(() => {
     const stopPing = () => {
       controllerRef.current.abort();
-      clearInterval(timerRef.current);
-      timerRef.current = undefined;
+
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = undefined;
+      }
     };
     stopPing();
 
-    if (!configLoading && hostViewModel.host && !open) {
-      if (autoPing || manualPingTrigger > 0) {
-        controllerRef.current = new AbortController();
-        const ping = () => {
-          setPinging(true);
-          pingHostAsync(hostViewModel, controllerRef.current)
-            .then(setIsAlive)
-            .finally(() => setPinging(false));
-        };
-        ping();
+    const canBePinged =
+      hostViewModel.host &&
+      !configLoading &&
+      !open &&
+      (autoPing || manualPingTrigger > 0);
+    if (canBePinged) {
+      controllerRef.current = new AbortController();
+      const ping = () => {
+        setPinging(true);
+        pingHostAsync(hostViewModel, controllerRef.current)
+          .then(setIsAlive)
+          .finally(() => setPinging(false));
+      };
+      ping();
 
-        if (autoPing) {
-          timerRef.current = setInterval(
-            ping,
-            settingsUtil.convertToMilliseconds(interval)
-          );
-        }
-
-        return stopPing;
+      if (autoPing) {
+        timerRef.current = setInterval(
+          ping,
+          settingsUtil.convertToMilliseconds(interval)
+        );
       }
+
+      return stopPing;
     }
   }, [
     autoPing,
