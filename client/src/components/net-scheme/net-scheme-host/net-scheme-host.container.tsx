@@ -42,10 +42,8 @@ const NetSchemeHostContainer = forwardRef<
     };
     stopPing();
 
-    if (!configLoading && hostViewModel.host) {
-      const isAutoPing = autoPing && !open;
-      const isManualPing = !autoPing && manualPingTrigger > 0;
-      if (isAutoPing || isManualPing) {
+    if (!configLoading && hostViewModel.host && !open) {
+      if (autoPing || manualPingTrigger > 0) {
         controllerRef.current = new AbortController();
         const ping = () => {
           setPinging(true);
@@ -55,7 +53,7 @@ const NetSchemeHostContainer = forwardRef<
         };
         ping();
 
-        if (isAutoPing) {
+        if (autoPing) {
           timerRef.current = setInterval(
             ping,
             settingsUtil.convertToMilliseconds(interval)
