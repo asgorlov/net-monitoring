@@ -1,9 +1,12 @@
-import { Config } from "../models/config.models";
+import { Config, UpdatingConfig } from "../models/config.models";
 import { MainState, MainStateBase } from "../store/main.slice";
 import {
   convertHostViewModelsToPingHosts,
   getUpdatedHostViewModels
 } from "./host.util";
+import { UploadFile } from "antd/es/upload/interface";
+import { defaultConfig } from "../constants/config.constants";
+import Path from "../constants/path.constants";
 
 export const updateState = (state: MainState, payload: MainStateBase) => {
   state.port = payload.port;
@@ -50,4 +53,57 @@ export const convertStateToConfig = (state: MainState): Config => {
     },
     pingHosts: convertHostViewModelsToPingHosts(state.hostViewModels)
   };
+};
+
+export const getConfigFromFile = (file: UploadFile): Promise<Config> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onloadend = (event: ProgressEvent<FileReader>) => {
+      const json = event.target?.result?.toString();
+
+      if (json) {
+        try {
+          const config = JSON.parse(json);
+
+          Object.keys(config).forEach(name => {
+            if (!Object.hasOwn(defaultConfig, name)) {
+              delete config[name];
+            }
+          });
+
+          resolve(config);
+        } catch (e) {
+          console.error(e);
+          reject("Не удалось распарсить файл настроек");
+        }
+      }
+    };
+
+    reader.readAsText(file.originFileObj as Blob);
+  });
+};
+
+export const updateConfig = (config: Config): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    const options: RequestInit = {
+      method: "PUT",
+      headers: [["Content-Type", "application/json"]],
+      body: JSON.stringify(config)
+    };
+
+    fetch(Path.config, options)
+      .then(async response => {
+        const data: UpdatingConfig = await response.json();
+        if (response.ok && data.isUpdated) {
+          resolve();
+        } else {
+          reject(data.message);
+        }
+      })
+      .catch(e => {
+        reject("Не удалось выполнить запрос на обновление настроек");
+        console.error(e);
+      });
+  });
 };

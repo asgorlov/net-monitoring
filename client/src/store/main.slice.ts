@@ -7,21 +7,24 @@ import {
 import { RootState } from "./store";
 import { defaultConfig } from "../constants/config.constants";
 import { LoggerLevel, LoggerType } from "../constants/logger.constants";
-import {
-  Config,
-  ConfigError,
-  UpdatingConfig,
-  ClearingLogFiles
-} from "../models/config.models";
+import { Config, ConfigError, ClearingLogFiles } from "../models/config.models";
 import Path from "../constants/path.constants";
 import { notification } from "antd";
 import {
   convertStateToConfig,
+  getConfigFromFile,
+  updateConfig,
   updateState,
   updateStateByConfig
 } from "../utils/main.util";
 import { HostViewModel, uuid } from "../models/host.models";
 import { initializePingHostViewModel } from "../utils/host.util";
+import settingsUtil from "../utils/settings.util";
+import {
+  CONFIG_FILE_NAME,
+  CONFIG_FILE_TYPE
+} from "../constants/common.constants";
+import { UploadFile } from "antd/es/upload/interface";
 
 export interface MainStateBase {
   port: number;
@@ -80,28 +83,11 @@ export const getConfigAsync = createAsyncThunk(
 
 export const updateConfigAsync = createAsyncThunk(
   "config/update",
-  async (_, { getState }): Promise<void> => {
+  (_, { getState }): Promise<void> => {
     return new Promise((resolve, reject) => {
       const { main } = getState() as RootState;
-      const options: RequestInit = {
-        method: "PUT",
-        headers: [["Content-Type", "application/json"]],
-        body: JSON.stringify(convertStateToConfig(main))
-      };
-
-      fetch(Path.config, options)
-        .then(async response => {
-          const data: UpdatingConfig = await response.json();
-          if (response.ok && data.isUpdated) {
-            resolve();
-          } else {
-            reject(data.message);
-          }
-        })
-        .catch(e => {
-          reject("Не удалось выполнить запрос на обновление настроек");
-          console.error(e);
-        });
+      const config = convertStateToConfig(main);
+      updateConfig(config).then(resolve).catch(reject);
     });
   }
 );
@@ -130,6 +116,28 @@ export const resetConfigAsync = createAsyncThunk(
           console.error(e);
         });
     });
+  }
+);
+
+export const importConfigAsync = createAsyncThunk(
+  "config/import",
+  async (file: UploadFile): Promise<Config> => {
+    const config = await getConfigFromFile(file);
+    await updateConfig(config);
+
+    return config;
+  }
+);
+
+export const exportConfigAsync = createAsyncThunk(
+  "config/export",
+  (_, { getState }) => {
+    const { main } = getState() as RootState;
+    settingsUtil.downloadFile(
+      JSON.stringify(convertStateToConfig(main), null, 4),
+      CONFIG_FILE_NAME,
+      CONFIG_FILE_TYPE
+    );
   }
 );
 
@@ -197,11 +205,21 @@ export const mainSlice = createSlice({
       state.configLoading = false;
     });
 
+    builder.addCase(getConfigAsync.fulfilled, (state, action) => {
+      const config = action.payload as Config;
+      updateStateByConfig(state, config);
+      state.configLoading = false;
+    });
+
     builder.addMatcher(
-      isAnyOf(getConfigAsync.fulfilled, resetConfigAsync.fulfilled),
+      isAnyOf(importConfigAsync.fulfilled, resetConfigAsync.fulfilled),
       (state, action) => {
         const config = action.payload as Config;
         updateStateByConfig(state, config);
+        notification.success({
+          message:
+            "Конфигурация обновлена. Для корректной работы приложения требуется перезагрузка"
+        });
         state.configLoading = false;
       }
     );
@@ -210,6 +228,7 @@ export const mainSlice = createSlice({
       isAnyOf(
         getConfigAsync.pending,
         updateConfigAsync.pending,
+        importConfigAsync.pending,
         resetConfigAsync.pending
       ),
       state => {
@@ -221,6 +240,7 @@ export const mainSlice = createSlice({
       isAnyOf(
         getConfigAsync.rejected,
         updateConfigAsync.rejected,
+        importConfigAsync.rejected,
         resetConfigAsync.rejected
       ),
       (state, action) => {

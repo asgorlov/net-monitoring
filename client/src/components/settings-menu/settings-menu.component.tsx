@@ -1,11 +1,20 @@
 import "./settings-menu.scss";
 import React, { FC, memo } from "react";
 import clsx from "clsx";
-import { Button, InputNumber, Select, Switch, theme } from "antd";
+import { UploadChangeParam } from "antd/es/upload/interface";
+import { UploadRequestOption as RcCustomRequestOptions } from "rc-upload/lib/interface";
+import { Button, InputNumber, Select, Switch, theme, Upload } from "antd";
 import { LoggerLevel, LoggerType } from "../../constants/logger.constants";
 import { SettingsForm } from "../../models/settings-form.models";
 import Skeleton from "../skeleton/skeleton";
-import { ClearOutlined, LoadingOutlined } from "@ant-design/icons";
+import {
+  ClearOutlined,
+  DownloadOutlined,
+  LoadingOutlined,
+  RollbackOutlined,
+  UploadOutlined
+} from "@ant-design/icons";
+import { CONFIG_FILE_TYPE } from "../../constants/common.constants";
 
 export interface MenuProps {
   open: boolean;
@@ -14,6 +23,10 @@ export interface MenuProps {
   onChangeFormValues: (values: SettingsForm) => void;
   resetPingTrigger: (value: boolean) => void;
   onClickClearLogs: () => void;
+  validateUploading: (option: RcCustomRequestOptions) => void;
+  importConfig: (info: UploadChangeParam) => void;
+  exportConfig: () => void;
+  resetConfig: () => void;
   clearLogsLoading: boolean;
 }
 
@@ -24,9 +37,15 @@ const SettingsMenuComponent: FC<MenuProps> = ({
   onChangeFormValues,
   resetPingTrigger,
   onClickClearLogs,
+  validateUploading,
+  importConfig,
+  exportConfig,
+  resetConfig,
   clearLogsLoading
 }) => {
   const { token } = theme.useToken();
+
+  const disableActions = !open || configLoading;
 
   const onPortChange = (port: number | null) => {
     if (port !== null) {
@@ -102,7 +121,7 @@ const SettingsMenuComponent: FC<MenuProps> = ({
           ) : (
             <InputNumber
               id="port"
-              disabled={!open || configLoading}
+              disabled={disableActions}
               value={formValues.port}
               onChange={onPortChange}
               min={0}
@@ -120,7 +139,7 @@ const SettingsMenuComponent: FC<MenuProps> = ({
           ) : (
             <Select
               id="level"
-              disabled={!open || configLoading}
+              disabled={disableActions}
               value={formValues.level}
               onChange={onLevelChange}
               options={[
@@ -139,9 +158,7 @@ const SettingsMenuComponent: FC<MenuProps> = ({
           ) : (
             <Select
               id="type"
-              disabled={
-                !open || configLoading || formValues.level === LoggerLevel.OFF
-              }
+              disabled={disableActions || formValues.level === LoggerLevel.OFF}
               value={formValues.type}
               onChange={onTypeChange}
               options={[
@@ -229,7 +246,7 @@ const SettingsMenuComponent: FC<MenuProps> = ({
           ) : (
             <InputNumber
               id="interval"
-              disabled={!open || configLoading || !formValues.autoPing}
+              disabled={disableActions || !formValues.autoPing}
               value={formValues.interval}
               onChange={onIntervalChange}
               min={1}
@@ -244,7 +261,7 @@ const SettingsMenuComponent: FC<MenuProps> = ({
           ) : (
             <InputNumber
               id="timeout"
-              disabled={!open || configLoading || !formValues.autoPing}
+              disabled={disableActions || !formValues.autoPing}
               value={getCorrectedTimeout()}
               onChange={onTimeoutChange}
               min={1}
@@ -252,6 +269,50 @@ const SettingsMenuComponent: FC<MenuProps> = ({
               suffix="сек."
             />
           )}
+        </div>
+      </div>
+      <div className="settings-menu__row">
+        <h6 style={{ borderColor: token.colorBorder }}>Настройки</h6>
+        <div className="settings-menu__row__item">
+          <label htmlFor="import-config">Импорт файла настроек:</label>
+          <Upload
+            id="import-config"
+            customRequest={validateUploading}
+            onChange={importConfig}
+            itemRender={() => null}
+            disabled={disableActions}
+            accept={CONFIG_FILE_TYPE}
+          >
+            <Button
+              disabled={disableActions}
+              className="settings-menu__row__item__cofig-btn"
+            >
+              <UploadOutlined />
+              <span>Импорт</span>
+            </Button>
+          </Upload>
+        </div>
+        <div className="settings-menu__row__item">
+          <label>Экспорт файла настроек:</label>
+          <Button
+            onClick={exportConfig}
+            disabled={disableActions}
+            className="settings-menu__row__item__cofig-btn"
+          >
+            <DownloadOutlined />
+            <span>Экспорт</span>
+          </Button>
+        </div>
+        <div className="settings-menu__row__item">
+          <label>Сброс настроек по умолчанию:</label>
+          <Button
+            onClick={resetConfig}
+            disabled={disableActions}
+            className="settings-menu__row__item__cofig-btn"
+          >
+            <RollbackOutlined />
+            <span>Сброс</span>
+          </Button>
         </div>
       </div>
     </div>
