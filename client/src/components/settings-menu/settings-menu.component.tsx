@@ -81,13 +81,20 @@ const SettingsMenuComponent: FC<MenuProps> = ({
 
   const getCorrectedTimeout = () => {
     let timeout = formValues.timeout;
-    let interval = formValues.interval;
-    if (timeout > interval) {
-      onTimeoutChange(interval);
-      return interval;
+
+    if (formValues.autoPing) {
+      let interval = formValues.interval;
+      if (timeout > interval) {
+        onTimeoutChange(interval);
+        return interval;
+      }
     }
 
     return timeout;
+  };
+
+  const getMaxTimeout = (): number | undefined => {
+    return formValues.autoPing ? formValues.interval : undefined;
   };
 
   const onIntervalChange = (interval: number | null) => {
@@ -261,11 +268,11 @@ const SettingsMenuComponent: FC<MenuProps> = ({
           ) : (
             <InputNumber
               id="timeout"
-              disabled={disableActions || !formValues.autoPing}
+              disabled={disableActions}
               value={getCorrectedTimeout()}
               onChange={onTimeoutChange}
               min={1}
-              max={formValues.interval}
+              max={getMaxTimeout()}
               suffix="сек."
             />
           )}
