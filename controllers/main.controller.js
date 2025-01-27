@@ -1,6 +1,10 @@
 const ping = require("ping");
 const logger = require("../utils/logger.util");
 const configUtil = require("../utils/config.util");
+const {
+  minEchoReply,
+  defaultTimeoutEchoReplyInSec,
+} = require("../constants/config.constant");
 
 /**
  * @desc Домашняя страница
@@ -139,8 +143,12 @@ const pingHosts = async (req, res) => {
     const hostStatuses = [];
     for (const host of hosts) {
       try {
+        const timeout = global.config?.request?.timeout
+          ? global.config.request.timeout / minEchoReply
+          : defaultTimeoutEchoReplyInSec;
         const response = await ping.promise.probe(host.host, {
-          timeout: global.config?.request?.timeout,
+          min_reply: minEchoReply,
+          timeout,
         });
         hostStatuses.push({
           ...host,

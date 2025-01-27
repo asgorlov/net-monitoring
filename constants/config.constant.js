@@ -11,6 +11,9 @@ const freeze = (obj) => {
 
 const configPath = path.join(process.cwd(), "/config.json");
 
+const minEchoReply = 4; // for Win ping.exe by default
+const defaultTimeoutEchoReplyInSec = 4; // for Win ping.exe by default
+
 const defaultConfig = freeze({
   port: 8008,
   logger: {
@@ -30,5 +33,7 @@ const defaultConfig = freeze({
 module.exports = {
   freeze: freeze,
   configPath: configPath,
+  minEchoReply: minEchoReply,
   defaultConfig: defaultConfig,
+  defaultTimeoutEchoReplyInSec: defaultTimeoutEchoReplyInSec,
 };
