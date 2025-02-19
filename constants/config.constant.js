@@ -11,8 +11,8 @@ const freeze = (obj) => {
 
 const configPath = path.join(process.cwd(), "/config.json");
 
-const minEchoReply = 4; // for Win ping.exe by default
-const defaultTimeoutEchoReplyInSec = 4; // for Win ping.exe by default
+const minEchoReply = 1; // for Win ping.exe by default
+const defaultTimeoutEchoReplyInSec = 1; // for Win ping.exe by default
 
 const defaultConfig = freeze({
   port: 8008,
