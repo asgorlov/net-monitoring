@@ -1,8 +1,13 @@
-const chalk = require('chalk');
-const fs = require('fs');
-const { loggerLevels, pathToLogDir, loggerTypes } = require('../constants/logger.constant');
-const { defaultConfig } = require('../constants/config.constant')
-const path = require('path')
+const chalk = require("chalk");
+const fs = require("fs");
+const {
+  loggerLevels,
+  pathToLogDir,
+  loggerTypes,
+} = require("../constants/logger.constant");
+const { defaultConfig } = require("../constants/config.constant");
+const path = require("path");
+const crypto = require("crypto");
 
 let logFileStream = null;
 
@@ -18,7 +23,11 @@ const show = (level, type) => {
 
   switch (settings.level) {
     case loggerLevels.DEBUG:
-      return level === settings.level || level === loggerLevels.INFO || level === loggerLevels.ERROR;
+      return (
+        level === settings.level ||
+        level === loggerLevels.INFO ||
+        level === loggerLevels.ERROR
+      );
     case loggerLevels.INFO:
       return level === settings.level || level === loggerLevels.ERROR;
     case loggerLevels.ERROR:
@@ -44,21 +53,20 @@ const removeFile = (file) => {
   } catch (e) {
     logToConsole(loggerLevels.ERROR, e);
   }
-}
+};
 
 const createFile = (row) => {
   try {
-    const files = fs.readdirSync(pathToLogDir, { withFileTypes: true })
-      .filter(d => !d.isDirectory());
+    const files = fs
+      .readdirSync(pathToLogDir, { withFileTypes: true })
+      .filter((d) => !d.isDirectory());
     const numberOfLogFiles = getSettings().numberOfLogFiles;
     if (numberOfLogFiles > 0 && files.length >= numberOfLogFiles) {
-      files
-        .slice(0, (files.length - 4))
-        .forEach(removeFile);
+      files.slice(0, files.length - 4).forEach(removeFile);
     }
 
     const pathToLogFile = path.join(pathToLogDir, `/log-${Date.now()}.log`);
-    logFileStream = fs.createWriteStream(pathToLogFile, { flags: 'a' });
+    logFileStream = fs.createWriteStream(pathToLogFile, { flags: "a" });
     logFileStream.write(row);
   } catch (e) {
     logToConsole(loggerLevels.ERROR, e);
@@ -83,7 +91,10 @@ const logToFile = (level, message) => {
 
     if (logFileStream) {
       const logFileSizeInBytes = getSettings().logFileSizeInBytes;
-      if (logFileSizeInBytes > 0 && logFileStream.bytesWritten >= logFileSizeInBytes) {
+      if (
+        logFileSizeInBytes > 0 &&
+        logFileStream.bytesWritten >= logFileSizeInBytes
+      ) {
         logFileStream.end();
         logFileStream = null;
         createFile(row);
@@ -111,7 +122,10 @@ const getConsoleColor = (level) => {
 const logToConsole = (level, message) => {
   if (show(level, loggerTypes.CONSOLE)) {
     const color = getConsoleColor(level);
-    const stdout = color(chalk.bold(`[${level}]`) + ` - ${new Date().toISOString()}`) + ' - ' + message;
+    const stdout =
+      color(chalk.bold(`[${level}]`) + ` - ${new Date().toISOString()}`) +
+      " - " +
+      message;
     console.log(stdout);
   }
 };
@@ -129,53 +143,58 @@ const info = (message) => {
 const error = (message) => {
   logToConsole(loggerLevels.ERROR, message);
   logToFile(loggerLevels.ERROR, message);
-}
+};
 
 const getUrl = (req) => {
-  return `${req.protocol}://${req.headers.host}${req.url}`
+  return `${req.protocol}://${req.headers.host}${req.url}`;
 };
 
 const getMethodColor = (method) => {
   switch (method.toUpperCase()) {
-    case 'GET':
-      return chalk.hex('#006400');
-    case 'PUT':
-      return chalk.hex('#1E90FF');
-    case 'POST':
-      return chalk.hex('#FF7F50');
-    case 'PATCH':
-      return chalk.hex('#483D8B');
-    case 'DELETE':
-      return chalk.hex('#8B0000');
+    case "GET":
+      return chalk.hex("#006400");
+    case "PUT":
+      return chalk.hex("#1E90FF");
+    case "POST":
+      return chalk.hex("#FF7F50");
+    case "PATCH":
+      return chalk.hex("#483D8B");
+    case "DELETE":
+      return chalk.hex("#8B0000");
     default:
       return chalk.grey;
   }
 };
 
 const getStringifiedBody = (req) => {
-  if (req.method.toUpperCase() !== 'GET') {
+  if (req.method.toUpperCase() !== "GET") {
     const body = req.body || {};
     return `body: ${JSON.stringify(body)}`;
   }
 
-  return '';
+  return "";
 };
 
 const apiMiddleware = (req, res, next) => {
+  req.id = crypto.randomUUID();
+
   const level = getSettings().level;
   if (level === loggerLevels.DEBUG) {
     const url = getUrl(req);
     const method = req.method;
     const color = getMethodColor(method);
     const body = getStringifiedBody(req);
-    logToConsole(loggerLevels.DEBUG, color(method) + ' ' + url + ' ' + body);
-    logToFile(loggerLevels.DEBUG, method + ' ' + url + ' ' + body);
+    logToConsole(
+      loggerLevels.DEBUG,
+      `[${req.id}] - ${color(method)} ${url} ${body}`
+    );
+    logToFile(loggerLevels.DEBUG, `[${req.id}] - ${method} ${url} ${body}`);
   } else if (level === loggerLevels.INFO) {
     const url = getUrl(req);
     const method = req.method;
     const color = getMethodColor(method);
-    logToConsole(loggerLevels.INFO, url + ' ' + color(method));
-    logToFile(loggerLevels.INFO, url + ' ' + method);
+    logToConsole(loggerLevels.INFO, `[${req.id}] - ${color(method)} ${url}`);
+    logToFile(loggerLevels.INFO, `[${req.id}] - ${method} ${url}`);
   }
 
   next();
@@ -183,7 +202,9 @@ const apiMiddleware = (req, res, next) => {
 
 const clearLogDir = () => {
   if (isDirExisted()) {
-    fs.readdirSync(pathToLogDir).forEach(f => fs.unlinkSync(path.join(pathToLogDir, f)));
+    fs.readdirSync(pathToLogDir).forEach((f) =>
+      fs.unlinkSync(path.join(pathToLogDir, f))
+    );
   }
 };
 
@@ -192,5 +213,5 @@ module.exports = {
   info: info,
   error: error,
   apiMiddleware: apiMiddleware,
-  clearLogDir: clearLogDir
+  clearLogDir: clearLogDir,
 };

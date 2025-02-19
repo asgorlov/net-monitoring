@@ -4,22 +4,33 @@ import { Button, Layout, theme } from "antd";
 import SettingsMenuContainer from "../settings-menu/settings-menu.container";
 import packageJson from "../../../package.json";
 
-import { DeleteOutlined, MenuOutlined, SaveOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  MenuOutlined,
+  SaveOutlined,
+  SyncOutlined
+} from "@ant-design/icons";
 import clsx from "clsx";
 import NetSchemeContainer from "../net-scheme/net-scheme.container";
 
 export interface AppLayoutComponentProps {
   open: boolean;
+  configLoading: boolean;
+  showManualPingBtn: boolean;
   isFormsTouched: boolean;
   saveSettings: () => void;
   toggleOpenMenu: () => void;
+  pingManually: () => void;
 }
 
 const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
   open,
+  configLoading,
+  showManualPingBtn,
   isFormsTouched,
   saveSettings,
-  toggleOpenMenu
+  toggleOpenMenu,
+  pingManually
 }) => {
   const { token } = theme.useToken();
 
@@ -33,9 +44,19 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
         className="app-layout__header"
       >
         <div className="app-layout__header__btns-block">
-          <Button size="small" onClick={toggleOpenMenu}>
+          <Button size="small" onClick={toggleOpenMenu} title="Меню настроек">
             <MenuOutlined />
           </Button>
+          {showManualPingBtn && (
+            <Button
+              size="small"
+              disabled={configLoading}
+              onClick={pingManually}
+              title="Ручной пинг"
+            >
+              <SyncOutlined />
+            </Button>
+          )}
           <div
             className={clsx("app-layout__header__btns-block__settings", {
               _touched: open && isFormsTouched

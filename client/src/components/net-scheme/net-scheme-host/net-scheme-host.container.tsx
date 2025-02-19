@@ -1,6 +1,11 @@
 import React, { forwardRef, memo, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { selectConfigLoading, selectInterval } from "../../../store/main.slice";
+import {
+  selectAutoPing,
+  selectConfigLoading,
+  selectInterval,
+  selectManualPingTrigger
+} from "../../../store/main.slice";
 import useOpenSettingsContext from "../../../contexts/open-settings.context";
 import NetSchemeHostComponent from "./net-scheme-host.component";
 import { HostViewModel } from "../../../models/host.models";
@@ -17,8 +22,10 @@ const NetSchemeHostContainer = forwardRef<
   HTMLDivElement,
   NetSchemeHostContainerProps
 >(({ hostViewModel, changeHostViewModel, addChildHostViewModel }, ref) => {
+  const manualPingTrigger = useSelector(selectManualPingTrigger);
   const configLoading = useSelector(selectConfigLoading);
   const interval = useSelector(selectInterval);
+  const autoPing = useSelector(selectAutoPing);
 
   const { open } = useOpenSettingsContext();
   const controllerRef = useRef(new AbortController());
@@ -28,27 +35,48 @@ const NetSchemeHostContainer = forwardRef<
   const [isAlive, setIsAlive] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (!configLoading) {
+    const stopPing = () => {
       controllerRef.current.abort();
-      clearInterval(timerRef.current);
 
-      if (!open && hostViewModel.host) {
-        controllerRef.current = new AbortController();
-        const ping = () => {
-          setPinging(true);
-          pingHostAsync(hostViewModel, controllerRef.current)
-            .then(setIsAlive)
-            .finally(() => setPinging(false));
-        };
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = undefined;
+      }
+    };
+    stopPing();
 
-        ping();
+    const canBePinged =
+      hostViewModel.host &&
+      !configLoading &&
+      !open &&
+      (autoPing || manualPingTrigger > 0);
+    if (canBePinged) {
+      controllerRef.current = new AbortController();
+      const ping = () => {
+        setPinging(true);
+        pingHostAsync(hostViewModel, controllerRef.current)
+          .then(setIsAlive)
+          .finally(() => setPinging(false));
+      };
+      ping();
+
+      if (autoPing) {
         timerRef.current = setInterval(
-          () => ping(),
+          ping,
           settingsUtil.convertToMilliseconds(interval)
         );
       }
+
+      return stopPing;
     }
-  }, [configLoading, open, hostViewModel, interval]);
+  }, [
+    autoPing,
+    manualPingTrigger,
+    hostViewModel,
+    configLoading,
+    open,
+    interval
+  ]);
 
   return (
     <NetSchemeHostComponent

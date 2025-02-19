@@ -11,6 +11,9 @@ const freeze = (obj) => {
 
 const configPath = path.join(process.cwd(), "/config.json");
 
+const minEchoReply = 1; // for Win ping.exe by default
+const defaultTimeoutEchoReplyInSec = 1; // for Win ping.exe by default
+
 const defaultConfig = freeze({
   port: 8008,
   logger: {
@@ -20,8 +23,9 @@ const defaultConfig = freeze({
     logFileSizeInBytes: 52428800, // 50Mb, if it < 0 - infinite size
   },
   request: {
+    autoPing: true,
     interval: 30, // can't be less 1
-    timeout: 30, // can't be less 1 and more interval
+    timeout: 29, // can't be less 1 and more interval
   },
   pingHosts: [],
 });
@@ -29,5 +33,7 @@ const defaultConfig = freeze({
 module.exports = {
   freeze: freeze,
   configPath: configPath,
+  minEchoReply: minEchoReply,
   defaultConfig: defaultConfig,
+  defaultTimeoutEchoReplyInSec: defaultTimeoutEchoReplyInSec,
 };

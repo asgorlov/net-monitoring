@@ -14,6 +14,7 @@ import { HostViewModel, uuid } from "../models/host.models";
 import { defaultConfig } from "../constants/config.constants";
 import { useSelector } from "react-redux";
 import {
+  selectAutoPing,
   selectHostViewModels,
   selectInterval,
   selectLogFileSizeInBytes,
@@ -47,6 +48,7 @@ const SettingsFormContext = createContext<SettingsFormInstance>({
     type: defaultConfig.logger.type,
     numberOfLogFiles: defaultConfig.logger.numberOfLogFiles,
     logFileSize: defaultConfig.logger.logFileSizeInBytes,
+    autoPing: defaultConfig.request.autoPing,
     interval: defaultConfig.request.interval,
     timeout: defaultConfig.request.timeout
   },
@@ -72,6 +74,7 @@ export const FormsContextProvider: FC<PropsWithChildren> = ({ children }) => {
   const port = useSelector(selectPort);
   const timeout = useSelector(selectTimeout);
   const interval = useSelector(selectInterval);
+  const autoPing = useSelector(selectAutoPing);
   const loggerType = useSelector(selectLoggerType);
   const loggerLevel = useSelector(selectLoggerLevel);
   const numberOfLogFiles = useSelector(selectNumberOfLogFiles);
@@ -83,6 +86,7 @@ export const FormsContextProvider: FC<PropsWithChildren> = ({ children }) => {
       type: loggerType,
       numberOfLogFiles,
       logFileSize: settingsUtil.convertToMb(logFileSizeInBytes),
+      autoPing,
       interval,
       timeout
     }),
@@ -92,6 +96,7 @@ export const FormsContextProvider: FC<PropsWithChildren> = ({ children }) => {
       loggerType,
       numberOfLogFiles,
       logFileSizeInBytes,
+      autoPing,
       interval,
       timeout
     ]

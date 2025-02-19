@@ -1,9 +1,9 @@
 import React, { forwardRef, memo, useCallback } from "react";
 import NetSchemeItemComponent from "./net-scheme-item.component";
 import { HostViewModel, uuid } from "../../../models/host.models";
-import { HostType } from "../../../constants/common.constants";
 import { useSchemeFormContext } from "../../../contexts/form.context";
 import { SchemeFormAction } from "../../../constants/form.constants";
+import { createEmptyHost } from "../../../utils/host.util";
 
 export interface NetSchemeItemContainerProps {
   hostId: uuid;
@@ -29,17 +29,7 @@ const NetSchemeItemContainer = forwardRef<
   );
 
   const addChildHostViewModel = useCallback(() => {
-    const child: HostViewModel = {
-      id: crypto.randomUUID(),
-      type: HostType.SW,
-      name: "",
-      host: "",
-      parentId: hostId,
-      childIds: [],
-      errors: []
-    };
-
-    setField(child, SchemeFormAction.ADD);
+    setField(createEmptyHost(hostId), SchemeFormAction.ADD);
   }, [hostId, setField]);
 
   return (

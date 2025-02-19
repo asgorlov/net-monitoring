@@ -1,6 +1,6 @@
 {
   "name": "net-monitoring",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
@@ -13,10 +13,11 @@
   "dependencies": {
     "chalk": "^4.1.2",
     "cookie-parser": "~1.4.4",
-    "express": "~4.16.1",
+    "express": "^4.20.0",
     "ping": "^0.4.4"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "concurrently": "^9.0.1",
     "dotenv": "^16.4.5",
     "nodemon": "^3.1.7",
