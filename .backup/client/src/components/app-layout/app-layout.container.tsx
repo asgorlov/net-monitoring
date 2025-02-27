@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import AppLayoutComponent from "./app-layout.component";
-import { useAppDispatch } from "../../hooks/store.hooks";
+import { useAppDispatch } from "../../../../.backup/client/src/hooks/store.hooks";
 import {
   getConfigAsync,
   incrementManualPingTrigger,
@@ -9,17 +9,17 @@ import {
   selectConfigLoading,
   setBaseConfigData,
   updateConfigAsync
-} from "../../store/main.slice";
-import settingsUtil from "../../utils/settings.util";
-import useOpenSettingsContext from "../../contexts/open-settings.context";
+} from "../../../../.backup/client/src/store/main.slice";
+import settingsUtil from "../../../../.backup/client/src/utils/settings.util";
+import useOpenSettingsContext from "../../../../.backup/client/src/contexts/open-settings.context";
 import {
   useSchemeFormContext,
   useSettingsFormContext
-} from "../../contexts/form.context";
+} from "../../../../.backup/client/src/contexts/form.context";
 import {
   validateAndChangeHostViewModels,
   getOnlyValidHostViewModels
-} from "../../utils/host.util";
+} from "../../../../.backup/client/src/utils/host.util";
 import { Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";

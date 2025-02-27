@@ -2,7 +2,7 @@ import "./app-layout.scss";
 import React, { FC, memo } from "react";
 import { Button, Layout, theme } from "antd";
 import SettingsMenuContainer from "../settings-menu/settings-menu.container";
-import packageJson from "../../../package.json";
+import packageJson from "../../../../.backup/client/package.json";
 
 import {
   DeleteOutlined,

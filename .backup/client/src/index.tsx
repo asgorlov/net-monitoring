@@ -2,7 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
-import AppLayoutContainer from "./components/app-layout/app-layout.container";
+import AppLayoutContainer from "../../../client/src/components/app-layout/app-layout.container";
 import "./index.scss";
 import { OpenSettingsContextProvider } from "./contexts/open-settings.context";
 import { FormsContextProvider } from "./contexts/form.context";
