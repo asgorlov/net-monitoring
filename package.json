@@ -12,9 +12,10 @@
     "build": "webpack --config webpack.main.config.js && webpack --config webpack.renderer.config.js",
     "start": "npm run build && electron-forge start",
     "package": "set NODE_TLS_REJECT_UNAUTHORIZED=0&& electron-forge package",
-    "make": "electron-forge make"
+    "make": "set NODE_TLS_REJECT_UNAUTHORIZED=0&& electron-forge make"
   },
   "dependencies": {
+    "electron-squirrel-startup": "^1.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -23,8 +24,15 @@
     "@babel/preset-env": "^7.23.8",
     "@babel/preset-react": "^7.23.3",
     "@babel/preset-typescript": "^7.23.3",
-    "@electron-forge/cli": "^7.2.0",
+    "@electron-forge/cli": "^7.7.0",
+    "@electron-forge/maker-deb": "^7.7.0",
+    "@electron-forge/maker-rpm": "^7.7.0",
+    "@electron-forge/maker-squirrel": "^7.7.0",
+    "@electron-forge/maker-zip": "^7.7.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.7.0",
+    "@electron-forge/plugin-fuses": "^7.7.0",
     "@electron-forge/plugin-webpack": "^7.2.0",
+    "@electron/fuses": "^1.8.0",
     "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.18",
     "babel-loader": "^9.1.3",
