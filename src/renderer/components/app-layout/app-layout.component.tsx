@@ -2,13 +2,13 @@ import "./app-layout.scss";
 import React, { FC, memo } from "react";
 import { Button, Layout, theme } from "antd";
 import SettingsMenuContainer from "../settings-menu/settings-menu.container";
-import packageJson from "../../../../.backup/client/package.json";
+import packageJson from "../../../../package.json";
 
 import {
   DeleteOutlined,
   MenuOutlined,
   SaveOutlined,
-  SyncOutlined
+  SyncOutlined,
 } from "@ant-design/icons";
 import clsx from "clsx";
 import NetSchemeContainer from "../net-scheme/net-scheme.container";
@@ -30,7 +30,7 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
   isFormsTouched,
   saveSettings,
   toggleOpenMenu,
-  pingManually
+  pingManually,
 }) => {
   const { token } = theme.useToken();
 
@@ -39,7 +39,7 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
       <Layout.Header
         style={{
           background: token.colorBgLayout,
-          borderColor: token.colorBorder
+          borderColor: token.colorBorder,
         }}
         className="app-layout__header"
       >
@@ -59,7 +59,7 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
           )}
           <div
             className={clsx("app-layout__header__btns-block__settings", {
-              _touched: open && isFormsTouched
+              _touched: open && isFormsTouched,
             })}
           >
             <Button
@@ -93,11 +93,7 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
         <span>Net Monitoring v{packageJson.version}</span>
         <span>
           ©2024-{new Date().getFullYear()} Created by{" "}
-          <a
-            href="https://github.com/asgorlov"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <a href={packageJson.author.url} target="_blank" rel="noreferrer">
             asgorlov
           </a>
         </span>

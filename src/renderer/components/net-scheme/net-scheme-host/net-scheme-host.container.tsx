@@ -4,7 +4,7 @@ import {
   selectAutoPing,
   selectConfigLoading,
   selectInterval,
-  selectManualPingTrigger
+  selectManualPingTrigger,
 } from "../../../store/main.slice";
 import useOpenSettingsContext from "../../../contexts/open-settings.context";
 import NetSchemeHostComponent from "./net-scheme-host.component";
@@ -29,7 +29,7 @@ const NetSchemeHostContainer = forwardRef<
 
   const { open } = useOpenSettingsContext();
   const controllerRef = useRef(new AbortController());
-  const timerRef = useRef<NodeJS.Timer | undefined>();
+  const timerRef = useRef<NodeJS.Timeout | undefined>();
 
   const [pinging, setPinging] = useState(false);
   const [isAlive, setIsAlive] = useState<boolean | null>(null);
@@ -63,7 +63,7 @@ const NetSchemeHostContainer = forwardRef<
       if (autoPing) {
         timerRef.current = setInterval(
           ping,
-          settingsUtil.convertToMilliseconds(interval)
+          settingsUtil.convertToMilliseconds(interval),
         );
       }
 
@@ -75,7 +75,7 @@ const NetSchemeHostContainer = forwardRef<
     hostViewModel,
     configLoading,
     open,
-    interval
+    interval,
   ]);
 
   return (

@@ -2,18 +2,18 @@ import "./settings-menu.scss";
 import React, { FC, memo } from "react";
 import clsx from "clsx";
 import { UploadChangeParam } from "antd/es/upload/interface";
-import { UploadRequestOption as RcCustomRequestOptions } from "rc-upload/lib/interface";
 import { Button, InputNumber, Select, Switch, theme, Upload } from "antd";
-import { LoggerLevel, LoggerType } from "../../constants/logger.constants";
-import { SettingsForm } from "../../models/settings-form.models";
-import Skeleton from "../skeleton/skeleton";
+import { UploadRequestOption as RcCustomRequestOptions } from "rc-upload/lib/interface";
 import {
   ClearOutlined,
   DownloadOutlined,
   LoadingOutlined,
   RollbackOutlined,
-  UploadOutlined
+  UploadOutlined,
 } from "@ant-design/icons";
+import { LoggerLevel, LoggerType } from "../../constants/logger.constants";
+import { SettingsForm } from "../../models/settings-form.models";
+import Skeleton from "../skeleton/skeleton";
 import { CONFIG_FILE_TYPE } from "../../constants/common.constants";
 
 export interface MenuProps {
@@ -41,7 +41,7 @@ const SettingsMenuComponent: FC<MenuProps> = ({
   importConfig,
   exportConfig,
   resetConfig,
-  clearLogsLoading
+  clearLogsLoading,
 }) => {
   const { token } = theme.useToken();
 
@@ -113,7 +113,7 @@ const SettingsMenuComponent: FC<MenuProps> = ({
       className={clsx("settings-menu", { _opened: open })}
       style={{
         background: token.colorBgLayout,
-        borderColor: token.colorBorder
+        borderColor: token.colorBorder,
       }}
     >
       <div
@@ -153,7 +153,7 @@ const SettingsMenuComponent: FC<MenuProps> = ({
                 { value: LoggerLevel.DEBUG, label: LoggerLevel.DEBUG },
                 { value: LoggerLevel.INFO, label: LoggerLevel.INFO },
                 { value: LoggerLevel.ERROR, label: LoggerLevel.ERROR },
-                { value: LoggerLevel.OFF, label: LoggerLevel.OFF }
+                { value: LoggerLevel.OFF, label: LoggerLevel.OFF },
               ]}
             />
           )}
@@ -171,7 +171,7 @@ const SettingsMenuComponent: FC<MenuProps> = ({
               options={[
                 { value: LoggerType.CONSOLE, label: LoggerType.CONSOLE },
                 { value: LoggerType.FILE, label: LoggerType.FILE },
-                { value: LoggerType.BOTH, label: LoggerType.BOTH }
+                { value: LoggerType.BOTH, label: LoggerType.BOTH },
               ]}
             />
           )}

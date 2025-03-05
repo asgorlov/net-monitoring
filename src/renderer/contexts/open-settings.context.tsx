@@ -1,11 +1,11 @@
-import {
+import React, {
   createContext,
   Dispatch,
   FC,
   PropsWithChildren,
   SetStateAction,
   useContext,
-  useState
+  useState,
 } from "react";
 
 export interface OpenSettings {
@@ -15,11 +15,11 @@ export interface OpenSettings {
 
 const OpenSettingsContext = createContext<OpenSettings>({
   open: false,
-  setOpen: () => {}
+  setOpen: () => {},
 });
 
 export const OpenSettingsContextProvider: FC<PropsWithChildren> = ({
-  children
+  children,
 }) => {
   const [open, setOpen] = useState(false);
 

@@ -2,29 +2,29 @@ import {
   createAsyncThunk,
   createSlice,
   isAnyOf,
-  PayloadAction
+  PayloadAction,
 } from "@reduxjs/toolkit";
+import { notification } from "antd";
+import { UploadFile } from "antd/es/upload/interface";
 import { RootState } from "./store";
 import { defaultConfig } from "../constants/config.constants";
 import { LoggerLevel, LoggerType } from "../constants/logger.constants";
 import { Config, ConfigError, ClearingLogFiles } from "../models/config.models";
 import Path from "../constants/path.constants";
-import { notification } from "antd";
 import {
   convertStateToConfig,
   getConfigFromFile,
   updateConfig,
   updateState,
-  updateStateByConfig
+  updateStateByConfig,
 } from "../utils/main.util";
 import { HostViewModel, uuid } from "../models/host.models";
 import { initializePingHostViewModel } from "../utils/host.util";
 import settingsUtil from "../utils/settings.util";
 import {
   CONFIG_FILE_NAME,
-  CONFIG_FILE_TYPE
+  CONFIG_FILE_TYPE,
 } from "../constants/common.constants";
-import { UploadFile } from "antd/es/upload/interface";
 
 export interface MainStateBase {
   port: number;
@@ -56,67 +56,73 @@ const initialState: MainState = {
   autoPing: defaultConfig.request.autoPing,
   interval: defaultConfig.request.interval,
   timeout: defaultConfig.request.timeout,
-  hostViewModels: initializePingHostViewModel(defaultConfig.pingHosts)
+  hostViewModels: initializePingHostViewModel(defaultConfig.pingHosts),
 };
 
 export const getConfigAsync = createAsyncThunk(
   "config/get",
   (): Promise<Config> => {
     return new Promise((resolve, reject) => {
-      fetch(Path.config)
-        .then(async response => {
-          if (response.ok) {
-            const data: Config = await response.json();
-            resolve(data);
-          } else {
-            const data: ConfigError = await response.json();
-            reject(data.message);
-          }
-        })
-        .catch(e => {
-          reject("Не удалось выполнить запрос на получение настроек");
-          console.error(e);
-        });
+      // toDo: Исправить логику
+      // fetch(Path.config)
+      //   .then(async (response) => {
+      //     if (response.ok) {
+      //       const data: Config = await response.json();
+      //       resolve(data);
+      //     } else {
+      //       const data: ConfigError = await response.json();
+      //       reject(data.message);
+      //     }
+      //   })
+      //   .catch((e) => {
+      //     reject("Не удалось выполнить запрос на получение настроек");
+      //     console.error(e);
+      //   });
+      resolve(defaultConfig);
     });
-  }
+  },
 );
 
 export const updateConfigAsync = createAsyncThunk(
   "config/update",
   (_, { getState }): Promise<void> => {
     return new Promise((resolve, reject) => {
-      const { main } = getState() as RootState;
-      const config = convertStateToConfig(main);
-      updateConfig(config).then(resolve).catch(reject);
+      // toDo: Исправить логику
+      // const { main } = getState() as RootState;
+      // const config = convertStateToConfig(main);
+      // updateConfig(config).then(resolve).catch(reject);
+      resolve();
     });
-  }
+  },
 );
 
 export const resetConfigAsync = createAsyncThunk(
   "config/reset",
   (): Promise<Config> => {
     return new Promise((resolve, reject) => {
-      const options: RequestInit = {
-        method: "DELETE"
-      };
-      fetch(Path.config, options)
-        .then(async response => {
-          if (response.ok) {
-            const data: Config = await response.json();
-            resolve(data);
-          } else {
-            const data: ConfigError = await response.json();
-            reject(data.message);
-          }
-        })
-        .catch(e => {
-          reject(
-            "Не удалось выполнить запрос на возврат настроек по умолчанию"
-          );
-          console.error(e);
-        });
+      // toDo: Исправить логику
+      // const options: RequestInit = {
+      //   method: "DELETE",
+      // };
+      // fetch(Path.config, options)
+      //   .then(async (response) => {
+      //     if (response.ok) {
+      //       const data: Config = await response.json();
+      //       resolve(data);
+      //     } else {
+      //       const data: ConfigError = await response.json();
+      //       reject(data.message);
+      //     }
+      //   })
+      //   .catch((e) => {
+      //     reject(
+      //       "Не удалось выполнить запрос на возврат настроек по умолчанию",
+      //     );
+      //     console.error(e);
+      //   });
+      resolve(defaultConfig);
     });
-  }
+  },
 );
 
 export const importConfigAsync = createAsyncThunk(
@@ -126,7 +132,7 @@ export const importConfigAsync = createAsyncThunk(
     await updateConfig(config);
 
     return config;
-  }
+  },
 );
 
 export const exportConfigAsync = createAsyncThunk(
@@ -136,33 +142,35 @@ export const exportConfigAsync = createAsyncThunk(
     settingsUtil.downloadFile(
       JSON.stringify(convertStateToConfig(main), null, 4),
       CONFIG_FILE_NAME,
-      CONFIG_FILE_TYPE
+      CONFIG_FILE_TYPE,
     );
-  }
+  },
 );
 
 export const clearLogFilesAsync = createAsyncThunk(
   "log/clear",
   (): Promise<void> => {
     return new Promise((resolve, reject) => {
-      const options: RequestInit = {
-        method: "DELETE"
-      };
-      fetch(Path.log, options)
-        .then(async response => {
-          const data: ClearingLogFiles = await response.json();
-          if (response.ok && data.isCleared) {
-            resolve();
-          } else {
-            reject(data.message);
-          }
-        })
-        .catch(e => {
-          reject("Не удалось выполнить запрос на очистку файлов логирования");
-          console.error(e);
-        });
+      // toDo: Исправить логику
+      // const options: RequestInit = {
+      //   method: "DELETE",
+      // };
+      // fetch(Path.log, options)
+      //   .then(async (response) => {
+      //     const data: ClearingLogFiles = await response.json();
+      //     if (response.ok && data.isCleared) {
+      //       resolve();
+      //     } else {
+      //       reject(data.message);
+      //     }
+      //   })
+      //   .catch((e) => {
+      //     reject("Не удалось выполнить запрос на очистку файлов логирования");
+      //     console.error(e);
+      //   });
+      resolve();
     });
-  }
+  },
 );
 
 export const mainSlice = createSlice({
@@ -172,22 +180,22 @@ export const mainSlice = createSlice({
     setBaseConfigData: (state, action: PayloadAction<MainStateBase>) => {
       updateState(state, action.payload);
     },
-    resetManualPingTrigger: state => {
+    resetManualPingTrigger: (state) => {
       state.manualPingTrigger = 0;
     },
-    incrementManualPingTrigger: state => {
+    incrementManualPingTrigger: (state) => {
       state.manualPingTrigger++;
-    }
+    },
   },
-  extraReducers: builder => {
-    builder.addCase(clearLogFilesAsync.fulfilled, state => {
+  extraReducers: (builder) => {
+    builder.addCase(clearLogFilesAsync.fulfilled, (state) => {
       notification.success({
-        message: "Папка с файлами логирования очищена"
+        message: "Папка с файлами логирования очищена",
       });
       state.clearLogFilesLoading = false;
     });
 
-    builder.addCase(clearLogFilesAsync.pending, state => {
+    builder.addCase(clearLogFilesAsync.pending, (state) => {
       state.clearLogFilesLoading = true;
     });
 
@@ -197,10 +205,10 @@ export const mainSlice = createSlice({
       state.clearLogFilesLoading = false;
     });
 
-    builder.addCase(updateConfigAsync.fulfilled, state => {
+    builder.addCase(updateConfigAsync.fulfilled, (state) => {
       notification.success({
         message:
-          "Конфигурация обновлена. Для корректной работы приложения требуется перезагрузка"
+          "Конфигурация обновлена. Для корректной работы приложения требуется перезагрузка",
       });
       state.configLoading = false;
     });
@@ -218,10 +226,10 @@ export const mainSlice = createSlice({
         updateStateByConfig(state, config);
         notification.success({
           message:
-            "Конфигурация обновлена. Для корректной работы приложения требуется перезагрузка"
+            "Конфигурация обновлена. Для корректной работы приложения требуется перезагрузка",
         });
         state.configLoading = false;
-      }
+      },
     );
 
     builder.addMatcher(
@@ -229,11 +237,11 @@ export const mainSlice = createSlice({
         getConfigAsync.pending,
         updateConfigAsync.pending,
         importConfigAsync.pending,
-        resetConfigAsync.pending
+        resetConfigAsync.pending,
       ),
-      state => {
+      (state) => {
         state.configLoading = true;
-      }
+      },
     );
 
     builder.addMatcher(
@@ -241,7 +249,7 @@ export const mainSlice = createSlice({
         getConfigAsync.rejected,
         updateConfigAsync.rejected,
         importConfigAsync.rejected,
-        resetConfigAsync.rejected
+        resetConfigAsync.rejected,
       ),
       (state, action) => {
         const stack = action.error.stack;
@@ -251,15 +259,15 @@ export const mainSlice = createSlice({
         const message = action.error.message;
         notification.error({ message });
         state.configLoading = false;
-      }
+      },
     );
-  }
+  },
 });
 
 export const {
   setBaseConfigData,
   resetManualPingTrigger,
-  incrementManualPingTrigger
+  incrementManualPingTrigger,
 } = mainSlice.actions;
 
 export const selectPort = (state: RootState): number => state.main.port;
@@ -276,7 +284,7 @@ export const selectAutoPing = (state: RootState): boolean =>
 export const selectInterval = (state: RootState): number => state.main.interval;
 export const selectTimeout = (state: RootState): number => state.main.timeout;
 export const selectHostViewModels = (
-  state: RootState
+  state: RootState,
 ): Record<uuid, HostViewModel> => state.main.hostViewModels;
 export const selectConfigLoading = (state: RootState): boolean =>
   state.main.configLoading;

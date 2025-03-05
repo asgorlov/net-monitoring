@@ -2,7 +2,7 @@ import { Config, UpdatingConfig } from "../models/config.models";
 import { MainState, MainStateBase } from "../store/main.slice";
 import {
   convertHostViewModelsToPingHosts,
-  getUpdatedHostViewModels
+  getUpdatedHostViewModels,
 } from "./host.util";
 import { UploadFile } from "antd/es/upload/interface";
 import { defaultConfig } from "../constants/config.constants";
@@ -32,8 +32,8 @@ export const updateStateByConfig = (state: MainState, config: Config) => {
     timeout: config.request.timeout,
     hostViewModels: getUpdatedHostViewModels(
       config.pingHosts,
-      state.hostViewModels
-    )
+      state.hostViewModels,
+    ),
   });
 };
 
@@ -44,14 +44,14 @@ export const convertStateToConfig = (state: MainState): Config => {
       level: state.loggerLevel,
       type: state.loggerType,
       numberOfLogFiles: state.numberOfLogFiles,
-      logFileSizeInBytes: state.logFileSizeInBytes
+      logFileSizeInBytes: state.logFileSizeInBytes,
     },
     request: {
       autoPing: state.autoPing,
       interval: state.interval,
-      timeout: state.timeout
+      timeout: state.timeout,
     },
-    pingHosts: convertHostViewModelsToPingHosts(state.hostViewModels)
+    pingHosts: convertHostViewModelsToPingHosts(state.hostViewModels),
   };
 };
 
@@ -66,7 +66,7 @@ export const getConfigFromFile = (file: UploadFile): Promise<Config> => {
         try {
           const config = JSON.parse(json);
 
-          Object.keys(config).forEach(name => {
+          Object.keys(config).forEach((name) => {
             if (!Object.hasOwn(defaultConfig, name)) {
               delete config[name];
             }
@@ -86,24 +86,26 @@ export const getConfigFromFile = (file: UploadFile): Promise<Config> => {
 
 export const updateConfig = (config: Config): Promise<void> => {
   return new Promise((resolve, reject) => {
-    const options: RequestInit = {
-      method: "PUT",
-      headers: [["Content-Type", "application/json"]],
-      body: JSON.stringify(config)
-    };
-
-    fetch(Path.config, options)
-      .then(async response => {
-        const data: UpdatingConfig = await response.json();
-        if (response.ok && data.isUpdated) {
-          resolve();
-        } else {
-          reject(data.message);
-        }
-      })
-      .catch(e => {
-        reject("Не удалось выполнить запрос на обновление настроек");
-        console.error(e);
-      });
+    // toDo: Исправить логику
+    // const options: RequestInit = {
+    //   method: "PUT",
+    //   headers: [["Content-Type", "application/json"]],
+    //   body: JSON.stringify(config)
+    // };
+    //
+    // fetch(Path.config, options)
+    //   .then(async response => {
+    //     const data: UpdatingConfig = await response.json();
+    //     if (response.ok && data.isUpdated) {
+    //       resolve();
+    //     } else {
+    //       reject(data.message);
+    //     }
+    //   })
+    //   .catch(e => {
+    //     reject("Не удалось выполнить запрос на обновление настроек");
+    //     console.error(e);
+    //   });
+    resolve();
   });
 };

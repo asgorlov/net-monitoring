@@ -1,4 +1,5 @@
-import {
+import { useSelector } from "react-redux";
+import React, {
   createContext,
   FC,
   PropsWithChildren,
@@ -7,12 +8,11 @@ import {
   useEffect,
   useMemo,
   useRef,
-  useState
+  useState,
 } from "react";
 import { SettingsForm } from "../models/settings-form.models";
 import { HostViewModel, uuid } from "../models/host.models";
 import { defaultConfig } from "../constants/config.constants";
-import { useSelector } from "react-redux";
 import {
   selectAutoPing,
   selectHostViewModels,
@@ -22,14 +22,14 @@ import {
   selectLoggerType,
   selectNumberOfLogFiles,
   selectPort,
-  selectTimeout
+  selectTimeout,
 } from "../store/main.slice";
 import settingsUtil from "../utils/settings.util";
 import { SchemeFormAction } from "../constants/form.constants";
 import {
   addHostViewModel,
   modifyHostViewModel,
-  removeHostViewModel
+  removeHostViewModel,
 } from "../utils/host.util";
 
 export interface FormInstance<T> {
@@ -50,11 +50,11 @@ const SettingsFormContext = createContext<SettingsFormInstance>({
     logFileSize: defaultConfig.logger.logFileSizeInBytes,
     autoPing: defaultConfig.request.autoPing,
     interval: defaultConfig.request.interval,
-    timeout: defaultConfig.request.timeout
+    timeout: defaultConfig.request.timeout,
   },
   setData: () => {},
   resetData: () => {},
-  isTouched: false
+  isTouched: false,
 });
 
 export interface SchemeFormInstance
@@ -67,7 +67,7 @@ const SchemeFormContext = createContext<SchemeFormInstance>({
   setData: () => {},
   setField: () => {},
   resetData: () => {},
-  isTouched: false
+  isTouched: false,
 });
 
 export const FormsContextProvider: FC<PropsWithChildren> = ({ children }) => {
@@ -88,7 +88,7 @@ export const FormsContextProvider: FC<PropsWithChildren> = ({ children }) => {
       logFileSize: settingsUtil.convertToMb(logFileSizeInBytes),
       autoPing,
       interval,
-      timeout
+      timeout,
     }),
     [
       port,
@@ -98,8 +98,8 @@ export const FormsContextProvider: FC<PropsWithChildren> = ({ children }) => {
       logFileSizeInBytes,
       autoPing,
       interval,
-      timeout
-    ]
+      timeout,
+    ],
   );
   const initialScheme = useSelector(selectHostViewModels);
 
@@ -122,7 +122,7 @@ export const FormsContextProvider: FC<PropsWithChildren> = ({ children }) => {
   const changeScheme = useCallback(
     (
       value: HostViewModel,
-      action: SchemeFormAction = SchemeFormAction.MODIFY
+      action: SchemeFormAction = SchemeFormAction.MODIFY,
     ) => {
       const newScheme = { ...scheme };
       switch (action) {
@@ -142,7 +142,7 @@ export const FormsContextProvider: FC<PropsWithChildren> = ({ children }) => {
       isSchemeTouched.current = true;
       setScheme(newScheme);
     },
-    [scheme]
+    [scheme],
   );
 
   const resetScheme = useCallback(() => {
@@ -160,7 +160,7 @@ export const FormsContextProvider: FC<PropsWithChildren> = ({ children }) => {
         data: settings,
         setData: changeSettings,
         resetData: resetSettings,
-        isTouched: isSettingsTouched.current
+        isTouched: isSettingsTouched.current,
       }}
     >
       <SchemeFormContext.Provider
@@ -169,7 +169,7 @@ export const FormsContextProvider: FC<PropsWithChildren> = ({ children }) => {
           setData: setScheme,
           resetData: resetScheme,
           isTouched: isSchemeTouched.current,
-          setField: changeScheme
+          setField: changeScheme,
         }}
       >
         {children}

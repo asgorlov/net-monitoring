@@ -1,9 +1,10 @@
 import React, { FC, useCallback } from "react";
 import { useSelector } from "react-redux";
+import { notification } from "antd";
 import {
   RcFile,
   UploadChangeParam,
-  UploadFile
+  UploadFile,
 } from "antd/es/upload/interface";
 import { UploadRequestOption as RcCustomRequestOptions } from "rc-upload/lib/interface";
 import {
@@ -13,7 +14,7 @@ import {
   resetConfigAsync,
   resetManualPingTrigger,
   selectClearLogFilesLoading,
-  selectConfigLoading
+  selectConfigLoading,
 } from "../../store/main.slice";
 import SettingsMenuComponent from "./settings-menu.component";
 import useOpenSettingsContext from "../../contexts/open-settings.context";
@@ -22,9 +23,8 @@ import { useAppDispatch } from "../../hooks/store.hooks";
 import {
   CONFIG_FILE_TYPE,
   DONE_STATUS,
-  ERROR_STATUS
+  ERROR_STATUS,
 } from "../../constants/common.constants";
-import { notification } from "antd";
 
 const SettingsMenuContainer: FC = () => {
   const clearLogFilesLoading = useSelector(selectClearLogFilesLoading);
@@ -36,7 +36,7 @@ const SettingsMenuContainer: FC = () => {
 
   const onClickClearLogs = useCallback(
     () => dispatch(clearLogFilesAsync()),
-    [dispatch]
+    [dispatch],
   );
 
   const resetPingTrigger = useCallback(
@@ -45,7 +45,7 @@ const SettingsMenuContainer: FC = () => {
         dispatch(resetManualPingTrigger());
       }
     },
-    [dispatch]
+    [dispatch],
   );
 
   const validateUploading = useCallback(
@@ -63,7 +63,7 @@ const SettingsMenuContainer: FC = () => {
         options.onSuccess?.(file);
       }
     },
-    []
+    [],
   );
 
   const importConfig = useCallback(
@@ -74,17 +74,17 @@ const SettingsMenuContainer: FC = () => {
         dispatch(importConfigAsync(file));
       } else if (file.status === ERROR_STATUS) {
         notification.error({
-          message: "Не удалось загрузить файл конфигурации"
+          message: "Не удалось загрузить файл конфигурации",
         });
         console.error(file.error);
       }
     },
-    [dispatch]
+    [dispatch],
   );
 
   const exportConfig = useCallback(
     () => dispatch(exportConfigAsync()),
-    [dispatch]
+    [dispatch],
   );
 
   const resetConfig = useCallback(() => {

@@ -1,6 +1,9 @@
 import React, { useCallback, useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
+import { Modal } from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import AppLayoutComponent from "./app-layout.component";
-import { useAppDispatch } from "../../../../.backup/client/src/hooks/store.hooks";
+import { useAppDispatch } from "../../hooks/store.hooks";
 import {
   getConfigAsync,
   incrementManualPingTrigger,
@@ -8,21 +11,18 @@ import {
   selectAutoPing,
   selectConfigLoading,
   setBaseConfigData,
-  updateConfigAsync
-} from "../../../../.backup/client/src/store/main.slice";
-import settingsUtil from "../../../../.backup/client/src/utils/settings.util";
-import useOpenSettingsContext from "../../../../.backup/client/src/contexts/open-settings.context";
+  updateConfigAsync,
+} from "../../store/main.slice";
+import settingsUtil from "../../utils/settings.util";
+import useOpenSettingsContext from "../../contexts/open-settings.context";
 import {
   useSchemeFormContext,
-  useSettingsFormContext
-} from "../../../../.backup/client/src/contexts/form.context";
+  useSettingsFormContext,
+} from "../../contexts/form.context";
 import {
   validateAndChangeHostViewModels,
-  getOnlyValidHostViewModels
-} from "../../../../.backup/client/src/utils/host.util";
-import { Modal } from "antd";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { useSelector } from "react-redux";
+  getOnlyValidHostViewModels,
+} from "../../utils/host.util";
 
 const AppLayoutContainer = () => {
   const [modal, contextHolder] = Modal.useModal();
@@ -37,12 +37,12 @@ const AppLayoutContainer = () => {
 
   const pingManually = useCallback(
     () => dispatch(incrementManualPingTrigger()),
-    [dispatch]
+    [dispatch],
   );
 
   const toggleOpenMenu = useCallback(
     () =>
-      setOpen(prevState => {
+      setOpen((prevState) => {
         const newState = !prevState;
         if (newState) {
           dispatch(resetManualPingTrigger());
@@ -50,7 +50,7 @@ const AppLayoutContainer = () => {
 
         return newState;
       }),
-    [setOpen, dispatch]
+    [setOpen, dispatch],
   );
 
   const saveSettings = useCallback(() => {
@@ -65,15 +65,15 @@ const AppLayoutContainer = () => {
           loggerType: settingsData.type,
           numberOfLogFiles: settingsData.numberOfLogFiles,
           logFileSizeInBytes: settingsUtil.convertToBytes(
-            settingsData.logFileSize
+            settingsData.logFileSize,
           ),
           autoPing: settingsData.autoPing,
           interval: settingsData.interval,
           timeout: settingsData.timeout,
           hostViewModels: hasErrors
             ? getOnlyValidHostViewModels(schemeData)
-            : schemeData
-        })
+            : schemeData,
+        }),
       );
       dispatch(updateConfigAsync());
       setOpen(false);
@@ -91,7 +91,7 @@ const AppLayoutContainer = () => {
         content,
         okText: "Продолжить",
         cancelText: "Отменить",
-        onOk: save
+        onOk: save,
       });
 
       schemeForm.setData(schemeData);

@@ -1,10 +1,10 @@
 import "./net-scheme.scss";
 import React, { FC, memo, useMemo } from "react";
+import { Button } from "antd";
 import NetSchemeItemContainer from "./net-scheme-item/net-scheme-item.container";
 import NetSchemeLine from "./net-scheme-line/net-scheme-line";
 import { HostViewModel, uuid } from "../../models/host.models";
 import NetSchemeEmptyItem from "./net-scheme-empty-item/net-scheme-empty-item";
-import { Button } from "antd";
 
 export interface NetSchemeComponentProps {
   hostViewModels: Record<uuid, HostViewModel>;
@@ -17,19 +17,19 @@ const NetSchemeComponent: FC<NetSchemeComponentProps> = ({
   hostViewModels,
   addHostViewModel,
   isEditable,
-  openSettings
+  openSettings,
 }) => {
   const parentHostViewModels = Object.values(hostViewModels).filter(
-    h => h.parentId === null
+    (h) => h.parentId === null,
   );
   const showEmptyMessage = !isEditable && !parentHostViewModels.length;
 
   const lineDimensions = useMemo(
     () => ({
       width: "12px",
-      isVertical: true
+      isVertical: true,
     }),
-    []
+    [],
   );
 
   return (
@@ -51,7 +51,7 @@ const NetSchemeComponent: FC<NetSchemeComponentProps> = ({
         <div className="net-scheme">
           <NetSchemeLine dimensions={lineDimensions} />
           <div className="net-scheme__hosts">
-            {parentHostViewModels.map(h => {
+            {parentHostViewModels.map((h) => {
               return <NetSchemeItemContainer key={h.id} hostId={h.id} />;
             })}
             {isEditable && <NetSchemeEmptyItem add={addHostViewModel} />}

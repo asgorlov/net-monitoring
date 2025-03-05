@@ -1,30 +1,30 @@
+import { notification } from "antd";
 import {
   FlattedPingHost,
   HostBase,
   HostResponseBody,
   HostViewModel,
   PingHost,
-  uuid
+  uuid,
 } from "../models/host.models";
 import { HostFieldError } from "../constants/form.constants";
-import Path from "../constants/path.constants";
-import { notification } from "antd";
 import { HostType } from "../constants/common.constants";
+import Path from "../constants/path.constants";
 
 export const getFlattedPingHosts = (
   hosts: PingHost[],
-  parentId: uuid | null = null
+  parentId: uuid | null = null,
 ): FlattedPingHost[] => {
   const result: FlattedPingHost[] = [];
 
-  hosts.forEach(h => {
+  hosts.forEach((h) => {
     result.push({
       id: h.id,
       type: h.type,
       name: h.name,
       host: h.host,
       parentId,
-      childIds: h.children.map(c => c.id)
+      childIds: h.children.map((c) => c.id),
     });
     if (h.children.length) {
       result.push(...getFlattedPingHosts(h.children, h.id));
@@ -35,14 +35,14 @@ export const getFlattedPingHosts = (
 };
 
 export const initializePingHostViewModel = (
-  hosts: PingHost[]
+  hosts: PingHost[],
 ): Record<uuid, HostViewModel> => {
   const result: Record<uuid, HostViewModel> = {};
 
-  getFlattedPingHosts(hosts).forEach(h => {
+  getFlattedPingHosts(hosts).forEach((h) => {
     result[h.id] = {
       ...h,
-      errors: []
+      errors: [],
     };
   });
 
@@ -51,18 +51,18 @@ export const initializePingHostViewModel = (
 
 export const getUpdatedHostViewModels = (
   hosts: PingHost[],
-  hostViewModels: Record<uuid, HostViewModel>
+  hostViewModels: Record<uuid, HostViewModel>,
 ): Record<uuid, HostViewModel> => {
   if (Object.keys(hostViewModels).length) {
     const result: Record<uuid, HostViewModel> = {};
 
-    getFlattedPingHosts(hosts).forEach(h => {
+    getFlattedPingHosts(hosts).forEach((h) => {
       const model = hostViewModels[h.id];
       result[h.id] = model
         ? { ...model, ...h }
         : {
             ...h,
-            errors: []
+            errors: [],
           };
     });
 
@@ -74,17 +74,17 @@ export const getUpdatedHostViewModels = (
 
 export const convertHostViewModelsToPingHosts = (
   hostViewModels: Record<uuid, HostViewModel>,
-  parentId: uuid | null = null
+  parentId: uuid | null = null,
 ): PingHost[] => {
   return Object.values(hostViewModels)
-    .filter(model => model.parentId === parentId)
-    .map(m => {
+    .filter((model) => model.parentId === parentId)
+    .map((m) => {
       const pingHost: PingHost = {
         id: m.id,
         type: m.type,
         name: m.name,
         host: m.host,
-        children: convertHostViewModelsToPingHosts(hostViewModels, m.id)
+        children: convertHostViewModelsToPingHosts(hostViewModels, m.id),
       };
 
       return pingHost;
@@ -93,14 +93,14 @@ export const convertHostViewModelsToPingHosts = (
 
 export const modifyHostViewModel = (
   models: Record<uuid, HostViewModel>,
-  modifiedModel: HostViewModel
+  modifiedModel: HostViewModel,
 ) => {
   models[modifiedModel.id] = modifiedModel;
 };
 
 export const addHostViewModel = (
   models: Record<uuid, HostViewModel>,
-  addedModel: HostViewModel
+  addedModel: HostViewModel,
 ) => {
   const addedId = addedModel.id;
   models[addedId] = addedModel;
@@ -111,7 +111,7 @@ export const addHostViewModel = (
     if (parent) {
       models[parentId] = {
         ...parent,
-        childIds: parent.childIds.concat(addedId)
+        childIds: parent.childIds.concat(addedId),
       };
     }
   }
@@ -119,11 +119,11 @@ export const addHostViewModel = (
 
 export const getFlattedChildHostViewModels = (
   models: Record<uuid, HostViewModel>,
-  model: HostViewModel
+  model: HostViewModel,
 ): HostViewModel[] => {
   const result: HostViewModel[] = [];
 
-  model.childIds.forEach(id => {
+  model.childIds.forEach((id) => {
     const current = models[id];
     if (current) {
       result.push(current);
@@ -139,23 +139,23 @@ export const getFlattedChildHostViewModels = (
 
 export const removeHostViewModel = (
   models: Record<uuid, HostViewModel>,
-  removedModel: HostViewModel
+  removedModel: HostViewModel,
 ) => {
   const removedId = removedModel.id;
   delete models[removedId];
 
   const children = getFlattedChildHostViewModels(models, removedModel);
-  children.forEach(c => delete models[c.id]);
+  children.forEach((c) => delete models[c.id]);
 
   const parentId = removedModel.parentId;
   if (parentId) {
     const parent = models[parentId];
     if (parent) {
-      const newChildIds = parent.childIds.filter(id => id !== removedId);
+      const newChildIds = parent.childIds.filter((id) => id !== removedId);
       if (newChildIds.length !== parent.childIds.length) {
         models[parentId] = {
           ...parent,
-          childIds: newChildIds
+          childIds: newChildIds,
         };
       }
     }
@@ -163,23 +163,23 @@ export const removeHostViewModel = (
 };
 
 export const getOnlyValidHostViewModels = (
-  hostViewModels: Record<uuid, HostViewModel>
+  hostViewModels: Record<uuid, HostViewModel>,
 ) => {
   const newHostViewModel = { ...hostViewModels };
 
   Object.values(newHostViewModel)
-    .filter(m => m.errors.length)
-    .forEach(m => removeHostViewModel(newHostViewModel, m));
+    .filter((m) => m.errors.length)
+    .forEach((m) => removeHostViewModel(newHostViewModel, m));
 
   return newHostViewModel;
 };
 
 export const validateAndChangeHostViewModels = (
-  hostViewModels: Record<uuid, HostViewModel>
+  hostViewModels: Record<uuid, HostViewModel>,
 ): Record<uuid, HostViewModel> => {
   const schemeFormErrors: Record<uuid, HostFieldError[]> = {};
 
-  Object.values(hostViewModels).forEach(m => {
+  Object.values(hostViewModels).forEach((m) => {
     const errors: HostFieldError[] = [];
 
     if (!m.name) {
@@ -200,7 +200,7 @@ export const validateAndChangeHostViewModels = (
     const newHostViewModels = { ...hostViewModels };
     resultEntries.forEach(
       ([id, errors]) =>
-        (newHostViewModels[id] = { ...newHostViewModels[id], errors })
+        (newHostViewModels[id] = { ...newHostViewModels[id], errors }),
     );
 
     return newHostViewModels;
@@ -211,34 +211,35 @@ export const validateAndChangeHostViewModels = (
 
 export const pingHostAsync = async (
   host: HostBase,
-  controller: AbortController
+  controller: AbortController,
 ): Promise<boolean | null> => {
-  try {
-    const options: RequestInit = {
-      method: "POST",
-      headers: [["Content-Type", "application/json"]],
-      body: JSON.stringify({ hosts: [host] }),
-      signal: controller.signal
-    };
-    const response = await fetch(Path.ping, options);
-    const data: HostResponseBody = await response.json();
-
-    return data.hostStatuses[0].isAlive;
-  } catch (e) {
-    const error = e as Error;
-    if (error.name !== "AbortError") {
-      notification.error({
-        message: `Не удалось выполнить пинг подключения с адресом: ${host.host}`
-      });
-      console.error(error);
-    }
-  }
+  // toDo: Исправить логику
+  // try {
+  //   const options: RequestInit = {
+  //     method: "POST",
+  //     headers: [["Content-Type", "application/json"]],
+  //     body: JSON.stringify({ hosts: [host] }),
+  //     signal: controller.signal,
+  //   };
+  //   const response = await fetch(Path.ping, options);
+  //   const data: HostResponseBody = await response.json();
+  //
+  //   return data.hostStatuses[0].isAlive;
+  // } catch (e) {
+  //   const error = e as Error;
+  //   if (error.name !== "AbortError") {
+  //     notification.error({
+  //       message: `Не удалось выполнить пинг подключения с адресом: ${host.host}`,
+  //     });
+  //     console.error(error);
+  //   }
+  // }
 
   return null;
 };
 
 export const createEmptyHost = (
-  parentId: uuid | null = null
+  parentId: uuid | null = null,
 ): HostViewModel => {
   return {
     id: crypto.randomUUID(),
@@ -247,6 +248,6 @@ export const createEmptyHost = (
     host: "",
     parentId,
     childIds: [],
-    errors: []
+    errors: [],
   };
 };
