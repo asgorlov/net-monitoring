@@ -1,4 +1,5 @@
 import React from "react";
+import "./App.scss";
 
 function App(): JSX.Element {
   function test(): void {
@@ -10,7 +11,7 @@ function App(): JSX.Element {
 
   return (
     <div>
-      <h1>Hello from React and Electron!</h1>
+      <h1 className="app-layout">Hello from React and Electron!</h1>
       <button onClick={test}>Test</button>
     </div>
   );
