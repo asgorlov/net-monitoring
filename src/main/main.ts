@@ -5,15 +5,17 @@ let mainWindow: BrowserWindow | null;
 
 function createWindow(): void {
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
     webPreferences: {
       preload: path.join(__dirname, "preloader.js"),
       contextIsolation: true,
     },
+    show: false,
   });
+  mainWindow.maximize();
+  mainWindow.show();
   mainWindow.loadFile(path.join(__dirname, "..", "renderer", "index.html"));
   mainWindow.on("closed", () => (mainWindow = null));
+  mainWindow.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
 }
 
 app.on("ready", createWindow);
