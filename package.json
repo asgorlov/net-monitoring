@@ -16,9 +16,11 @@
     "prod": "npm run build && npm run package && npm run make"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.6.0",
     "electron-squirrel-startup": "^1.0.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-redux": "^9.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.23.7",
