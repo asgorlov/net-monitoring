@@ -4,6 +4,7 @@
     "module": "CommonJS",
     "target": "ES2022",
     "jsx": "react",
+    "resolveJsonModule": true,
     "esModuleInterop": true
   },
   "include": [
