@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "./dist",
     "module": "CommonJS",
-    "target": "ES6",
+    "target": "ES2022",
     "jsx": "react",
     "esModuleInterop": true
   },
