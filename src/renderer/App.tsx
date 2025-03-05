@@ -1,5 +1,6 @@
 import React from "react";
 import "./App.scss";
+import { Button } from "antd";
 
 function App(): JSX.Element {
   function test(): void {
@@ -12,7 +13,7 @@ function App(): JSX.Element {
   return (
     <div>
       <h1 className="app-layout">Hello from React and Electron!</h1>
-      <button onClick={test}>Test</button>
+      <Button onClick={test}>Test</Button>
     </div>
   );
 }
