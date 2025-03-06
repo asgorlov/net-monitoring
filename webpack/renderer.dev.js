@@ -6,6 +6,9 @@ module.exports = webpackMerge.merge(commonRendererConfig("development"), {
   devServer: {
     port: 3003,
     static: "./dist",
+    client: {
+      overlay: { warnings: false, errors: true },
+    },
   },
   optimization: {
     runtimeChunk: "single",
