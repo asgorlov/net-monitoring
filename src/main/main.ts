@@ -2,9 +2,7 @@ import { app, BrowserWindow, ipcMain, IpcMainInvokeEvent } from "electron";
 import path from "path";
 import url from "url";
 
-let mainWindow: BrowserWindow | null;
-
-function createWindow(): void {
+const createWindow = (): void => {
   const options = {
     webPreferences: {
       preload: path.join(__dirname, "preloader.js"),
@@ -12,10 +10,7 @@ function createWindow(): void {
     },
     show: false,
   };
-  mainWindow = new BrowserWindow(options);
-  mainWindow.maximize();
-  mainWindow.show();
-
+  const mainWindow = new BrowserWindow(options);
   const filePath =
     process.env.RENDERER_URL ||
     url.format({
@@ -23,15 +18,27 @@ function createWindow(): void {
       protocol: "file:",
       slashes: true,
     });
-  mainWindow.loadURL(filePath);
+  mainWindow.loadURL(filePath).finally(() => {
+    mainWindow.maximize();
+    mainWindow.show();
 
-  mainWindow.on("closed", () => (mainWindow = null));
+    if (process.env.RENDERER_URL) {
+      mainWindow.webContents.openDevTools();
+    }
+  });
 
   mainWindow.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
-}
+};
 
-app.on("ready", createWindow);
-app.on("activate", () => mainWindow && mainWindow.show());
+app.whenReady().then(() => {
+  createWindow();
+
+  app.on(
+    "activate",
+    () => BrowserWindow.getAllWindows().length === 0 && createWindow(),
+  );
+});
+
 app.on("window-all-closed", () => process.platform !== "darwin" && app.quit());
 
 ipcMain.handle(
