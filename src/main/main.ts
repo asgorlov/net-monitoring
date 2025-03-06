@@ -1,20 +1,32 @@
 import { app, BrowserWindow, ipcMain, IpcMainInvokeEvent } from "electron";
 import path from "path";
+import url from "url";
 
 let mainWindow: BrowserWindow | null;
 
 function createWindow(): void {
-  mainWindow = new BrowserWindow({
+  const options = {
     webPreferences: {
       preload: path.join(__dirname, "preloader.js"),
       contextIsolation: true,
     },
     show: false,
-  });
+  };
+  mainWindow = new BrowserWindow(options);
   mainWindow.maximize();
   mainWindow.show();
-  mainWindow.loadFile(path.join(__dirname, "..", "renderer", "index.html"));
+
+  const filePath =
+    process.env.RENDERER_URL ||
+    url.format({
+      pathname: path.join(__dirname, "..", "renderer", "index.html"),
+      protocol: "file:",
+      slashes: true,
+    });
+  mainWindow.loadURL(filePath);
+
   mainWindow.on("closed", () => (mainWindow = null));
+
   mainWindow.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
 }
 

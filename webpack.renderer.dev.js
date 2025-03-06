@@ -4,7 +4,15 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 module.exports = {
   mode: "development",
   entry: "./src/renderer/index.tsx",
-  target: "electron-renderer",
+  target: "web",
+  devtool: "eval-cheap-module-source-map",
+  devServer: {
+    port: 3003,
+    static: "./dist",
+  },
+  optimization: {
+    runtimeChunk: "single",
+  },
   module: {
     rules: [
       {
@@ -20,7 +28,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, "dist/renderer"),
-    filename: "renderer.js",
+    filename: "[name].js",
   },
   plugins: [
     new HtmlWebpackPlugin({

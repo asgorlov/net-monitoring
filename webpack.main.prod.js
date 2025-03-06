@@ -1,7 +1,7 @@
 const path = require("path");
 
 module.exports = {
-  mode: "development",
+  mode: "production",
   entry: {
     main: "./src/main/main.ts",
     preloader: "./src/main/preloader.ts",
