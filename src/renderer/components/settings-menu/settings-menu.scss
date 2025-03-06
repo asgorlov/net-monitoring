@@ -1,4 +1,4 @@
-@import "../../index";
+@use "../../index" as index;
 
 .settings-menu {
   max-width: 0;
@@ -58,15 +58,15 @@
 
       &__skeleton {
         &-input-number {
-          @include skeleton-dimensions(30px, 88px);
+          @include index.skeleton-dimensions(30px, 88px);
         }
 
         &-select {
-          @include skeleton-dimensions(30px, 100%);
+          @include index.skeleton-dimensions(30px, 100%);
         }
 
         &-switch {
-          @include skeleton-dimensions(22px, 44px);
+          @include index.skeleton-dimensions(22px, 44px);
         }
       }
 

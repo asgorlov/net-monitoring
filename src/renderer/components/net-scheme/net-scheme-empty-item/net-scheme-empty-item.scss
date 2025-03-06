@@ -1,4 +1,4 @@
-@import "../../../index";
+@use "../../../index" as index;
 
 .net-scheme-empty-item {
   display: flex;
@@ -7,9 +7,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: $host-width;
-    height: $host-height;
-    border: $host-border-weight solid;
+    width: index.$host-width;
+    height: index.$host-height;
+    border: index.$host-border-weight solid;
     padding: 6px;
     border-radius: 4px;
     background-color: #B8B8B8;

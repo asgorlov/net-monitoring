@@ -1,13 +1,13 @@
-@import "../../../index";
+@use "../../../index" as index;
 
 .net-scheme-host {
-  height: $host-height;
-  width: $host-width;
+  height: index.$host-height;
+  width: index.$host-width;
   display: flex;
   flex-direction: column;
   gap: 4px;
   padding: 6px;
-  border: $host-border-weight solid;
+  border: index.$host-border-weight solid;
   border-radius: 4px;
   background-color: #B8B8B8;
 
@@ -31,7 +31,7 @@
     &__skeleton {
       &-select,
       &-input {
-        @include skeleton-dimensions(20px, 100%);
+        @include index.skeleton-dimensions(20px, 100%);
       }
     }
 
