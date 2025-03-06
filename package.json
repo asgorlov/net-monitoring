@@ -9,10 +9,10 @@
   "main": "dist/main/main.js",
   "description": "Приложение для проверки оборудования в сети",
   "scripts": {
-    "start-renderer": "webpack serve --config webpack.renderer.dev.js",
-    "start-main": "set RENDERER_URL=http://localhost:3003&& webpack --config webpack.main.dev.js && electron-forge start",
+    "start-renderer": "webpack serve --config webpack/renderer.dev.js",
+    "start-main": "set RENDERER_URL=http://localhost:3003&& webpack --config webpack/main.dev.js && electron-forge start",
     "start": "concurrently \"npm run \"start-renderer\"\" \"wait-on tcp:127.0.0.1:3003 && npm run \"start-main\"\"",
-    "build": "webpack --config webpack.main.prod.js && webpack --config webpack.renderer.prod.js",
+    "build": "webpack --config webpack/main.prod.js && webpack --config webpack/renderer.prod.js",
     "package": "set NODE_TLS_REJECT_UNAUTHORIZED=0&& electron-forge package",
     "make": "set NODE_TLS_REJECT_UNAUTHORIZED=0&& electron-forge make",
     "prod": "npm run build && npm run package && npm run make"
@@ -66,6 +66,7 @@
     "wait-on": "^8.0.2",
     "webpack": "^5.98.0",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.2.0"
+    "webpack-dev-server": "^5.2.0",
+    "webpack-merge": "^6.0.1"
   }
 }
