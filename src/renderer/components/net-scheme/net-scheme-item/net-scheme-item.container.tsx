@@ -22,10 +22,10 @@ const NetSchemeItemContainer = forwardRef<
     (value: HostViewModel, remove: boolean = false) => {
       setField(
         value,
-        remove ? SchemeFormAction.REMOVE : SchemeFormAction.MODIFY
+        remove ? SchemeFormAction.REMOVE : SchemeFormAction.MODIFY,
       );
     },
-    [setField]
+    [setField],
   );
 
   const addChildHostViewModel = useCallback(() => {

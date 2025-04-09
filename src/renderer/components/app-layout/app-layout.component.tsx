@@ -1,17 +1,16 @@
 import "./app-layout.scss";
 import React, { FC, memo } from "react";
-import { Button, Layout, theme } from "antd";
-import SettingsMenuContainer from "../settings-menu/settings-menu.container";
-import packageJson from "../../../../package.json";
-
+import clsx from "clsx";
+import { Button, Layout, notification, theme } from "antd";
 import {
   DeleteOutlined,
   MenuOutlined,
   SaveOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
-import clsx from "clsx";
+import packageJson from "../../../../package.json";
 import NetSchemeContainer from "../net-scheme/net-scheme.container";
+import SettingsMenuContainer from "../settings-menu/settings-menu.container";
 
 export interface AppLayoutComponentProps {
   open: boolean;
@@ -33,6 +32,15 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
   pingManually,
 }) => {
   const { token } = theme.useToken();
+
+  const onLinkClick = () => {
+    window.api.openTab(packageJson.author.url).catch((err) => {
+      notification.error({
+        message: `Не удалось открыть ссылку: ${packageJson.author.url}`,
+      });
+      console.error(err); // toDo: сделать логирование
+    });
+  };
 
   return (
     <Layout className="app-layout">
@@ -93,7 +101,7 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
         <span>Net Monitoring v{packageJson.version}</span>
         <span>
           ©2024-{new Date().getFullYear()} Created by{" "}
-          <a href={packageJson.author.url} target="_blank" rel="noreferrer">
+          <a onClick={onLinkClick} target="_blank" rel="noreferrer">
             asgorlov
           </a>
         </span>

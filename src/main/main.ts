@@ -1,12 +1,18 @@
 import { app, BrowserWindow, ipcMain, IpcMainInvokeEvent } from "electron";
 import path from "path";
 import url from "url";
+import ChannelName from "./constants/channel-name.constant";
+import CommonUtil from "./utils/common.util";
 
+/**
+ * Init Electron
+ */
 const createWindow = (): void => {
   const options = {
     webPreferences: {
       preload: path.join(__dirname, "preloader.js"),
       contextIsolation: true,
+      nodeIntegration: false,
     },
     show: false,
   };
@@ -41,10 +47,11 @@ app.whenReady().then(() => {
 
 app.on("window-all-closed", () => process.platform !== "darwin" && app.quit());
 
-ipcMain.handle(
-  "toMain",
-  async (event: IpcMainInvokeEvent, data: any): Promise<any> => {
-    console.log(data);
-    return "Received your message!";
-  },
+/**
+ * IPC Main Handlers
+ */
+ipcMain.handleOnce(
+  ChannelName.OPEN_TAB,
+  (event: IpcMainInvokeEvent, url: string): Promise<void> =>
+    CommonUtil.openTabExternal(url),
 );

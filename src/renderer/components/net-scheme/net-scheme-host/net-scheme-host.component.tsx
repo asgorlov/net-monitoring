@@ -8,7 +8,7 @@ import {
   MinusCircleOutlined,
   MinusOutlined,
   PlusOutlined,
-  StopOutlined
+  StopOutlined,
 } from "@ant-design/icons";
 import { DefaultOptionType } from "rc-select/lib/Select";
 import clsx from "clsx";
@@ -17,7 +17,7 @@ import {
   HOST_TITLE,
   HostType,
   NAME_TITLE,
-  TYPE_TITLE
+  TYPE_TITLE,
 } from "../../../constants/common.constants";
 import { HostViewModel } from "../../../models/host.models";
 import { HostFieldError } from "../../../constants/form.constants";
@@ -32,9 +32,9 @@ export interface NetSchemeHostComponentProps {
   addChildHostViewModel: () => void;
 }
 
-const typeOptions: DefaultOptionType[] = Object.values(HostType).map(v => ({
+const typeOptions: DefaultOptionType[] = Object.values(HostType).map((v) => ({
   value: v,
-  label: v
+  label: v,
 }));
 
 const NetSchemeHostComponent = forwardRef<
@@ -49,9 +49,9 @@ const NetSchemeHostComponent = forwardRef<
       isAlive,
       hostViewModel,
       changeHostViewModel,
-      addChildHostViewModel
+      addChildHostViewModel,
     },
-    ref
+    ref,
   ) => {
     const [modal, contextHolder] = Modal.useModal();
 
@@ -77,7 +77,7 @@ const NetSchemeHostComponent = forwardRef<
         content,
         okText: "Да",
         cancelText: "Нет",
-        onOk: () => changeHostViewModel(hostViewModel, true)
+        onOk: () => changeHostViewModel(hostViewModel, true),
       });
     };
 
@@ -88,7 +88,7 @@ const NetSchemeHostComponent = forwardRef<
     const onNameChange = (e: ChangeEvent<HTMLInputElement>) => {
       const name = e.target.value;
       const errors = hostViewModel.errors.filter(
-        err => err !== HostFieldError.NAME
+        (err) => err !== HostFieldError.NAME,
       );
       changeHostViewModel({ ...hostViewModel, name, errors });
     };
@@ -96,13 +96,13 @@ const NetSchemeHostComponent = forwardRef<
     const onAddressChange = (e: ChangeEvent<HTMLInputElement>) => {
       const host = e.target.value;
       const errors = hostViewModel.errors.filter(
-        err => err !== HostFieldError.HOST
+        (err) => err !== HostFieldError.HOST,
       );
       changeHostViewModel({ ...hostViewModel, host, errors });
     };
 
     const validateInput = (type: HostFieldError): "error" | undefined => {
-      return hostViewModel.errors.some(err => err === type)
+      return hostViewModel.errors.some((err) => err === type)
         ? "error"
         : undefined;
     };
@@ -129,7 +129,7 @@ const NetSchemeHostComponent = forwardRef<
       <div
         className={clsx(
           "net-scheme-host",
-          `_${hostViewModel.type.toLowerCase()}`
+          `_${hostViewModel.type.toLowerCase()}`,
         )}
         ref={ref}
       >
@@ -230,7 +230,7 @@ const NetSchemeHostComponent = forwardRef<
         </div>
       </div>
     );
-  }
+  },
 );
 
 export default memo(NetSchemeHostComponent);

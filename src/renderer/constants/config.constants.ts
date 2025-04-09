@@ -7,12 +7,12 @@ export const defaultConfig: Config = {
     level: LoggerLevel.DEBUG,
     type: LoggerType.CONSOLE,
     numberOfLogFiles: 5, // if it < 0 - infinite number of files
-    logFileSizeInBytes: 52428800 // 50Mb, if it < 0 - infinite size
+    logFileSizeInBytes: 52428800, // 50Mb, if it < 0 - infinite size
   },
   request: {
     autoPing: true,
     interval: 30, // can't be less 1
-    timeout: 29 // can't be less 1 and more interval
+    timeout: 29, // can't be less 1 and more interval
   },
-  pingHosts: []
+  pingHosts: [],
 };

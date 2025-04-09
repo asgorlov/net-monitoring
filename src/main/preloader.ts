@@ -1,10 +1,6 @@
 import { contextBridge, ipcRenderer } from "electron";
+import ChannelName from "./constants/channel-name.constant";
 
 contextBridge.exposeInMainWorld("api", {
-  sendMessage: (channel: string, data: any) => {
-    const validChannels: string[] = ["toMain"];
-    if (validChannels.includes(channel)) {
-      return ipcRenderer.invoke(channel, data);
-    }
-  },
+  openTab: (url: string) => ipcRenderer.invoke(ChannelName.OPEN_TAB, url),
 });
