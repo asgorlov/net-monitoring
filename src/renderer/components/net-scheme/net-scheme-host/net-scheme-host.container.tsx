@@ -8,7 +8,7 @@ import {
 } from "../../../store/main.slice";
 import useOpenSettingsContext from "../../../contexts/open-settings.context";
 import NetSchemeHostComponent from "./net-scheme-host.component";
-import { HostViewModel } from "../../../models/host.models";
+import { HostViewModel } from "../../../../shared/models/host.models";
 import { pingHostAsync } from "../../../utils/host.util";
 import settingsUtil from "../../../utils/settings.util";
 

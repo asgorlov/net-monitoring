@@ -1,6 +1,6 @@
 import React, { forwardRef, memo, useCallback } from "react";
 import NetSchemeItemComponent from "./net-scheme-item.component";
-import { HostViewModel, uuid } from "../../../models/host.models";
+import { HostViewModel, uuid } from "../../../../shared/models/host.models";
 import { useSchemeFormContext } from "../../../contexts/form.context";
 import { SchemeFormAction } from "../../../constants/form.constants";
 import { createEmptyHost } from "../../../utils/host.util";

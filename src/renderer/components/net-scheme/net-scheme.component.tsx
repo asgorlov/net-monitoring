@@ -3,7 +3,7 @@ import React, { FC, memo, useMemo } from "react";
 import { Button } from "antd";
 import NetSchemeItemContainer from "./net-scheme-item/net-scheme-item.container";
 import NetSchemeLine from "./net-scheme-line/net-scheme-line";
-import { HostViewModel, uuid } from "../../models/host.models";
+import { HostViewModel, uuid } from "../../../shared/models/host.models";
 import NetSchemeEmptyItem from "./net-scheme-empty-item/net-scheme-empty-item";
 
 export interface NetSchemeComponentProps {

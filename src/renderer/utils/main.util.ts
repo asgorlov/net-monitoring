@@ -1,11 +1,11 @@
-import { Config, UpdatingConfig } from "../models/config.models";
+import { Config, UpdatingConfig } from "../../shared/models/config.models";
 import { MainState, MainStateBase } from "../store/main.slice";
 import {
   convertHostViewModelsToPingHosts,
   getUpdatedHostViewModels,
 } from "./host.util";
 import { UploadFile } from "antd/es/upload/interface";
-import { defaultConfig } from "../constants/config.constants";
+import { defaultConfig } from "../../shared/constants/config.constants";
 import Path from "../constants/path.constants";
 
 export const updateState = (state: MainState, payload: MainStateBase) => {

@@ -1,5 +1,5 @@
-import { HostType } from "../constants/common.constants";
-import { HostFieldError } from "../constants/form.constants";
+import { HostType } from "../../renderer/constants/common.constants";
+import { HostFieldError } from "../../renderer/constants/form.constants";
 
 export type uuid = string;
 

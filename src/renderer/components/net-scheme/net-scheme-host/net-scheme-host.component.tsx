@@ -19,7 +19,7 @@ import {
   NAME_TITLE,
   TYPE_TITLE,
 } from "../../../constants/common.constants";
-import { HostViewModel } from "../../../models/host.models";
+import { HostViewModel } from "../../../../shared/models/host.models";
 import { HostFieldError } from "../../../constants/form.constants";
 
 export interface NetSchemeHostComponentProps {

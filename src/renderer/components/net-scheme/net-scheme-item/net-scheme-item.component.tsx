@@ -4,7 +4,7 @@ import NetSchemeHostContainer from "../net-scheme-host/net-scheme-host.container
 import NetSchemeItemContainer from "./net-scheme-item.container";
 import NetSchemeLine from "../net-scheme-line/net-scheme-line";
 import { LineProperties } from "../../../models/line.models";
-import { HostViewModel, uuid } from "../../../models/host.models";
+import { HostViewModel, uuid } from "../../../../shared/models/host.models";
 
 export interface NetSchemeItemComponentProps {
   parentId: uuid | null;
@@ -19,14 +19,14 @@ const NetSchemeItemComponent = forwardRef<
 >(
   (
     { hostViewModel, parentId, changeHostViewModel, addChildHostViewModel },
-    ref
+    ref,
   ) => {
     const [lineProps, setLineProps] = useState<LineProperties>({
       hostBlock: {
         height: 0,
-        width: 0
+        width: 0,
       },
-      horizontalLastChildrenWidth: 0
+      horizontalLastChildrenWidth: 0,
     });
 
     const mainLineDimensions = useMemo(() => {
@@ -36,7 +36,7 @@ const NetSchemeItemComponent = forwardRef<
 
         return {
           width: `${halfHeight}px`,
-          height: `${halfWidth}px`
+          height: `${halfWidth}px`,
         };
       }
     }, [parentId, lineProps.hostBlock]);
@@ -52,15 +52,15 @@ const NetSchemeItemComponent = forwardRef<
           ...lineProps,
           hostBlock: {
             height: element!.offsetHeight,
-            width: element!.offsetWidth
-          }
+            width: element!.offsetWidth,
+          },
         });
       }
     };
 
     const setLastChildrenWidth = (
       element: HTMLDivElement | null,
-      index: number
+      index: number,
     ) => {
       const canBeUpdated =
         element &&
@@ -69,7 +69,7 @@ const NetSchemeItemComponent = forwardRef<
       if (canBeUpdated) {
         setLineProps({
           ...lineProps,
-          horizontalLastChildrenWidth: element!.offsetWidth
+          horizontalLastChildrenWidth: element!.offsetWidth,
         });
       }
     };
@@ -102,7 +102,7 @@ const NetSchemeItemComponent = forwardRef<
                     <NetSchemeItemContainer
                       hostId={id}
                       parentId={hostViewModel.id}
-                      ref={el => setLastChildrenWidth(el, i)}
+                      ref={(el) => setLastChildrenWidth(el, i)}
                     />
                   </div>
                 );
@@ -112,7 +112,7 @@ const NetSchemeItemComponent = forwardRef<
         )}
       </div>
     );
-  }
+  },
 );
 
 export default memo(NetSchemeItemComponent);

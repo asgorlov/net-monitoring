@@ -20,11 +20,8 @@ import SettingsMenuComponent from "./settings-menu.component";
 import useOpenSettingsContext from "../../contexts/open-settings.context";
 import { useSettingsFormContext } from "../../contexts/form.context";
 import { useAppDispatch } from "../../hooks/store.hooks";
-import {
-  CONFIG_FILE_TYPE,
-  DONE_STATUS,
-  ERROR_STATUS,
-} from "../../constants/common.constants";
+import { DONE_STATUS, ERROR_STATUS } from "../../constants/common.constants";
+import { CONFIG_FILE_TYPE } from "../../../shared/constants/config.constants";
 
 const SettingsMenuContainer: FC = () => {
   const clearLogFilesLoading = useSelector(selectClearLogFilesLoading);

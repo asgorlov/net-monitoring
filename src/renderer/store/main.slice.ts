@@ -7,9 +7,20 @@ import {
 import { notification } from "antd";
 import { UploadFile } from "antd/es/upload/interface";
 import { RootState } from "./store";
-import { defaultConfig } from "../constants/config.constants";
-import { LoggerLevel, LoggerType } from "../constants/logger.constants";
-import { Config, ConfigError, ClearingLogFiles } from "../models/config.models";
+import {
+  defaultConfig,
+  CONFIG_FILE_NAME,
+  CONFIG_FILE_TYPE,
+} from "../../shared/constants/config.constants";
+import {
+  LoggerLevel,
+  LoggerType,
+} from "../../shared/constants/logger.constants";
+import {
+  Config,
+  ConfigError,
+  ClearingLogFiles,
+} from "../../shared/models/config.models";
 import Path from "../constants/path.constants";
 import {
   convertStateToConfig,
@@ -18,13 +29,9 @@ import {
   updateState,
   updateStateByConfig,
 } from "../utils/main.util";
-import { HostViewModel, uuid } from "../models/host.models";
+import { HostViewModel, uuid } from "../../shared/models/host.models";
 import { initializePingHostViewModel } from "../utils/host.util";
 import settingsUtil from "../utils/settings.util";
-import {
-  CONFIG_FILE_NAME,
-  CONFIG_FILE_TYPE,
-} from "../constants/common.constants";
 
 export interface MainStateBase {
   port: number;

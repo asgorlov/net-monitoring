@@ -11,8 +11,8 @@ import React, {
   useState,
 } from "react";
 import { SettingsForm } from "../models/settings-form.models";
-import { HostViewModel, uuid } from "../models/host.models";
-import { defaultConfig } from "../constants/config.constants";
+import { HostViewModel, uuid } from "../../shared/models/host.models";
+import { defaultConfig } from "../../shared/constants/config.constants";
 import {
   selectAutoPing,
   selectHostViewModels,

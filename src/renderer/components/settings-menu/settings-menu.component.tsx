@@ -11,10 +11,13 @@ import {
   RollbackOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
-import { LoggerLevel, LoggerType } from "../../constants/logger.constants";
+import {
+  LoggerLevel,
+  LoggerType,
+} from "../../../shared/constants/logger.constants";
 import { SettingsForm } from "../../models/settings-form.models";
 import Skeleton from "../skeleton/skeleton";
-import { CONFIG_FILE_TYPE } from "../../constants/common.constants";
+import { CONFIG_FILE_TYPE } from "../../../shared/constants/config.constants";
 
 export interface MenuProps {
   open: boolean;

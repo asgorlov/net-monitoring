@@ -1,4 +1,4 @@
-import { ConfigLogger, ConfigRequest } from "./config.models";
+import { ConfigLogger, ConfigRequest } from "../../shared/models/config.models";
 
 export interface SettingsForm
   extends ConfigRequest,

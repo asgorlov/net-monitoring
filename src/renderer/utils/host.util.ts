@@ -6,7 +6,7 @@ import {
   HostViewModel,
   PingHost,
   uuid,
-} from "../models/host.models";
+} from "../../shared/models/host.models";
 import { HostFieldError } from "../constants/form.constants";
 import { HostType } from "../constants/common.constants";
 import Path from "../constants/path.constants";
