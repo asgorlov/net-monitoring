@@ -24,6 +24,7 @@ import {
   getOnlyValidHostViewModels,
 } from "../../utils/host.util";
 import packageJson from "../../../../package.json";
+import Logger from "../../utils/renderer-logger.utils";
 
 const AppLayoutContainer = () => {
   const [modal, contextHolder] = Modal.useModal();
@@ -106,7 +107,7 @@ const AppLayoutContainer = () => {
       notification.error({
         message: `Не удалось открыть ссылку: ${packageJson.author.url}`,
       });
-      console.error(err); // toDo: сделать логирование
+      Logger.error(err);
     });
   }, []);
 

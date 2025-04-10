@@ -50,7 +50,7 @@ app.on("window-all-closed", () => process.platform !== "darwin" && app.quit());
 /**
  * IPC Main Handlers
  */
-ipcMain.handleOnce(
+ipcMain.handle(
   ChannelName.OPEN_TAB,
   (_e: IpcMainInvokeEvent, url: string): Promise<void> =>
     CommonUtil.openTabExternal(url),

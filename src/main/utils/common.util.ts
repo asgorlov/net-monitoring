@@ -1,10 +1,11 @@
 import { shell } from "electron";
+import Logger from "./main-logger.utils";
 
 const openTabExternal = async (url: string): Promise<void> => {
   try {
     await shell.openExternal(url);
   } catch (e) {
-    console.error(e); // toDo: сделать логирование в файл
+    Logger.error(e);
     throw e;
   }
 };
