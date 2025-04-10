@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { Modal } from "antd";
+import { Modal, notification } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import AppLayoutComponent from "./app-layout.component";
 import { useAppDispatch } from "../../hooks/store.hooks";
@@ -23,6 +23,7 @@ import {
   validateAndChangeHostViewModels,
   getOnlyValidHostViewModels,
 } from "../../utils/host.util";
+import packageJson from "../../../../package.json";
 
 const AppLayoutContainer = () => {
   const [modal, contextHolder] = Modal.useModal();
@@ -100,6 +101,15 @@ const AppLayoutContainer = () => {
     }
   }, [settingsForm, schemeForm, dispatch, setOpen, modal]);
 
+  const onLinkClick = useCallback(() => {
+    window.api.openTab(packageJson.author.url).catch((err) => {
+      notification.error({
+        message: `Не удалось открыть ссылку: ${packageJson.author.url}`,
+      });
+      console.error(err); // toDo: сделать логирование
+    });
+  }, []);
+
   useEffect(() => {
     if (open || !isInitializedRef.current) {
       dispatch(getConfigAsync());
@@ -124,6 +134,7 @@ const AppLayoutContainer = () => {
         saveSettings={saveSettings}
         toggleOpenMenu={toggleOpenMenu}
         pingManually={pingManually}
+        onLinkClick={onLinkClick}
       />
       {contextHolder}
     </>

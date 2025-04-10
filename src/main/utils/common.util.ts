@@ -1,7 +1,12 @@
 import { shell } from "electron";
 
 const openTabExternal = async (url: string): Promise<void> => {
-  await shell.openExternal(url);
+  try {
+    await shell.openExternal(url);
+  } catch (e) {
+    console.error(e); // toDo: сделать логирование в файл
+    throw e;
+  }
 };
 
 const CommonUtil = {

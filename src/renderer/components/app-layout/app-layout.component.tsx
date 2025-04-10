@@ -1,7 +1,7 @@
 import "./app-layout.scss";
 import React, { FC, memo } from "react";
 import clsx from "clsx";
-import { Button, Layout, notification, theme } from "antd";
+import { Button, Layout, theme } from "antd";
 import {
   DeleteOutlined,
   MenuOutlined,
@@ -20,6 +20,7 @@ export interface AppLayoutComponentProps {
   saveSettings: () => void;
   toggleOpenMenu: () => void;
   pingManually: () => void;
+  onLinkClick: () => void;
 }
 
 const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
@@ -30,17 +31,9 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
   saveSettings,
   toggleOpenMenu,
   pingManually,
+  onLinkClick,
 }) => {
   const { token } = theme.useToken();
-
-  const onLinkClick = () => {
-    window.api.openTab(packageJson.author.url).catch((err) => {
-      notification.error({
-        message: `Не удалось открыть ссылку: ${packageJson.author.url}`,
-      });
-      console.error(err); // toDo: сделать логирование
-    });
-  };
 
   return (
     <Layout className="app-layout">

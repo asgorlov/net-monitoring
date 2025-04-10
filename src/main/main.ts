@@ -52,6 +52,6 @@ app.on("window-all-closed", () => process.platform !== "darwin" && app.quit());
  */
 ipcMain.handleOnce(
   ChannelName.OPEN_TAB,
-  (event: IpcMainInvokeEvent, url: string): Promise<void> =>
+  (_e: IpcMainInvokeEvent, url: string): Promise<void> =>
     CommonUtil.openTabExternal(url),
 );
