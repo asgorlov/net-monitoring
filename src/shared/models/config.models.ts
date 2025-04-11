@@ -21,14 +21,14 @@ export interface Config {
   pingHosts: PingHost[];
 }
 
-export interface ConfigError {
-  message: string;
+export interface ActionResult {
+  errorMessage?: string;
 }
 
-export interface UpdatingConfig extends Partial<ConfigError> {
-  isUpdated: boolean;
+export interface GettingConfigResult extends ActionResult {
+  config?: Config | null;
 }
 
-export interface ClearingLogFiles extends Partial<ConfigError> {
+export interface ClearingLogFiles extends ActionResult {
   isCleared: boolean;
 }

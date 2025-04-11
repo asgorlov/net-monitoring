@@ -7,13 +7,18 @@ import {
 } from "../../shared/constants/logger.constants";
 import { defaultConfig } from "../../shared/constants/config.constants";
 import { ConfigLogger } from "../../shared/models/config.models";
-import ChannelName from "../constants/channel-name.constant";
+import ChannelName from "../constants/channel-name.constants";
 import { ConsoleLoggerRow } from "../../shared/models/logger.models";
+import ConfigUtils from "./config.utils";
 
 let logFileStream = null;
 
 const getSettings = (): ConfigLogger => {
-  return global.config?.logger || defaultConfig.logger;
+  try {
+    return ConfigUtils.get().logger;
+  } catch (e) {
+    return defaultConfig.logger;
+  }
 };
 
 const show = (level: LoggerLevel, type: LoggerType): boolean => {
@@ -133,13 +138,13 @@ const getConsoleColor = (level: LoggerLevel): string => {
       colorName = "red";
       break;
     case LoggerLevel.INFO:
-      colorName = "green";
+      colorName = "orange";
       break;
     case LoggerLevel.DEBUG:
-      colorName = "yellow";
+      colorName = "gray";
       break;
     default:
-      colorName = "grey";
+      colorName = "black";
   }
 
   return `color:${colorName};`;

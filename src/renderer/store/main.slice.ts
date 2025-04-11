@@ -16,11 +16,7 @@ import {
   LoggerLevel,
   LoggerType,
 } from "../../shared/constants/logger.constants";
-import {
-  Config,
-  ConfigError,
-  ClearingLogFiles,
-} from "../../shared/models/config.models";
+import { Config, ClearingLogFiles } from "../../shared/models/config.models";
 import Path from "../constants/path.constants";
 import {
   convertStateToConfig,

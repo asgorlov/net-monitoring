@@ -1,4 +1,4 @@
-import { Config, UpdatingConfig } from "../../shared/models/config.models";
+import { Config } from "../../shared/models/config.models";
 import { MainState, MainStateBase } from "../store/main.slice";
 import {
   convertHostViewModelsToPingHosts,

@@ -1,10 +1,8 @@
 import { app, BrowserWindow, ipcMain, IpcMainInvokeEvent } from "electron";
 import path from "path";
 import url from "url";
-import ChannelName from "./constants/channel-name.constant";
-import CommonUtil from "./utils/common.util";
-import { LoggerLevel } from "../shared/constants/logger.constants";
-import Logger from "./utils/main-logger.utils";
+import ChannelName from "./constants/channel-name.constants";
+import IpcMainHandlerUtils from "./utils/ipc-main-handler.utils";
 
 /**
  * Init Electron
@@ -56,28 +54,20 @@ app.on("window-all-closed", () => process.platform !== "darwin" && app.quit());
 /**
  * IPC Main Handlers
  */
-ipcMain.handle(
-  ChannelName.OPEN_TAB,
-  (_e: IpcMainInvokeEvent, url: string): Promise<void> =>
-    CommonUtil.openTabExternal(url),
-);
+ipcMain.handle(ChannelName.OPEN_TAB, IpcMainHandlerUtils.openTab);
 
 ipcMain.handle(
   ChannelName.SEND_RENDERER_LOGS,
-  (
-    _e: IpcMainInvokeEvent,
-    level: LoggerLevel,
-    logObj: Error | string,
-  ): void => {
-    switch (level) {
-      case LoggerLevel.DEBUG:
-        Logger.debug(logObj);
-        break;
-      case LoggerLevel.INFO:
-        Logger.info(logObj);
-        break;
-      case LoggerLevel.ERROR:
-        Logger.error(logObj);
-    }
-  },
+  IpcMainHandlerUtils.sendRendererLogs,
+);
+
+ipcMain.handle(ChannelName.CLEAR_LOG_FILES, IpcMainHandlerUtils.clearLogFiles);
+
+ipcMain.handle(ChannelName.GET_CONFIG, IpcMainHandlerUtils.getConfig);
+
+ipcMain.handle(ChannelName.UPDATE_CONFIG, IpcMainHandlerUtils.updateConfig);
+
+ipcMain.handle(
+  ChannelName.CREATE_DEFAULT_CONFIG,
+  IpcMainHandlerUtils.createDefaultConfig,
 );
