@@ -3,6 +3,8 @@ import path from "path";
 import url from "url";
 import ChannelName from "./constants/channel-name.constant";
 import CommonUtil from "./utils/common.util";
+import { LoggerLevel } from "../shared/constants/logger.constants";
+import Logger from "./utils/main-logger.utils";
 
 /**
  * Init Electron
@@ -34,6 +36,10 @@ const createWindow = (): void => {
   });
 
   mainWindow.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
+
+  global.sendToRenderer = (channel: string, ...args: any[]) => {
+    mainWindow.webContents.send(channel, ...args);
+  };
 };
 
 app.whenReady().then(() => {
@@ -54,4 +60,24 @@ ipcMain.handle(
   ChannelName.OPEN_TAB,
   (_e: IpcMainInvokeEvent, url: string): Promise<void> =>
     CommonUtil.openTabExternal(url),
+);
+
+ipcMain.handle(
+  ChannelName.SEND_RENDERER_LOGS,
+  (
+    _e: IpcMainInvokeEvent,
+    level: LoggerLevel,
+    logObj: Error | string,
+  ): void => {
+    switch (level) {
+      case LoggerLevel.DEBUG:
+        Logger.debug(logObj);
+        break;
+      case LoggerLevel.INFO:
+        Logger.info(logObj);
+        break;
+      case LoggerLevel.ERROR:
+        Logger.error(logObj);
+    }
+  },
 );

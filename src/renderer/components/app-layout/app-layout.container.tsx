@@ -24,7 +24,6 @@ import {
   getOnlyValidHostViewModels,
 } from "../../utils/host.util";
 import packageJson from "../../../../package.json";
-import Logger from "../../utils/renderer-logger.utils";
 
 const AppLayoutContainer = () => {
   const [modal, contextHolder] = Modal.useModal();
@@ -103,11 +102,10 @@ const AppLayoutContainer = () => {
   }, [settingsForm, schemeForm, dispatch, setOpen, modal]);
 
   const onLinkClick = useCallback(() => {
-    window.api.openTab(packageJson.author.url).catch((err) => {
+    window.api.openTab(packageJson.author.url).catch(() => {
       notification.error({
         message: `Не удалось открыть ссылку: ${packageJson.author.url}`,
       });
-      Logger.error(err);
     });
   }, []);
 

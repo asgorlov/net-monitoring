@@ -22,6 +22,7 @@ import { useSettingsFormContext } from "../../contexts/form.context";
 import { useAppDispatch } from "../../hooks/store.hooks";
 import { DONE_STATUS, ERROR_STATUS } from "../../constants/common.constants";
 import { CONFIG_FILE_TYPE } from "../../../shared/constants/config.constants";
+import Logger from "../../utils/renderer-logger.utils";
 
 const SettingsMenuContainer: FC = () => {
   const clearLogFilesLoading = useSelector(selectClearLogFilesLoading);
@@ -73,7 +74,7 @@ const SettingsMenuContainer: FC = () => {
         notification.error({
           message: "Не удалось загрузить файл конфигурации",
         });
-        console.error(file.error);
+        Logger.error(file.error);
       }
     },
     [dispatch],

@@ -222,13 +222,8 @@ export const mainSlice = createSlice({
 
     builder.addCase(getConfigAsync.fulfilled, (state, action) => {
       const config = action.payload as Config;
-      window.logger = config.logger;
       updateStateByConfig(state, config);
       state.configLoading = false;
-    });
-
-    builder.addCase(getConfigAsync.rejected, (_, action) => {
-      window.logger = null;
     });
 
     builder.addMatcher(

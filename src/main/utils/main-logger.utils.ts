@@ -7,7 +7,8 @@ import {
 } from "../../shared/constants/logger.constants";
 import { defaultConfig } from "../../shared/constants/config.constants";
 import { ConfigLogger } from "../../shared/models/config.models";
-import LoggerHelper from "../../shared/helpers/logger.helper";
+import ChannelName from "../constants/channel-name.constant";
+import { ConsoleLoggerRow } from "../../shared/models/logger.models";
 
 let logFileStream = null;
 
@@ -21,7 +22,16 @@ const show = (level: LoggerLevel, type: LoggerType): boolean => {
     return false;
   }
 
-  return LoggerHelper.isLogWritable(level, settings.level);
+  switch (settings.level) {
+    case LoggerLevel.DEBUG:
+      return level !== LoggerLevel.OFF;
+    case LoggerLevel.INFO:
+      return level === LoggerLevel.INFO || level === LoggerLevel.ERROR;
+    case LoggerLevel.ERROR:
+      return level === LoggerLevel.ERROR;
+    default:
+      return false;
+  }
 };
 
 const isDirExisted = (): boolean => {
@@ -73,9 +83,30 @@ const recordRowToFile = (row: string) => {
   }
 };
 
+const createRow = (
+  level: LoggerLevel,
+  message: string,
+  isFileCase: boolean = false,
+) => {
+  const consoleChar = isFileCase ? "" : "%c";
+  const tempData = [
+    consoleChar,
+    `[${level}]`,
+    consoleChar,
+    " - ",
+    new Date().toISOString(),
+    " - ",
+    message,
+    isFileCase ? "\n" : "",
+  ];
+
+  // [DEBUG] - 2025-04-11T06:47:35.452Z - Something wrong
+  return tempData.join("");
+};
+
 const logToFile = (level: LoggerLevel, message: string) => {
   if (show(level, LoggerType.FILE)) {
-    const row = `[${level}] - ${new Date().toISOString()} - ${message}\n`;
+    const row = createRow(level, message, true);
 
     if (logFileStream) {
       const logFileSizeInBytes = getSettings().logFileSizeInBytes;
@@ -95,10 +126,41 @@ const logToFile = (level: LoggerLevel, message: string) => {
   }
 };
 
+const getConsoleColor = (level: LoggerLevel): string => {
+  let colorName: string;
+  switch (level) {
+    case LoggerLevel.ERROR:
+      colorName = "red";
+      break;
+    case LoggerLevel.INFO:
+      colorName = "green";
+      break;
+    case LoggerLevel.DEBUG:
+      colorName = "yellow";
+      break;
+    default:
+      colorName = "grey";
+  }
+
+  return `color:${colorName};`;
+};
+
+const createConsoleLoggerRow = (
+  level: LoggerLevel,
+  message: string,
+): ConsoleLoggerRow => {
+  const color = getConsoleColor(level);
+  const settings = [`${color}font-weight:bold;`, color];
+  const row = createRow(level, message);
+
+  return { row, settings };
+};
+
 const logToConsole = (level: LoggerLevel, message: string) => {
   if (show(level, LoggerType.CONSOLE)) {
-    const { row, settings } = LoggerHelper.createConsoleRow(level, message);
-    console.log(row, ...settings);
+    const loggerRow = createConsoleLoggerRow(level, message);
+    console.log(loggerRow.row, ...loggerRow.settings);
+    global.sendToRenderer(ChannelName.SEND_MAIN_LOGS, loggerRow);
   }
 };
 
