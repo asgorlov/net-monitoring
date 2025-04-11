@@ -6,7 +6,6 @@ import {
 } from "./host.util";
 import { UploadFile } from "antd/es/upload/interface";
 import { defaultConfig } from "../../shared/constants/config.constants";
-import Path from "../constants/path.constants";
 
 export const updateState = (state: MainState, payload: MainStateBase) => {
   state.port = payload.port;
@@ -85,27 +84,12 @@ export const getConfigFromFile = (file: UploadFile): Promise<Config> => {
 };
 
 export const updateConfig = (config: Config): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    // toDo: Исправить логику
-    // const options: RequestInit = {
-    //   method: "PUT",
-    //   headers: [["Content-Type", "application/json"]],
-    //   body: JSON.stringify(config)
-    // };
-    //
-    // fetch(Path.config, options)
-    //   .then(async response => {
-    //     const data: UpdatingConfig = await response.json();
-    //     if (response.ok && data.isUpdated) {
-    //       resolve();
-    //     } else {
-    //       reject(data.message);
-    //     }
-    //   })
-    //   .catch(e => {
-    //     reject("Не удалось выполнить запрос на обновление настроек");
-    //     console.error(e);
-    //   });
-    resolve();
+  return new Promise(async (resolve, reject) => {
+    const result = await window.api.updateConfig(config);
+    if (result.errorMessage) {
+      reject(result.errorMessage);
+    } else {
+      resolve();
+    }
   });
 };

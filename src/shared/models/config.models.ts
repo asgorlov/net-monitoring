@@ -26,9 +26,5 @@ export interface ActionResult {
 }
 
 export interface GettingConfigResult extends ActionResult {
-  config?: Config | null;
-}
-
-export interface ClearingLogFiles extends ActionResult {
-  isCleared: boolean;
+  config?: Config;
 }

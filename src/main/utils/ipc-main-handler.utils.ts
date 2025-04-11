@@ -145,11 +145,11 @@ const updateConfig = (_e: IpcMainInvokeEvent, config: Config): ActionResult => {
   return result;
 };
 
-const createDefaultConfig = (): ActionResult => {
-  const result: ActionResult = {};
+const createDefaultConfig = (): GettingConfigResult => {
+  const result: GettingConfigResult = {};
 
   try {
-    ConfigUtils.createDefault();
+    result.config = ConfigUtils.createDefault();
     Logger.debug("Default config file was created");
   } catch (e) {
     Logger.error(

@@ -16,15 +16,14 @@ import {
   LoggerLevel,
   LoggerType,
 } from "../../shared/constants/logger.constants";
-import { Config, ClearingLogFiles } from "../../shared/models/config.models";
-import Path from "../constants/path.constants";
+import { Config } from "../../shared/models/config.models";
 import {
   convertStateToConfig,
   getConfigFromFile,
   updateConfig,
   updateState,
   updateStateByConfig,
-} from "../utils/main.util";
+} from "../utils/store.util";
 import { HostViewModel, uuid } from "../../shared/models/host.models";
 import { initializePingHostViewModel } from "../utils/host.util";
 import settingsUtil from "../utils/settings.util";
@@ -65,23 +64,13 @@ const initialState: MainState = {
 export const getConfigAsync = createAsyncThunk(
   "config/get",
   (): Promise<Config> => {
-    return new Promise((resolve, reject) => {
-      // toDo: Исправить логику
-      // fetch(Path.config)
-      //   .then(async (response) => {
-      //     if (response.ok) {
-      //       const data: Config = await response.json();
-      //       resolve(data);
-      //     } else {
-      //       const data: ConfigError = await response.json();
-      //       reject(data.message);
-      //     }
-      //   })
-      //   .catch((e) => {
-      //     reject("Не удалось выполнить запрос на получение настроек");
-      //     console.error(e);
-      //   });
-      resolve(defaultConfig);
+    return new Promise(async (resolve, reject) => {
+      const result = await window.api.getConfig();
+      if (result.errorMessage) {
+        reject(result.errorMessage);
+      } else {
+        resolve(result.config);
+      }
     });
   },
 );
@@ -90,11 +79,9 @@ export const updateConfigAsync = createAsyncThunk(
   "config/update",
   (_, { getState }): Promise<void> => {
     return new Promise((resolve, reject) => {
-      // toDo: Исправить логику
-      // const { main } = getState() as RootState;
-      // const config = convertStateToConfig(main);
-      // updateConfig(config).then(resolve).catch(reject);
-      resolve();
+      const { main } = getState() as RootState;
+      const config = convertStateToConfig(main);
+      updateConfig(config).then(resolve).catch(reject);
     });
   },
 );
@@ -102,28 +89,13 @@ export const updateConfigAsync = createAsyncThunk(
 export const resetConfigAsync = createAsyncThunk(
   "config/reset",
   (): Promise<Config> => {
-    return new Promise((resolve, reject) => {
-      // toDo: Исправить логику
-      // const options: RequestInit = {
-      //   method: "DELETE",
-      // };
-      // fetch(Path.config, options)
-      //   .then(async (response) => {
-      //     if (response.ok) {
-      //       const data: Config = await response.json();
-      //       resolve(data);
-      //     } else {
-      //       const data: ConfigError = await response.json();
-      //       reject(data.message);
-      //     }
-      //   })
-      //   .catch((e) => {
-      //     reject(
-      //       "Не удалось выполнить запрос на возврат настроек по умолчанию",
-      //     );
-      //     console.error(e);
-      //   });
-      resolve(defaultConfig);
+    return new Promise(async (resolve, reject) => {
+      const result = await window.api.createDefaultConfig();
+      if (result.errorMessage) {
+        reject(result.errorMessage);
+      } else {
+        resolve(result.config);
+      }
     });
   },
 );
@@ -153,25 +125,13 @@ export const exportConfigAsync = createAsyncThunk(
 export const clearLogFilesAsync = createAsyncThunk(
   "log/clear",
   (): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      // toDo: Исправить логику
-      // const options: RequestInit = {
-      //   method: "DELETE",
-      // };
-      // fetch(Path.log, options)
-      //   .then(async (response) => {
-      //     const data: ClearingLogFiles = await response.json();
-      //     if (response.ok && data.isCleared) {
-      //       resolve();
-      //     } else {
-      //       reject(data.message);
-      //     }
-      //   })
-      //   .catch((e) => {
-      //     reject("Не удалось выполнить запрос на очистку файлов логирования");
-      //     console.error(e);
-      //   });
-      resolve();
+    return new Promise(async (resolve, reject) => {
+      const result = await window.api.clearLogFiles();
+      if (result.errorMessage) {
+        reject(result.errorMessage);
+      } else {
+        resolve();
+      }
     });
   },
 );

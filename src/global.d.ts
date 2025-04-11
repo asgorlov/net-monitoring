@@ -16,7 +16,7 @@ export interface API {
   clearLogFiles: () => Promise<ActionResult>;
   getConfig: () => Promise<GettingConfigResult>;
   updateConfig: (config: Config) => Promise<ActionResult>;
-  createDefaultConfig: () => Promise<ActionResult>;
+  createDefaultConfig: () => Promise<GettingConfigResult>;
 }
 
 declare global {

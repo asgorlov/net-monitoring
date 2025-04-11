@@ -28,7 +28,7 @@ const api: API = {
     ipcRenderer.invoke(ChannelName.GET_CONFIG),
   updateConfig: (config: Config): Promise<ActionResult> =>
     ipcRenderer.invoke(ChannelName.UPDATE_CONFIG, config),
-  createDefaultConfig: (): Promise<ActionResult> =>
+  createDefaultConfig: (): Promise<GettingConfigResult> =>
     ipcRenderer.invoke(ChannelName.CREATE_DEFAULT_CONFIG),
 };
 

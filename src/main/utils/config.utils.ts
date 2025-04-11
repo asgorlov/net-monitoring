@@ -10,9 +10,8 @@ import { ConfigValidationError } from "../constants/config-validation-error.cons
 
 let configCache: Config | null = null;
 
-const getActualConfig = (module: string): Config => {
-  delete require.cache[require.resolve(module)];
-  return require(module);
+const getActualConfig = (path: string): Config => {
+  return JSON.parse(fs.readFileSync(path, "utf8"));
 };
 
 const getConfig = (): Config => {
