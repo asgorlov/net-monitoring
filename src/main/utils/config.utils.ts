@@ -10,13 +10,15 @@ import { ConfigValidationError } from "../constants/config-validation-error.cons
 
 let configCache: Config | null = null;
 
+const setConfigCache = (config: Config) => (configCache = freeze(config));
+
 const getActualConfig = (path: string): Config => {
   return JSON.parse(fs.readFileSync(path, "utf8"));
 };
 
 const getConfig = (): Config => {
   if (!configCache) {
-    configCache = getActualConfig(Path.config);
+    setConfigCache(getActualConfig(Path.config));
   }
 
   return configCache;
@@ -24,7 +26,8 @@ const getConfig = (): Config => {
 
 const createDefaultConfig = (): Config => {
   fs.writeFileSync(Path.config, JSON.stringify(defaultConfig));
-  return defaultConfig;
+  setConfigCache(defaultConfig);
+  return configCache;
 };
 
 const validateConfig = (config: Config | null | undefined) => {
@@ -84,7 +87,8 @@ const updateConfig = (config: Config): Config => {
 
   try {
     fs.writeFileSync(Path.config, JSON.stringify(config));
-    return freeze(config);
+    setConfigCache(config);
+    return configCache;
   } catch (e) {
     throw new Error(ConfigValidationError.ConfigUpdatingFailed);
   }
