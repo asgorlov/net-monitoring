@@ -11,6 +11,7 @@ import {
   ActionResult,
   GettingConfigResult,
 } from "../shared/models/config.models";
+import { PingHostParams, uuid } from "../shared/models/host.models";
 
 const api: API = {
   openTab: (url: string) => ipcRenderer.invoke(ChannelName.OPEN_TAB, url),
@@ -30,6 +31,10 @@ const api: API = {
     ipcRenderer.invoke(ChannelName.UPDATE_CONFIG, config),
   createDefaultConfig: (): Promise<GettingConfigResult> =>
     ipcRenderer.invoke(ChannelName.CREATE_DEFAULT_CONFIG),
+  pingHost: (params: PingHostParams): Promise<boolean | null> =>
+    ipcRenderer.invoke(ChannelName.PING_HOST, params),
+  abortPingHost: (id: uuid) =>
+    ipcRenderer.invoke(ChannelName.ABORT_PING_HOST, id),
 };
 
 contextBridge.exposeInMainWorld("api", api);

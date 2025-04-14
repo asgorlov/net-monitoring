@@ -25,8 +25,8 @@ export const defaultConfig: Config = freeze({
   pingHosts: [],
 });
 
-export const MIN_ECHO_REPLY = 1; // for Win ping.exe by default
-export const DEFAULT_TIMEOUT_ECHO_REPLY_IN_SEC = 1; // for Win ping.exe by default
+export const MIN_ECHO_REPLY = 1;
+export const DEFAULT_TIMEOUT_ECHO_REPLY_IN_MS = 1000; // for Win ping.exe by default
 
 export const CONFIG_FILE_NAME: string = "config.json";
 export const CONFIG_FILE_TYPE: string = "application/json";

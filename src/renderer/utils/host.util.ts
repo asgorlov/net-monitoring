@@ -2,7 +2,6 @@ import { notification } from "antd";
 import {
   FlattedPingHost,
   HostBase,
-  HostResponseBody,
   HostViewModel,
   PingHost,
   uuid,
@@ -210,32 +209,44 @@ export const validateAndChangeHostViewModels = (
 
 export const pingHostAsync = async (
   host: HostBase,
-  controller: AbortController,
-): Promise<boolean | null> => {
-  // toDo: Исправить логику
-  // try {
-  //   const options: RequestInit = {
-  //     method: "POST",
-  //     headers: [["Content-Type", "application/json"]],
-  //     body: JSON.stringify({ hosts: [host] }),
-  //     signal: controller.signal,
-  //   };
-  //   const response = await fetch(Path.ping, options);
-  //   const data: HostResponseBody = await response.json();
-  //
-  //   return data.hostStatuses[0].isAlive;
-  // } catch (e) {
-  //   const error = e as Error;
-  //   if (error.name !== "AbortError") {
-  //     notification.error({
-  //       message: `Не удалось выполнить пинг подключения с адресом: ${host.host}`,
-  //     });
-  //     console.error(error);
-  //   }
-  // }
+  signal: AbortSignal,
+  setPinging: (v: boolean) => void,
+): Promise<boolean | null> =>
+  new Promise<boolean | null>((resolve) => {
+    const resolvePing = (result: boolean | null) => {
+      setPinging(false);
+      resolve(result);
+    };
 
-  return null;
-};
+    if (signal.aborted) {
+      resolvePing(null);
+    } else {
+      setPinging(true);
+      const pingId = crypto.randomUUID();
+      const abortCallback = () => {
+        window.api.abortPingHost(pingId);
+        signal.removeEventListener("abort", abortCallback);
+        resolvePing(null);
+      };
+
+      signal.addEventListener("abort", abortCallback);
+
+      window.api
+        .pingHost({ host, pingId })
+        .then((result) => {
+          if (!signal.aborted) {
+            resolvePing(result);
+          }
+        })
+        .catch(() => {
+          notification.error({
+            message: `Не удалось выполнить пинг подключения с адресом: ${host.host}`,
+          });
+          resolvePing(null);
+        })
+        .finally(() => signal.removeEventListener("abort", abortCallback));
+    }
+  });
 
 export const createEmptyHost = (
   parentId: uuid | null = null,

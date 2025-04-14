@@ -53,10 +53,11 @@ const NetSchemeHostContainer = forwardRef<
     if (canBePinged) {
       controllerRef.current = new AbortController();
       const ping = () => {
-        setPinging(true);
-        pingHostAsync(hostViewModel, controllerRef.current)
-          .then(setIsAlive)
-          .finally(() => setPinging(false));
+        pingHostAsync(
+          hostViewModel,
+          controllerRef.current.signal,
+          setPinging,
+        ).then(setIsAlive);
       };
       ping();
 

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, IpcMainInvokeEvent } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
 import url from "url";
 import ChannelName from "./constants/channel-name.constants";
@@ -71,3 +71,7 @@ ipcMain.handle(
   ChannelName.CREATE_DEFAULT_CONFIG,
   IpcMainHandlerUtils.createDefaultConfig,
 );
+
+ipcMain.handle(ChannelName.PING_HOST, IpcMainHandlerUtils.pingHost);
+
+ipcMain.handle(ChannelName.ABORT_PING_HOST, IpcMainHandlerUtils.abortPingHost);

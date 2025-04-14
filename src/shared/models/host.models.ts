@@ -8,14 +8,6 @@ export interface HostBase {
   host: string;
 }
 
-export interface HostStatus extends HostBase {
-  isAlive: boolean | null;
-}
-
-export interface HostResponseBody {
-  hostStatuses: HostStatus[];
-}
-
 export interface CommonPingHost extends HostBase {
   name: string;
   type: HostType;
@@ -32,4 +24,9 @@ export interface FlattedPingHost extends CommonPingHost {
 
 export interface HostViewModel extends FlattedPingHost {
   errors: HostFieldError[];
+}
+
+export interface PingHostParams {
+  pingId: uuid;
+  host: HostBase;
 }

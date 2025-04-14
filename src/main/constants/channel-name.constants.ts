@@ -6,6 +6,8 @@ enum ChannelName {
   GET_CONFIG = "getConfig",
   UPDATE_CONFIG = "updateConfig",
   CREATE_DEFAULT_CONFIG = "createDefaultConfig",
+  PING_HOST = "pingHost",
+  ABORT_PING_HOST = "abortPingHost",
 }
 
 export default ChannelName;

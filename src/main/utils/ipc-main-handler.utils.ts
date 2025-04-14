@@ -1,13 +1,15 @@
 import { IpcMainInvokeEvent, shell } from "electron";
 import Logger from "./main-logger.utils";
+import PingUtils from "./ping.utils";
+import ConfigUtils from "./config.utils";
 import { LoggerLevel } from "../../shared/constants/logger.constants";
 import {
   ActionResult,
   Config,
   GettingConfigResult,
 } from "../../shared/models/config.models";
-import ConfigUtils from "./config.utils";
 import { ConfigValidationError } from "../constants/config-validation-error.constants";
+import { PingHostParams, uuid } from "../../shared/models/host.models";
 
 const openTabExternal = async (
   _e: IpcMainInvokeEvent,
@@ -179,6 +181,13 @@ const clearLogFiles = (): ActionResult => {
   return result;
 };
 
+const pingHost = (
+  _e: IpcMainInvokeEvent,
+  params: PingHostParams,
+): Promise<boolean | null> => PingUtils.ping(params);
+
+const abortPingHost = (_e: IpcMainInvokeEvent, id: uuid) => PingUtils.abort(id);
+
 const IpcMainHandlerUtils = {
   openTab: openTabExternal,
   sendRendererLogs: sendRendererLogs,
@@ -186,6 +195,8 @@ const IpcMainHandlerUtils = {
   updateConfig: updateConfig,
   createDefaultConfig: createDefaultConfig,
   clearLogFiles: clearLogFiles,
+  pingHost: pingHost,
+  abortPingHost: abortPingHost,
 };
 
 export default IpcMainHandlerUtils;
