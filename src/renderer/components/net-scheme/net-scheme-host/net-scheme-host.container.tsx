@@ -11,6 +11,7 @@ import NetSchemeHostComponent from "./net-scheme-host.component";
 import { HostViewModel } from "../../../../shared/models/host.models";
 import { pingHostAsync } from "../../../utils/host.util";
 import settingsUtil from "../../../utils/settings.util";
+import { useSchemeFormContext } from "../../../contexts/form.context";
 
 export interface NetSchemeHostContainerProps {
   hostViewModel: HostViewModel;
@@ -28,6 +29,7 @@ const NetSchemeHostContainer = forwardRef<
   const autoPing = useSelector(selectAutoPing);
 
   const { open } = useOpenSettingsContext();
+  const { isTouched } = useSchemeFormContext();
   const controllerRef = useRef(new AbortController());
   const timerRef = useRef<NodeJS.Timeout | undefined>();
 
@@ -78,6 +80,12 @@ const NetSchemeHostContainer = forwardRef<
     open,
     interval,
   ]);
+
+  useEffect(() => {
+    if (!open && isTouched) {
+      setIsAlive(null);
+    }
+  }, [open, isTouched]);
 
   return (
     <NetSchemeHostComponent

@@ -60,7 +60,7 @@ const pingHost = (params: PingHostParams): Promise<boolean | null> => {
         let alive = null;
         if (error) {
           if (error.name === "AbortError") {
-            Logger.info(`The ping of host '${host.host}' was aborted`);
+            Logger.debug(`The ping of host '${host.host}' was aborted`);
           } else if (stdout.includes("timed out")) {
             Logger.info(
               `The ping of host '${host.host}' was interrupted by timeout`,
