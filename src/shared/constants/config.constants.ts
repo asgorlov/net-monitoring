@@ -12,7 +12,7 @@ export const freeze = (obj) => {
 export const defaultConfig: Config = freeze({
   logger: {
     level: LoggerLevel.DEBUG,
-    type: LoggerType.CONSOLE,
+    type: LoggerType.BOTH,
     numberOfLogFiles: 5, // if it < 0 - infinite number of files
     logFileSizeInBytes: 52428800, // 50Mb, if it < 0 - infinite size
   },

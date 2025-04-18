@@ -1,4 +1,4 @@
-import fs, { Dirent } from "fs";
+import fs, { Dirent, WriteStream } from "fs";
 import path from "path";
 import Path from "../constants/path.constants";
 import {
@@ -11,7 +11,7 @@ import ChannelName from "../constants/channel-name.constants";
 import { ConsoleLoggerRow } from "../../shared/models/logger.models";
 import ConfigUtils from "./config.utils";
 
-let logFileStream = null;
+let logFileStream: WriteStream | null = null;
 
 const getSettings = (): ConfigLogger => {
   try {
@@ -44,7 +44,8 @@ const isDirExisted = (): boolean => {
     fs.mkdirSync(Path.logDir, { recursive: true });
     return true;
   } catch (e) {
-    logToConsole(LoggerLevel.ERROR, e);
+    const date = new Date().toISOString();
+    logToConsole(LoggerLevel.ERROR, e, date);
     return false;
   }
 };
@@ -54,7 +55,8 @@ const removeFile = (file: Dirent) => {
     const pathToFile = path.join(Path.logDir, `/${file.name}`);
     fs.unlinkSync(pathToFile);
   } catch (e) {
-    logToConsole(LoggerLevel.ERROR, e);
+    const date = new Date().toISOString();
+    logToConsole(LoggerLevel.ERROR, e, date);
   }
 };
 
@@ -69,10 +71,11 @@ const createFile = (row: string) => {
     }
 
     const pathToLogFile = path.join(Path.logDir, `/log-${Date.now()}.log`);
-    logFileStream = fs.createWriteStream(pathToLogFile, { flags: "a" });
+    logFileStream = fs.createWriteStream(pathToLogFile, { flags: "w" });
     logFileStream.write(row);
   } catch (e) {
-    logToConsole(LoggerLevel.ERROR, e);
+    const date = new Date().toISOString();
+    logToConsole(LoggerLevel.ERROR, e, date);
     logFileStream?.end();
     logFileStream = null;
   }
@@ -82,7 +85,8 @@ const recordRowToFile = (row: string) => {
   try {
     logFileStream.write(row);
   } catch (e) {
-    logToConsole(LoggerLevel.ERROR, e);
+    const date = new Date().toISOString();
+    logToConsole(LoggerLevel.ERROR, e, date);
     logFileStream?.end();
     logFileStream = null;
   }
@@ -91,6 +95,7 @@ const recordRowToFile = (row: string) => {
 const createRow = (
   level: LoggerLevel,
   message: string,
+  date: string,
   isFileCase: boolean = false,
 ) => {
   const consoleChar = isFileCase ? "" : "%c";
@@ -99,7 +104,7 @@ const createRow = (
     `[${level}]`,
     consoleChar,
     " - ",
-    new Date().toISOString(),
+    date,
     " - ",
     message,
     isFileCase ? "\n" : "",
@@ -109,9 +114,9 @@ const createRow = (
   return tempData.join("");
 };
 
-const logToFile = (level: LoggerLevel, message: string) => {
+const logToFile = (level: LoggerLevel, message: string, date: string) => {
   if (show(level, LoggerType.FILE)) {
-    const row = createRow(level, message, true);
+    const row = createRow(level, message, date, true);
 
     if (logFileStream) {
       const logFileSizeInBytes = getSettings().logFileSizeInBytes;
@@ -153,38 +158,40 @@ const getConsoleColor = (level: LoggerLevel): string => {
 const createConsoleLoggerRow = (
   level: LoggerLevel,
   message: string,
+  date: string,
 ): ConsoleLoggerRow => {
   const color = getConsoleColor(level);
   const settings = [`${color}font-weight:bold;`, color];
-  const row = createRow(level, message);
+  const row = createRow(level, message, date);
 
   return { row, settings };
 };
 
-const logToConsole = (level: LoggerLevel, message: string) => {
+const logToConsole = (level: LoggerLevel, message: string, date: string) => {
   if (show(level, LoggerType.CONSOLE)) {
-    const loggerRow = createConsoleLoggerRow(level, message);
+    const loggerRow = createConsoleLoggerRow(level, message, date);
     console.log(loggerRow.row, ...loggerRow.settings);
     global.sendToRenderer(ChannelName.SEND_MAIN_LOGS, loggerRow);
   }
 };
 
-const debug = (logObj: Error | string) => {
+const log = (level: LoggerLevel, logObj: Error | string) => {
+  const date = new Date().toISOString();
   const message = logObj instanceof Error ? logObj.message : logObj;
-  logToConsole(LoggerLevel.DEBUG, message);
-  logToFile(LoggerLevel.DEBUG, message);
+  logToConsole(level, message, date);
+  logToFile(level, message, date);
+};
+
+const debug = (logObj: Error | string) => {
+  log(LoggerLevel.DEBUG, logObj);
 };
 
 const info = (logObj: Error | string) => {
-  const message = logObj instanceof Error ? logObj.message : logObj;
-  logToConsole(LoggerLevel.INFO, message);
-  logToFile(LoggerLevel.INFO, message);
+  log(LoggerLevel.INFO, logObj);
 };
 
 const error = (logObj: Error | string) => {
-  const message = logObj instanceof Error ? logObj.message : logObj;
-  logToConsole(LoggerLevel.ERROR, message);
-  logToFile(LoggerLevel.ERROR, message);
+  log(LoggerLevel.ERROR, logObj);
 };
 
 const clearLogDir = () => {
