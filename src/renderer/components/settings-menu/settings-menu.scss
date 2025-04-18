@@ -74,8 +74,14 @@
         width: max-content;
       }
 
-      &__cofig-btn {
-        width: 114px;
+      &__config-btn {
+        padding-left: 8px;
+        padding-right: 8px;
+
+        &-group {
+          display: flex;
+          gap: 4px;
+        }
       }
     }
   }

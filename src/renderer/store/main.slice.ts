@@ -29,7 +29,6 @@ import { initializePingHostViewModel } from "../utils/host.util";
 import settingsUtil from "../utils/settings.util";
 
 export interface MainStateBase {
-  port: number;
   loggerLevel: LoggerLevel;
   loggerType: LoggerType;
   numberOfLogFiles: number;
@@ -50,7 +49,6 @@ const initialState: MainState = {
   configLoading: false,
   manualPingTrigger: 0,
   clearLogFilesLoading: false,
-  port: defaultConfig.port,
   loggerLevel: defaultConfig.logger.level,
   loggerType: defaultConfig.logger.type,
   numberOfLogFiles: defaultConfig.logger.numberOfLogFiles,
@@ -233,7 +231,6 @@ export const {
   incrementManualPingTrigger,
 } = mainSlice.actions;
 
-export const selectPort = (state: RootState): number => state.main.port;
 export const selectLoggerLevel = (state: RootState): LoggerLevel =>
   state.main.loggerLevel;
 export const selectLoggerType = (state: RootState): LoggerType =>

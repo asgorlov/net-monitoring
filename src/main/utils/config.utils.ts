@@ -10,7 +10,9 @@ import { ConfigValidationError } from "../constants/config-validation-error.cons
 
 let configCache: Config | null = null;
 
-const setConfigCache = (config: Config) => (configCache = freeze(config));
+const setConfigCache = (config: Config) => {
+  configCache = Object.isFrozen(config) ? config : freeze(config);
+};
 
 const getActualConfig = (path: string): Config => {
   return JSON.parse(fs.readFileSync(path, "utf8"));
@@ -33,11 +35,6 @@ const createDefaultConfig = (): Config => {
 const validateConfig = (config: Config | null | undefined) => {
   if (!config) {
     throw new Error(ConfigValidationError.EmptyConfig);
-  }
-
-  const isPortValid = isFinite(config.port);
-  if (!isPortValid) {
-    throw new Error(ConfigValidationError.InvalidPort);
   }
 
   if (config.logger) {

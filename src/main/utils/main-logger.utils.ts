@@ -189,6 +189,11 @@ const error = (logObj: Error | string) => {
 
 const clearLogDir = () => {
   if (isDirExisted()) {
+    if (logFileStream) {
+      logFileStream.end();
+      logFileStream = null;
+    }
+
     fs.readdirSync(Path.logDir).forEach((f) =>
       fs.unlinkSync(path.join(Path.logDir, f)),
     );

@@ -10,7 +10,6 @@ export const freeze = (obj) => {
 };
 
 export const defaultConfig: Config = freeze({
-  port: 8008,
   logger: {
     level: LoggerLevel.DEBUG,
     type: LoggerType.CONSOLE,
@@ -20,7 +19,7 @@ export const defaultConfig: Config = freeze({
   request: {
     autoPing: true,
     interval: 30, // can't be less 1
-    timeout: 29, // can't be less 1 and more interval
+    timeout: 15, // can't be less 1 and more interval
   },
   pingHosts: [],
 });

@@ -50,12 +50,6 @@ const SettingsMenuComponent: FC<MenuProps> = ({
 
   const disableActions = !open || configLoading;
 
-  const onPortChange = (port: number | null) => {
-    if (port !== null) {
-      onChangeFormValues({ ...formValues, port });
-    }
-  };
-
   const onLevelChange = (level: LoggerLevel) => {
     onChangeFormValues({ ...formValues, level });
   };
@@ -119,25 +113,47 @@ const SettingsMenuComponent: FC<MenuProps> = ({
         borderColor: token.colorBorder,
       }}
     >
-      <div
-        className="settings-menu__row"
-        style={{ borderColor: token.colorBorder }}
-      >
+      <div className="settings-menu__row">
         <h6 style={{ borderColor: token.colorBorder }}>Общие</h6>
         <div className="settings-menu__row__item">
-          <label htmlFor="port">Порт:</label>
-          {configLoading ? (
-            <Skeleton className="settings-menu__row__item__skeleton-input-number" />
-          ) : (
-            <InputNumber
-              id="port"
+          <label>Конфигурация:</label>
+          <div className="settings-menu__row__item__config-btn-group">
+            <Upload
+              id="import-config"
+              customRequest={validateUploading}
+              onChange={importConfig}
+              itemRender={() => null}
               disabled={disableActions}
-              value={formValues.port}
-              onChange={onPortChange}
-              min={0}
-              max={65535}
-            />
-          )}
+              accept={CONFIG_FILE_TYPE}
+            >
+              <Button
+                title="Импорт файла конфигурации"
+                disabled={disableActions}
+                className="settings-menu__row__item__config-btn"
+              >
+                <UploadOutlined />
+                <span>Импорт</span>
+              </Button>
+            </Upload>
+            <Button
+              title="Экспорт файла конфигурации"
+              onClick={exportConfig}
+              disabled={disableActions}
+              className="settings-menu__row__item__config-btn"
+            >
+              <DownloadOutlined />
+              <span>Экспорт</span>
+            </Button>
+            <Button
+              title="Сброс настроек по умолчанию"
+              onClick={resetConfig}
+              disabled={disableActions}
+              className="settings-menu__row__item__config-btn"
+            >
+              <RollbackOutlined />
+              <span>Сброс</span>
+            </Button>
+          </div>
         </div>
       </div>
       <div className="settings-menu__row">
@@ -148,33 +164,47 @@ const SettingsMenuComponent: FC<MenuProps> = ({
             <Skeleton className="settings-menu__row__item__skeleton-select" />
           ) : (
             <Select
+              title="Уровень логирования"
               id="level"
               disabled={disableActions}
               value={formValues.level}
               onChange={onLevelChange}
               options={[
-                { value: LoggerLevel.DEBUG, label: LoggerLevel.DEBUG },
-                { value: LoggerLevel.INFO, label: LoggerLevel.INFO },
-                { value: LoggerLevel.ERROR, label: LoggerLevel.ERROR },
-                { value: LoggerLevel.OFF, label: LoggerLevel.OFF },
+                {
+                  value: LoggerLevel.DEBUG,
+                  label: `[${LoggerLevel.DEBUG}] - Всё включено`,
+                },
+                {
+                  value: LoggerLevel.INFO,
+                  label: `[${LoggerLevel.INFO}] - Важная информация и ошибки`,
+                },
+                {
+                  value: LoggerLevel.ERROR,
+                  label: `[${LoggerLevel.ERROR}] - Только ошибки`,
+                },
+                {
+                  value: LoggerLevel.OFF,
+                  label: `[${LoggerLevel.OFF}] - Отключено`,
+                },
               ]}
             />
           )}
         </div>
         <div className="settings-menu__row__item">
-          <label htmlFor="type">Тип:</label>
+          <label htmlFor="type">Запись в:</label>
           {configLoading ? (
             <Skeleton className="settings-menu__row__item__skeleton-select" />
           ) : (
             <Select
+              title="Место вывода логов"
               id="type"
               disabled={disableActions || formValues.level === LoggerLevel.OFF}
               value={formValues.type}
               onChange={onTypeChange}
               options={[
-                { value: LoggerType.CONSOLE, label: LoggerType.CONSOLE },
-                { value: LoggerType.FILE, label: LoggerType.FILE },
-                { value: LoggerType.BOTH, label: LoggerType.BOTH },
+                { value: LoggerType.CONSOLE, label: "Консоль" },
+                { value: LoggerType.FILE, label: "Файл" },
+                { value: LoggerType.BOTH, label: "Файл и консоль" },
               ]}
             />
           )}
@@ -187,6 +217,7 @@ const SettingsMenuComponent: FC<MenuProps> = ({
             <Skeleton className="settings-menu__row__item__skeleton-input-number" />
           ) : (
             <InputNumber
+              title="Максимальное количество файлов c логами"
               id="numberOfLogFiles"
               disabled={
                 !open ||
@@ -206,6 +237,7 @@ const SettingsMenuComponent: FC<MenuProps> = ({
             <Skeleton className="settings-menu__row__item__skeleton-input-number" />
           ) : (
             <InputNumber
+              title="Максимальный размер файлов c логами"
               id="logFileSize"
               disabled={
                 !open ||
@@ -221,10 +253,9 @@ const SettingsMenuComponent: FC<MenuProps> = ({
           )}
         </div>
         <div className="settings-menu__row__item">
-          <label htmlFor="logFileSize">
-            Очистить папку с файлами логирования:
-          </label>
+          <label htmlFor="logFileSize">Очистить папку логирования:</label>
           <Button
+            title="Очистить папку с логами"
             className="settings-menu__row__item__clear-logs-btn"
             onClick={onClickClearLogs}
             disabled={!open || clearLogsLoading}
@@ -235,13 +266,14 @@ const SettingsMenuComponent: FC<MenuProps> = ({
         </div>
       </div>
       <div className="settings-menu__row">
-        <h6 style={{ borderColor: token.colorBorder }}>Запросы</h6>
+        <h6 style={{ borderColor: token.colorBorder }}>Пинг-запросы</h6>
         <div className="settings-menu__row__item">
-          <label htmlFor="autoPing">Периодическая автоотправка запросов:</label>
+          <label htmlFor="autoPing">Автопинг-запросы:</label>
           {configLoading ? (
             <Skeleton className="settings-menu__row__item__skeleton-switch" />
           ) : (
             <Switch
+              title="Ручной или автоматический пинг"
               id="autoPing"
               checked={formValues.autoPing}
               onChange={onAutoPingChange}
@@ -255,6 +287,7 @@ const SettingsMenuComponent: FC<MenuProps> = ({
             <Skeleton className="settings-menu__row__item__skeleton-input-number" />
           ) : (
             <InputNumber
+              title="Период между автоматическими пинг-запросами"
               id="interval"
               disabled={disableActions || !formValues.autoPing}
               value={formValues.interval}
@@ -270,6 +303,7 @@ const SettingsMenuComponent: FC<MenuProps> = ({
             <Skeleton className="settings-menu__row__item__skeleton-input-number" />
           ) : (
             <InputNumber
+              title="Время ожидания ответа на пинг-запрос"
               id="timeout"
               disabled={disableActions}
               value={getCorrectedTimeout()}
@@ -279,50 +313,6 @@ const SettingsMenuComponent: FC<MenuProps> = ({
               suffix="сек."
             />
           )}
-        </div>
-      </div>
-      <div className="settings-menu__row">
-        <h6 style={{ borderColor: token.colorBorder }}>Настройки</h6>
-        <div className="settings-menu__row__item">
-          <label htmlFor="import-config">Импорт файла настроек:</label>
-          <Upload
-            id="import-config"
-            customRequest={validateUploading}
-            onChange={importConfig}
-            itemRender={() => null}
-            disabled={disableActions}
-            accept={CONFIG_FILE_TYPE}
-          >
-            <Button
-              disabled={disableActions}
-              className="settings-menu__row__item__cofig-btn"
-            >
-              <UploadOutlined />
-              <span>Импорт</span>
-            </Button>
-          </Upload>
-        </div>
-        <div className="settings-menu__row__item">
-          <label>Экспорт файла настроек:</label>
-          <Button
-            onClick={exportConfig}
-            disabled={disableActions}
-            className="settings-menu__row__item__cofig-btn"
-          >
-            <DownloadOutlined />
-            <span>Экспорт</span>
-          </Button>
-        </div>
-        <div className="settings-menu__row__item">
-          <label>Сброс настроек по умолчанию:</label>
-          <Button
-            onClick={resetConfig}
-            disabled={disableActions}
-            className="settings-menu__row__item__cofig-btn"
-          >
-            <RollbackOutlined />
-            <span>Сброс</span>
-          </Button>
         </div>
       </div>
     </div>

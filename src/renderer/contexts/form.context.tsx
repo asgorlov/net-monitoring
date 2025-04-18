@@ -21,7 +21,6 @@ import {
   selectLoggerLevel,
   selectLoggerType,
   selectNumberOfLogFiles,
-  selectPort,
   selectTimeout,
 } from "../store/main.slice";
 import settingsUtil from "../utils/settings.util";
@@ -43,7 +42,6 @@ export interface SettingsFormInstance extends FormInstance<SettingsForm> {}
 
 const SettingsFormContext = createContext<SettingsFormInstance>({
   data: {
-    port: defaultConfig.port,
     level: defaultConfig.logger.level,
     type: defaultConfig.logger.type,
     numberOfLogFiles: defaultConfig.logger.numberOfLogFiles,
@@ -71,7 +69,6 @@ const SchemeFormContext = createContext<SchemeFormInstance>({
 });
 
 export const FormsContextProvider: FC<PropsWithChildren> = ({ children }) => {
-  const port = useSelector(selectPort);
   const timeout = useSelector(selectTimeout);
   const interval = useSelector(selectInterval);
   const autoPing = useSelector(selectAutoPing);
@@ -81,7 +78,6 @@ export const FormsContextProvider: FC<PropsWithChildren> = ({ children }) => {
   const logFileSizeInBytes = useSelector(selectLogFileSizeInBytes);
   const initialSettings = useMemo(
     () => ({
-      port,
       level: loggerLevel,
       type: loggerType,
       numberOfLogFiles,
@@ -91,7 +87,6 @@ export const FormsContextProvider: FC<PropsWithChildren> = ({ children }) => {
       timeout,
     }),
     [
-      port,
       loggerLevel,
       loggerType,
       numberOfLogFiles,

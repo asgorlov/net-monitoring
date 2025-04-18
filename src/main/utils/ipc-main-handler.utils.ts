@@ -78,10 +78,6 @@ const updateConfig = (_e: IpcMainInvokeEvent, config: Config): ActionResult => {
         result.errorMessage =
           "Некорректные данные. Отсутствуют данные конфигурации";
         break;
-      case ConfigValidationError.InvalidPort:
-        Logger.error(`Incorrect config field \'port\' = ${config.port}`);
-        result.errorMessage = "Некорректные данные. Неверно указан порт";
-        break;
       case ConfigValidationError.InvalidLoggerConfig:
         Logger.error(`Incorrect config field \'logger\' = ${config.logger}`);
         result.errorMessage =

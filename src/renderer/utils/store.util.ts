@@ -8,7 +8,6 @@ import { UploadFile } from "antd/es/upload/interface";
 import { defaultConfig } from "../../shared/constants/config.constants";
 
 export const updateState = (state: MainState, payload: MainStateBase) => {
-  state.port = payload.port;
   state.loggerLevel = payload.loggerLevel;
   state.loggerType = payload.loggerType;
   state.numberOfLogFiles = payload.numberOfLogFiles;
@@ -21,7 +20,6 @@ export const updateState = (state: MainState, payload: MainStateBase) => {
 
 export const updateStateByConfig = (state: MainState, config: Config) => {
   updateState(state, {
-    port: config.port,
     loggerLevel: config.logger.level,
     loggerType: config.logger.type,
     numberOfLogFiles: config.logger.numberOfLogFiles,
@@ -38,7 +36,6 @@ export const updateStateByConfig = (state: MainState, config: Config) => {
 
 export const convertStateToConfig = (state: MainState): Config => {
   return {
-    port: state.port,
     logger: {
       level: state.loggerLevel,
       type: state.loggerType,

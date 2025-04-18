@@ -61,7 +61,6 @@ const AppLayoutContainer = () => {
     const save = () => {
       dispatch(
         setBaseConfigData({
-          port: settingsData.port,
           loggerLevel: settingsData.level,
           loggerType: settingsData.type,
           numberOfLogFiles: settingsData.numberOfLogFiles,
