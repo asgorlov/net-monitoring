@@ -1,4 +1,4 @@
-import fs, { Dirent, WriteStream } from "fs";
+import fs, { Dirent, Stats, WriteStream } from "fs";
 import path from "path";
 import Path from "../constants/path.constants";
 import {
@@ -11,7 +11,17 @@ import ChannelName from "../constants/channel-name.constants";
 import { ConsoleLoggerRow } from "../../shared/models/logger.models";
 import ConfigUtils from "./config.utils";
 
-let logFileStream: WriteStream | null = null;
+interface LoggerFile {
+  stream: WriteStream;
+  stats: Stats;
+}
+
+let currentLogFile: LoggerFile | null = null;
+
+const clearLoggerData = () => {
+  currentLogFile?.stream.end();
+  currentLogFile = null;
+};
 
 const getSettings = (): ConfigLogger => {
   try {
@@ -50,46 +60,60 @@ const isDirExisted = (): boolean => {
   }
 };
 
-const removeFile = (file: Dirent) => {
+const clearRedundantOldLogFiles = () => {
   try {
-    const pathToFile = path.join(Path.logDir, `/${file.name}`);
-    fs.unlinkSync(pathToFile);
-  } catch (e) {
-    const date = new Date().toISOString();
-    logToConsole(LoggerLevel.ERROR, e, date);
-  }
-};
-
-const createFile = (row: string) => {
-  try {
-    const files = fs
-      .readdirSync(Path.logDir, { withFileTypes: true })
-      .filter((d) => !d.isDirectory());
     const numberOfLogFiles = getSettings().numberOfLogFiles;
-    if (numberOfLogFiles > 0 && files.length >= numberOfLogFiles) {
-      files.slice(0, files.length - 4).forEach(removeFile);
-    }
+    if (numberOfLogFiles > 0) {
+      const files = fs
+        .readdirSync(Path.logDir, { withFileTypes: true })
+        .filter((d) => !d.isDirectory());
+      if (files.length >= numberOfLogFiles) {
+        const removeFile = (f: Dirent) => {
+          const pathToFile = path.join(Path.logDir, `/${f.name}`);
+          fs.unlinkSync(pathToFile);
+        };
 
-    const pathToLogFile = path.join(Path.logDir, `/log-${Date.now()}.log`);
-    logFileStream = fs.createWriteStream(pathToLogFile, { flags: "w" });
-    logFileStream.write(row);
+        files
+          .sort((f1, f2) => f2.name.localeCompare(f1.name))
+          .slice(numberOfLogFiles - 1)
+          .forEach(removeFile);
+      }
+    }
   } catch (e) {
     const date = new Date().toISOString();
     logToConsole(LoggerLevel.ERROR, e, date);
-    logFileStream?.end();
-    logFileStream = null;
   }
 };
 
 const recordRowToFile = (row: string) => {
   try {
-    logFileStream.write(row);
+    currentLogFile.stream.write(row);
   } catch (e) {
     const date = new Date().toISOString();
     logToConsole(LoggerLevel.ERROR, e, date);
-    logFileStream?.end();
-    logFileStream = null;
+    clearLoggerData();
   }
+};
+
+const createFile = (row: string) => {
+  clearRedundantOldLogFiles();
+
+  try {
+    const pathToLogFile = path.join(Path.logDir, `/log-${Date.now()}.log`);
+    fs.writeFileSync(pathToLogFile, "");
+
+    clearLoggerData();
+    currentLogFile = {
+      stream: fs.createWriteStream(pathToLogFile, { flags: "a" }),
+      stats: fs.statSync(pathToLogFile),
+    };
+  } catch (e) {
+    const date = new Date().toISOString();
+    logToConsole(LoggerLevel.ERROR, e, date);
+    clearLoggerData();
+  }
+
+  recordRowToFile(row);
 };
 
 const createRow = (
@@ -116,21 +140,31 @@ const createRow = (
 
 const logToFile = (level: LoggerLevel, message: string, date: string) => {
   if (show(level, LoggerType.FILE)) {
-    const row = createRow(level, message, date, true);
+    const isFileExisted =
+      currentLogFile && fs.existsSync(currentLogFile.stream.path);
+    if (isFileExisted) {
+      const row = createRow(level, message, date, true);
 
-    if (logFileStream) {
-      const logFileSizeInBytes = getSettings().logFileSizeInBytes;
-      const isOverflow =
-        logFileSizeInBytes > 0 &&
-        logFileStream.bytesWritten >= logFileSizeInBytes;
-      if (isOverflow) {
-        logFileStream.end();
-        logFileStream = null;
+      const isSameFile = () => {
+        const stats = fs.statSync(currentLogFile.stream.path);
+        return stats.ino === currentLogFile.stats.ino;
+      };
+
+      const isOverflow = () => {
+        const logFileSizeInBytes = getSettings().logFileSizeInBytes;
+        return (
+          logFileSizeInBytes > 0 &&
+          currentLogFile.stream.bytesWritten >= logFileSizeInBytes
+        );
+      };
+
+      if (isSameFile() && !isOverflow()) {
+        recordRowToFile(row);
+      } else {
         createFile(row);
       }
-
-      recordRowToFile(row);
     } else if (isDirExisted()) {
+      const row = createRow(level, message, date, true);
       createFile(row);
     }
   }
@@ -196,10 +230,7 @@ const error = (logObj: Error | string) => {
 
 const clearLogDir = () => {
   if (isDirExisted()) {
-    if (logFileStream) {
-      logFileStream.end();
-      logFileStream = null;
-    }
+    clearLoggerData();
 
     fs.readdirSync(Path.logDir).forEach((f) =>
       fs.unlinkSync(path.join(Path.logDir, f)),
