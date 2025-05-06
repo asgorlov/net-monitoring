@@ -45,7 +45,11 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
         className="app-layout__header"
       >
         <div className="app-layout__header__btns-block">
-          <Button size="small" onClick={toggleOpenMenu} title="Меню настроек">
+          <Button
+            size="small"
+            onClick={toggleOpenMenu}
+            title="Меню настроек приложения"
+          >
             <MenuOutlined />
           </Button>
           {showManualPingBtn && (

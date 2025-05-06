@@ -1,4 +1,10 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  Menu,
+  MenuItemConstructorOptions,
+} from "electron";
 import path from "path";
 import url from "url";
 import ChannelName from "./constants/channel-name.constants";
@@ -7,7 +13,7 @@ import IpcMainHandlerUtils from "./utils/ipc-main-handler.utils";
 /**
  * Init Electron
  */
-const createWindow = (): void => {
+const createMainWindow = (): BrowserWindow => {
   const options = {
     webPreferences: {
       preload: path.join(__dirname, "preloader.js"),
@@ -16,7 +22,11 @@ const createWindow = (): void => {
     },
     show: false,
   };
-  const mainWindow = new BrowserWindow(options);
+
+  return new BrowserWindow(options);
+};
+
+const configureMainWindow = (mainWindow: BrowserWindow) => {
   const filePath =
     process.env.RENDERER_URL ||
     url.format({
@@ -34,18 +44,130 @@ const createWindow = (): void => {
   });
 
   mainWindow.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
+};
 
+const configureApplicationMenu = (mainWindow: BrowserWindow) => {
+  const webContents = mainWindow.webContents;
+  const contextTemplate: MenuItemConstructorOptions[] = [
+    {
+      label: "Обновить",
+      accelerator: "F5",
+      role: "reload",
+    },
+    { type: "separator" },
+    {
+      label: "Отменить действие",
+      accelerator: "CommandOrControl+Z",
+      role: "undo",
+    },
+    {
+      label: "Повторить действие",
+      accelerator: "CommandOrControl+Y",
+      role: "redo",
+    },
+    { type: "separator" },
+    {
+      label: "Вырезать",
+      accelerator: "CommandOrControl+X",
+      role: "cut",
+    },
+    {
+      label: "Копировать",
+      accelerator: "CommandOrControl+C",
+      role: "copy",
+    },
+    {
+      label: "Вставить",
+      accelerator: "CommandOrControl+V",
+      role: "paste",
+    },
+    {
+      label: "Удалить",
+      role: "delete",
+    },
+    { type: "separator" },
+    {
+      label: "Выделить все",
+      accelerator: "CommandOrControl+A",
+      role: "selectAll",
+    },
+  ];
+  const contextMenu = Menu.buildFromTemplate(contextTemplate);
+  webContents.on("context-menu", (e: Event) => {
+    e.preventDefault();
+    contextMenu.popup({ window: mainWindow });
+  });
+
+  const menuTemplate: MenuItemConstructorOptions[] = [
+    {
+      label: "Меню",
+      submenu: [
+        {
+          label: "Инструменты разработчика",
+          accelerator: "F12",
+          role: "toggleDevTools",
+        },
+        {
+          label: "Обновить",
+          accelerator: "F5",
+          role: "reload",
+        },
+        {
+          label: "Вид",
+          submenu: [
+            {
+              label: "Уменьшить",
+              accelerator: "F2",
+              role: "zoomOut",
+            },
+            {
+              label: "Увеличить",
+              accelerator: "F3",
+              role: "zoomIn",
+            },
+            {
+              label: "Фактический размер",
+              accelerator: "F4",
+              role: "resetZoom",
+            },
+            {
+              label: "Полноэкранный режим",
+              accelerator: "F11",
+              role: "togglefullscreen",
+            },
+          ],
+        },
+        { type: "separator" },
+        {
+          label: "Выход",
+          role: "quit",
+        },
+      ],
+    },
+  ];
+  const menu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(menu);
+};
+
+const configureGlobalVariables = (mainWindow: BrowserWindow) => {
   global.sendToRenderer = (channel: string, ...args: any[]) => {
     mainWindow.webContents.send(channel, ...args);
   };
 };
 
+const initWindow = (): void => {
+  const mainWindow = createMainWindow();
+  configureGlobalVariables(mainWindow);
+  configureApplicationMenu(mainWindow);
+  configureMainWindow(mainWindow);
+};
+
 app.whenReady().then(() => {
-  createWindow();
+  initWindow();
 
   app.on(
     "activate",
-    () => BrowserWindow.getAllWindows().length === 0 && createWindow(),
+    () => BrowserWindow.getAllWindows().length === 0 && initWindow(),
   );
 });
 

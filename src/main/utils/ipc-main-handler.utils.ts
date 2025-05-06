@@ -1,4 +1,11 @@
-import { IpcMainInvokeEvent, shell } from "electron";
+import {
+  app,
+  BrowserWindow,
+  IpcMainInvokeEvent,
+  Menu,
+  MenuItemConstructorOptions,
+  shell,
+} from "electron";
 import Logger from "./main-logger.utils";
 import PingUtils from "./ping.utils";
 import ConfigUtils from "./config.utils";
@@ -184,6 +191,87 @@ const pingHost = (
 
 const abortPingHost = (_e: IpcMainInvokeEvent, id: uuid) => PingUtils.abort(id);
 
+const showContextMenu = (e: IpcMainInvokeEvent) => {
+  const sender = e.sender;
+  const browserWindow = BrowserWindow.fromWebContents(sender);
+  const zoomStep = 0.2;
+  const template: MenuItemConstructorOptions[] = [
+    {
+      id: "0",
+      label: "Обновить",
+      accelerator: "F5",
+      click: () => {
+        sender.reload();
+        Logger.debug("The window was reloaded");
+      },
+    },
+    {
+      id: "1",
+      label: "Инструменты разработчика",
+      accelerator: "F11",
+      click: () => {
+        sender.toggleDevTools();
+        Logger.debug(
+          `The dev tools were ${sender.isDevToolsOpened() ? "opened" : "closed"}`,
+        );
+      },
+    },
+    {
+      id: "2",
+      label: "Вид",
+      submenu: [
+        {
+          id: "2.1",
+          label: "Уменьшить",
+          accelerator: "F2",
+          click: () => {
+            const zoomFactor =
+              Math.round((sender.getZoomFactor() - zoomStep) * 100) / 100;
+            if (zoomFactor > 0) {
+              sender.setZoomFactor(zoomFactor);
+              Logger.debug(
+                `The window size was reduced to ${zoomFactor * 100}%`,
+              );
+            }
+          },
+        },
+        {
+          id: "2.2",
+          label: "Увеличить",
+          accelerator: "F3",
+          click: () => {
+            const zoomFactor = sender.getZoomFactor() + zoomStep;
+            sender.setZoomFactor(zoomFactor);
+            Logger.debug(
+              `The window size was increased to ${zoomFactor * 100}%`,
+            );
+          },
+        },
+        {
+          id: "2.3",
+          label: "Фактический размер",
+          accelerator: "F4",
+          click: () => {
+            sender.setZoomFactor(1);
+            Logger.debug("The window size was changed to 100%");
+          },
+        },
+      ],
+    },
+    { type: "separator" },
+    {
+      id: "3",
+      label: "Выход",
+      click: () => {
+        Logger.debug("The app was closed");
+        app.quit();
+      },
+    },
+  ];
+  const menu = Menu.buildFromTemplate(template);
+  menu.popup({ window: browserWindow });
+};
+
 const IpcMainHandlerUtils = {
   openTab: openTabExternal,
   sendRendererLogs: sendRendererLogs,
@@ -193,6 +281,7 @@ const IpcMainHandlerUtils = {
   clearLogFiles: clearLogFiles,
   pingHost: pingHost,
   abortPingHost: abortPingHost,
+  showContextMenu: showContextMenu,
 };
 
 export default IpcMainHandlerUtils;
