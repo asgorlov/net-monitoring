@@ -168,8 +168,7 @@ export const mainSlice = createSlice({
 
     builder.addCase(updateConfigAsync.fulfilled, (state) => {
       notification.success({
-        message:
-          "Конфигурация обновлена. Для корректной работы приложения требуется перезагрузка",
+        message: "Конфигурация обновлена.",
       });
       state.configLoading = false;
     });
@@ -186,8 +185,7 @@ export const mainSlice = createSlice({
         const config = action.payload as Config;
         updateStateByConfig(state, config);
         notification.success({
-          message:
-            "Конфигурация обновлена. Для корректной работы приложения требуется перезагрузка",
+          message: "Конфигурация обновлена.",
         });
         state.configLoading = false;
       },
