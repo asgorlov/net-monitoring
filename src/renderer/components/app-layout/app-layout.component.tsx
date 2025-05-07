@@ -1,5 +1,5 @@
 import "./app-layout.scss";
-import React, { FC, memo } from "react";
+import React, { FC } from "react";
 import clsx from "clsx";
 import { Button, Layout, theme } from "antd";
 import {
@@ -107,4 +107,4 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
   );
 };
 
-export default memo(AppLayoutComponent);
+export default AppLayoutComponent;

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { Modal, notification } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
@@ -36,25 +36,20 @@ const AppLayoutContainer = () => {
   const autoPing = useSelector(selectAutoPing);
   const configLoading = useSelector(selectConfigLoading);
 
-  const pingManually = useCallback(
-    () => dispatch(incrementManualPingTrigger()),
-    [dispatch],
-  );
+  const pingManually = () => dispatch(incrementManualPingTrigger());
 
-  const toggleOpenMenu = useCallback(
-    () =>
-      setOpen((prevState) => {
-        const newState = !prevState;
-        if (newState) {
-          dispatch(resetManualPingTrigger());
-        }
+  const toggleOpenMenu = () => {
+    setOpen((prevState) => {
+      const newState = !prevState;
+      if (newState) {
+        dispatch(resetManualPingTrigger());
+      }
 
-        return newState;
-      }),
-    [setOpen, dispatch],
-  );
+      return newState;
+    });
+  };
 
-  const saveSettings = useCallback(() => {
+  const saveSettings = () => {
     const settingsData = settingsForm.data;
     const schemeData = validateAndChangeHostViewModels(schemeForm.data);
     const hasErrors = schemeData !== schemeForm.data;
@@ -98,15 +93,15 @@ const AppLayoutContainer = () => {
     } else {
       save();
     }
-  }, [settingsForm, schemeForm, dispatch, setOpen, modal]);
+  };
 
-  const onLinkClick = useCallback(() => {
+  const onLinkClick = () => {
     window.api.openTab(packageJson.author.url).catch(() => {
       notification.error({
         message: `Не удалось открыть ссылку: ${packageJson.author.url}`,
       });
     });
-  }, []);
+  };
 
   useEffect(() => {
     if (open || !isInitializedRef.current) {
