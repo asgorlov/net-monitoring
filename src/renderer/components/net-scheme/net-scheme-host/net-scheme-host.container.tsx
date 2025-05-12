@@ -90,7 +90,6 @@ const NetSchemeHostContainer = forwardRef<
   return (
     <NetSchemeHostComponent
       ref={ref}
-      configLoading={configLoading}
       pinging={pinging}
       isEditable={open}
       isAlive={isAlive}

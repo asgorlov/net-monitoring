@@ -1,10 +1,11 @@
 import "./net-scheme.scss";
-import React, { FC, memo, useMemo } from "react";
+import React, { FC, memo } from "react";
 import { Button } from "antd";
 import NetSchemeItemContainer from "./net-scheme-item/net-scheme-item.container";
 import NetSchemeLine from "./net-scheme-line/net-scheme-line";
 import { HostViewModel, uuid } from "../../../shared/models/host.models";
 import NetSchemeEmptyItem from "./net-scheme-empty-item/net-scheme-empty-item";
+import { LineDimensions } from "../../models/line.models";
 
 export interface NetSchemeComponentProps {
   hostViewModels: Record<uuid, HostViewModel>;
@@ -12,6 +13,11 @@ export interface NetSchemeComponentProps {
   isEditable: boolean;
   openSettings: () => void;
 }
+
+const lineDimensions: LineDimensions = {
+  width: "12px",
+  isVertical: true,
+};
 
 const NetSchemeComponent: FC<NetSchemeComponentProps> = ({
   hostViewModels,
@@ -23,14 +29,6 @@ const NetSchemeComponent: FC<NetSchemeComponentProps> = ({
     (h) => h.parentId === null,
   );
   const showEmptyMessage = !isEditable && !parentHostViewModels.length;
-
-  const lineDimensions = useMemo(
-    () => ({
-      width: "12px",
-      isVertical: true,
-    }),
-    [],
-  );
 
   return (
     <div className="net-scheme__wrapper">

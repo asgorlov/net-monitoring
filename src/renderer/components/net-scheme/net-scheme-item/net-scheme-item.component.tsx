@@ -13,6 +13,14 @@ export interface NetSchemeItemComponentProps {
   addChildHostViewModel: () => void;
 }
 
+const initialLineProps: LineProperties = {
+  hostBlock: {
+    height: 0,
+    width: 0,
+  },
+  horizontalLastChildrenWidth: 0,
+};
+
 const NetSchemeItemComponent = forwardRef<
   HTMLDivElement,
   NetSchemeItemComponentProps
@@ -21,13 +29,8 @@ const NetSchemeItemComponent = forwardRef<
     { hostViewModel, parentId, changeHostViewModel, addChildHostViewModel },
     ref,
   ) => {
-    const [lineProps, setLineProps] = useState<LineProperties>({
-      hostBlock: {
-        height: 0,
-        width: 0,
-      },
-      horizontalLastChildrenWidth: 0,
-    });
+    const [lineProps, setLineProps] =
+      useState<LineProperties>(initialLineProps);
 
     const mainLineDimensions = useMemo(() => {
       if (parentId === null && lineProps.hostBlock) {

@@ -23,7 +23,7 @@ import { HostViewModel } from "../../../../shared/models/host.models";
 import { HostFieldError } from "../../../constants/form.constants";
 
 export interface NetSchemeHostComponentProps {
-  configLoading: boolean;
+  configLoading?: boolean;
   pinging: boolean;
   isEditable: boolean;
   isAlive: boolean | null;
@@ -43,7 +43,7 @@ const NetSchemeHostComponent = forwardRef<
 >(
   (
     {
-      configLoading,
+      configLoading = false,
       pinging,
       isEditable,
       isAlive,
