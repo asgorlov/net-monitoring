@@ -86,7 +86,7 @@ const updateConfig = (config: Config): Config => {
     fs.writeFileSync(Path.config, JSON.stringify(config));
     setConfigCache(config);
     return configCache;
-  } catch (e) {
+  } catch (_e) {
     throw new Error(ConfigValidationError.ConfigUpdatingFailed);
   }
 };

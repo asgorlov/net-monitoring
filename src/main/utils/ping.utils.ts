@@ -14,7 +14,7 @@ const pingHostAbortControllers = new Map<uuid, AbortController>();
 const getPingSettings = (): ConfigRequest => {
   try {
     return ConfigUtils.get().request;
-  } catch (err) {
+  } catch (_e) {
     Logger.info("Can't get request config. The default request config is used");
 
     return defaultConfig.request;

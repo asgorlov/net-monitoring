@@ -2,6 +2,7 @@ import js from "@eslint/js";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 import pluginReact from "eslint-plugin-react";
+import pluginReactHooks from "eslint-plugin-react-hooks";
 import eslintConfigPrettier from "eslint-config-prettier";
 import { defineConfig, globalIgnores } from "eslint/config";
 
@@ -23,6 +24,32 @@ export default defineConfig([
       },
     },
   },
+  {
+    plugins: { "react-hooks": pluginReactHooks },
+    rules: {
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn",
+    },
+  },
   eslintConfigPrettier,
+  {
+    rules: {
+      // игнорировать использование any
+      "@typescript-eslint/no-explicit-any": "off",
+      // игнорировать обязательную установку displayName для компонентов
+      "react/display-name": "off",
+      // игнорировать прокидывание компонентов через пропс
+      "react/no-children-prop": "off",
+      // игнорировать несипользуемые переменные, если перед ними стоить _
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+    },
+  },
   globalIgnores(["dist", "out", "logs"]),
 ]);

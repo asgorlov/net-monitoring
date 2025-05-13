@@ -26,7 +26,7 @@ const clearLoggerData = () => {
 const getSettings = (): ConfigLogger => {
   try {
     return ConfigUtils.get().logger;
-  } catch (e) {
+  } catch (_e) {
     return defaultConfig.logger;
   }
 };

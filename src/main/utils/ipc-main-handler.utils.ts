@@ -54,13 +54,13 @@ const getConfig = (): GettingConfigResult => {
   try {
     result.config = ConfigUtils.get();
     Logger.debug("Config was got");
-  } catch (e) {
+  } catch (_e) {
     Logger.info("Can't get config file. It's, probably, missing");
 
     try {
       result.config = ConfigUtils.createDefault();
       Logger.debug("Default config file was created");
-    } catch (e) {
+    } catch (_e) {
       Logger.error(
         "Can't create config file. Please close all applications using the file or delete it",
       );
@@ -156,7 +156,7 @@ const createDefaultConfig = (): GettingConfigResult => {
   try {
     result.config = ConfigUtils.createDefault();
     Logger.debug("Default config file was created");
-  } catch (e) {
+  } catch (_e) {
     Logger.error(
       "Can't create default config file. Please close all applications using the file or delete it",
     );
@@ -173,7 +173,7 @@ const clearLogFiles = (): ActionResult => {
   try {
     Logger.clearLogDir();
     Logger.debug("The log folder was cleaned");
-  } catch (e) {
+  } catch (_e) {
     Logger.error(
       "Can't clear the log folder. Please close all applications using the log files or delete log folder manually",
     );
