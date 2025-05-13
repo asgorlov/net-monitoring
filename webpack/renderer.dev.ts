@@ -1,7 +1,7 @@
-const webpackMerge = require("webpack-merge");
-const { commonRendererConfig } = require("./common");
+import merge from "webpack-merge";
+import { commonRendererConfig } from "./common";
 
-module.exports = webpackMerge.merge(commonRendererConfig("development"), {
+module.exports = merge(commonRendererConfig("development"), {
   devtool: "eval-cheap-module-source-map",
   devServer: {
     port: 3003,

@@ -62,13 +62,14 @@ const initialState: MainState = {
 export const getConfigAsync = createAsyncThunk(
   "config/get",
   (): Promise<Config> => {
-    return new Promise(async (resolve, reject) => {
-      const result = await window.api.getConfig();
-      if (result.errorMessage) {
-        reject(result.errorMessage);
-      } else {
-        resolve(result.config);
-      }
+    return new Promise((resolve, reject) => {
+      window.api.getConfig().then((result) => {
+        if (result.errorMessage) {
+          reject(result.errorMessage);
+        } else {
+          resolve(result.config);
+        }
+      });
     });
   },
 );
@@ -87,13 +88,14 @@ export const updateConfigAsync = createAsyncThunk(
 export const resetConfigAsync = createAsyncThunk(
   "config/reset",
   (): Promise<Config> => {
-    return new Promise(async (resolve, reject) => {
-      const result = await window.api.createDefaultConfig();
-      if (result.errorMessage) {
-        reject(result.errorMessage);
-      } else {
-        resolve(result.config);
-      }
+    return new Promise((resolve, reject) => {
+      window.api.createDefaultConfig().then((result) => {
+        if (result.errorMessage) {
+          reject(result.errorMessage);
+        } else {
+          resolve(result.config);
+        }
+      });
     });
   },
 );
@@ -123,13 +125,14 @@ export const exportConfigAsync = createAsyncThunk(
 export const clearLogFilesAsync = createAsyncThunk(
   "log/clear",
   (): Promise<void> => {
-    return new Promise(async (resolve, reject) => {
-      const result = await window.api.clearLogFiles();
-      if (result.errorMessage) {
-        reject(result.errorMessage);
-      } else {
-        resolve();
-      }
+    return new Promise((resolve, reject) => {
+      window.api.clearLogFiles().then((result) => {
+        if (result.errorMessage) {
+          reject(result.errorMessage);
+        } else {
+          resolve();
+        }
+      });
     });
   },
 );

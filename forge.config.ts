@@ -1,12 +1,10 @@
-const { FusesPlugin } = require("@electron-forge/plugin-fuses");
-const { MakerSquirrel } = require("@electron-forge/maker-squirrel");
-const { MakerZIP } = require("@electron-forge/maker-zip");
-const { MakerDeb } = require("@electron-forge/maker-deb");
-const { MakerRpm } = require("@electron-forge/maker-rpm");
-const {
-  AutoUnpackNativesPlugin,
-} = require("@electron-forge/plugin-auto-unpack-natives");
-const { FuseV1Options, FuseVersion } = require("@electron/fuses");
+import { FusesPlugin } from "@electron-forge/plugin-fuses";
+import { MakerSquirrel } from "@electron-forge/maker-squirrel";
+import { MakerZIP } from "@electron-forge/maker-zip";
+import { MakerDeb } from "@electron-forge/maker-deb";
+import { MakerRpm } from "@electron-forge/maker-rpm";
+import { AutoUnpackNativesPlugin } from "@electron-forge/plugin-auto-unpack-natives";
+import { FuseV1Options, FuseVersion } from "@electron/fuses";
 
 module.exports = {
   packagerConfig: {

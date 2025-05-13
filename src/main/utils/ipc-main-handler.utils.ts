@@ -86,53 +86,53 @@ const updateConfig = (_e: IpcMainInvokeEvent, config: Config): ActionResult => {
           "Некорректные данные. Отсутствуют данные конфигурации";
         break;
       case ConfigValidationError.InvalidLoggerConfig:
-        Logger.error(`Incorrect config field \'logger\' = ${config.logger}`);
+        Logger.error(`Incorrect config field 'logger' = ${config.logger}`);
         result.errorMessage =
           "Некорректные данные. Отсутствует конфигурация логирования";
         break;
       case ConfigValidationError.InvalidLoggerLevel:
         Logger.error(
-          `Incorrect config field \'logger.level\' = ${config.logger.level}`,
+          `Incorrect config field 'logger.level' = ${config.logger.level}`,
         );
         result.errorMessage =
           "Некорректные данные. Неверно указан уровень логирования";
         break;
       case ConfigValidationError.InvalidLoggerType:
         Logger.error(
-          `Incorrect config field \'logger.type\' = ${config.logger.type}`,
+          `Incorrect config field 'logger.type' = ${config.logger.type}`,
         );
         result.errorMessage =
           "Некорректные данные. Неверно указан тип логирования";
         break;
       case ConfigValidationError.InvalidNumberOfLogFiles:
         Logger.error(
-          `Incorrect config field \'logger.numberOfLogFiles\' = ${config.logger.numberOfLogFiles}`,
+          `Incorrect config field 'logger.numberOfLogFiles' = ${config.logger.numberOfLogFiles}`,
         );
         result.errorMessage =
           "Некорректные данные. Неверно указано максимальное количество файлов логирования";
         break;
       case ConfigValidationError.InvalidRequestConfig:
-        Logger.error(`Incorrect config field \'request\' = ${config.request}`);
+        Logger.error(`Incorrect config field 'request' = ${config.request}`);
         result.errorMessage =
           "Некорректные данные. Отсутствует конфигурация запросов на пинг";
         break;
       case ConfigValidationError.InvalidRequestInterval:
         Logger.error(
-          `Incorrect config field \'request.interval\' = ${config.request.interval}`,
+          `Incorrect config field 'request.interval' = ${config.request.interval}`,
         );
         result.errorMessage =
           "Некорректные данные. Неверно указан интервал отправки запроса на пинг";
         break;
       case ConfigValidationError.InvalidRequestTimeout:
         Logger.error(
-          `Incorrect config field \'request.timeout\' = ${config.request.timeout}`,
+          `Incorrect config field 'request.timeout' = ${config.request.timeout}`,
         );
         result.errorMessage =
           "Некорректные данные. Неверно указано время таймаута запроса на пинг";
         break;
       case ConfigValidationError.InvalidPingHosts:
         Logger.error(
-          `Incorrect config field \'pingHosts\' = ${config.pingHosts}. It is not array or some host has empty id`,
+          `Incorrect config field 'pingHosts' = ${config.pingHosts}. It is not array or some host has empty id`,
         );
         result.errorMessage =
           "Некорректные данные. Неверно указан массив пингуемых хостов";

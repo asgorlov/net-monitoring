@@ -81,12 +81,13 @@ export const getConfigFromFile = (file: UploadFile): Promise<Config> => {
 };
 
 export const updateConfig = (config: Config): Promise<void> => {
-  return new Promise(async (resolve, reject) => {
-    const result = await window.api.updateConfig(config);
-    if (result.errorMessage) {
-      reject(result.errorMessage);
-    } else {
-      resolve();
-    }
+  return new Promise((resolve, reject) => {
+    window.api.updateConfig(config).then((result) => {
+      if (result.errorMessage) {
+        reject(result.errorMessage);
+      } else {
+        resolve();
+      }
+    });
   });
 };

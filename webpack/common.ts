@@ -1,7 +1,7 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+import path from "path";
+import HtmlWebpackPlugin from "html-webpack-plugin";
 
-const commonMainConfig = (mode) => {
+export const commonMainConfig = (mode: string): object => {
   return {
     mode,
     entry: {
@@ -37,7 +37,7 @@ const commonMainConfig = (mode) => {
   };
 };
 
-const commonRendererConfig = (mode) => {
+export const commonRendererConfig = (mode: string): object => {
   return {
     mode,
     entry: "./src/renderer/index.tsx",
@@ -68,9 +68,4 @@ const commonRendererConfig = (mode) => {
       extensions: [".js", ".ts", ".tsx", ".json"],
     },
   };
-};
-
-module.exports = {
-  commonMainConfig: commonMainConfig,
-  commonRendererConfig: commonRendererConfig,
 };

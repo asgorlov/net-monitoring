@@ -77,10 +77,10 @@ const SettingsMenuComponent: FC<MenuProps> = ({
   };
 
   const getCorrectedTimeout = () => {
-    let timeout = formValues.timeout;
+    const timeout = formValues.timeout;
 
     if (formValues.autoPing) {
-      let interval = formValues.interval;
+      const interval = formValues.interval;
       if (timeout > interval) {
         onTimeoutChange(interval);
         return interval;
