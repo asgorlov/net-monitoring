@@ -10,10 +10,7 @@ import { PingHostParams, uuid } from "./shared/models/host.models";
 export interface API {
   openTab: (url: string) => Promise<void>;
   listenMainLogs: (handler: MainLogsHandlerType) => void;
-  writeRendererLogs: (
-    level: LoggerLevel,
-    logObj: Error | string,
-  ) => Promise<void>;
+  writeRendererLogs: (level: LoggerLevel, logObj: Error | string) => void;
   clearLogFiles: () => Promise<ActionResult>;
   getConfig: () => Promise<GettingConfigResult>;
   updateConfig: (config: Config) => Promise<ActionResult>;
@@ -27,5 +24,7 @@ declare global {
     api: API;
   }
 
-  var sendToRenderer: (channel: string, ...args: any[]) => void;
+  interface GlobalThis {
+    sendToRenderer(channel: string, ...args: any[]): void;
+  }
 }
