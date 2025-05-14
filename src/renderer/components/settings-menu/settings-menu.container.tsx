@@ -15,9 +15,9 @@ import {
   resetManualPingTrigger,
   selectClearLogFilesLoading,
   selectConfigLoading,
+  selectIsSettingsOpened,
 } from "../../store/main.slice";
 import SettingsMenuComponent from "./settings-menu.component";
-import useOpenSettingsContext from "../../contexts/open-settings.context";
 import { useSettingsFormContext } from "../../contexts/form.context";
 import { useAppDispatch } from "../../hooks/store.hooks";
 import { DONE_STATUS, ERROR_STATUS } from "../../constants/common.constants";
@@ -27,9 +27,9 @@ import Logger from "../../utils/renderer-logger.utils";
 const SettingsMenuContainer: FC = () => {
   const clearLogFilesLoading = useSelector(selectClearLogFilesLoading);
   const configLoading = useSelector(selectConfigLoading);
+  const open = useSelector(selectIsSettingsOpened);
 
   const dispatch = useAppDispatch();
-  const { open } = useOpenSettingsContext();
   const { data, setData } = useSettingsFormContext();
 
   const onClickClearLogs = useCallback(

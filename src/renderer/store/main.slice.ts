@@ -41,12 +41,14 @@ export interface MainStateBase {
 
 export interface MainState extends MainStateBase {
   configLoading: boolean;
+  isSettingsOpened: boolean;
   manualPingTrigger: number;
   clearLogFilesLoading: boolean;
 }
 
 const initialState: MainState = {
   configLoading: false,
+  isSettingsOpened: false,
   manualPingTrigger: 0,
   clearLogFilesLoading: false,
   loggerLevel: defaultConfig.logger.level,
@@ -138,7 +140,7 @@ export const clearLogFilesAsync = createAsyncThunk(
 );
 
 export const mainSlice = createSlice({
-  name: "config",
+  name: "main-slice",
   initialState,
   reducers: {
     setBaseConfigData: (state, action: PayloadAction<MainStateBase>) => {
@@ -149,6 +151,9 @@ export const mainSlice = createSlice({
     },
     incrementManualPingTrigger: (state) => {
       state.manualPingTrigger++;
+    },
+    setIsSettingsOpened: (state, action: PayloadAction<boolean>) => {
+      state.isSettingsOpened = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -230,6 +235,7 @@ export const {
   setBaseConfigData,
   resetManualPingTrigger,
   incrementManualPingTrigger,
+  setIsSettingsOpened,
 } = mainSlice.actions;
 
 export const selectLoggerLevel = (state: RootState): LoggerLevel =>
@@ -253,5 +259,7 @@ export const selectManualPingTrigger = (state: RootState): number =>
   state.main.manualPingTrigger;
 export const selectClearLogFilesLoading = (state: RootState): boolean =>
   state.main.clearLogFilesLoading;
+export const selectIsSettingsOpened = (state: RootState): boolean =>
+  state.main.isSettingsOpened;
 
 export default mainSlice.reducer;

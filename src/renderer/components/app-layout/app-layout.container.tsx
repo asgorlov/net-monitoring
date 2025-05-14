@@ -10,11 +10,12 @@ import {
   resetManualPingTrigger,
   selectAutoPing,
   selectConfigLoading,
+  selectIsSettingsOpened,
   setBaseConfigData,
+  setIsSettingsOpened,
   updateConfigAsync,
 } from "../../store/main.slice";
 import settingsUtil from "../../utils/settings.util";
-import useOpenSettingsContext from "../../contexts/open-settings.context";
 import {
   useSchemeFormContext,
   useSettingsFormContext,
@@ -27,25 +28,23 @@ import packageJson from "../../../../package.json";
 
 const AppLayoutContainer = () => {
   const [modal, contextHolder] = Modal.useModal();
-  const { open, setOpen } = useOpenSettingsContext();
   const settingsForm = useSettingsFormContext();
   const schemeForm = useSchemeFormContext();
   const dispatch = useAppDispatch();
 
+  const open = useSelector(selectIsSettingsOpened);
   const autoPing = useSelector(selectAutoPing);
   const configLoading = useSelector(selectConfigLoading);
 
   const pingManually = () => dispatch(incrementManualPingTrigger());
 
   const toggleOpenMenu = () => {
-    setOpen((prevState) => {
-      const newState = !prevState;
-      if (newState) {
-        dispatch(resetManualPingTrigger());
-      }
+    const newValue = !open;
+    if (newValue) {
+      dispatch(resetManualPingTrigger());
+    }
 
-      return newState;
-    });
+    dispatch(setIsSettingsOpened(newValue));
   };
 
   const saveSettings = () => {
@@ -70,7 +69,7 @@ const AppLayoutContainer = () => {
         }),
       );
       dispatch(updateConfigAsync());
-      setOpen(false);
+      dispatch(setIsSettingsOpened(false));
     };
 
     if (hasErrors) {
