@@ -49,6 +49,8 @@ export default defineConfig([
           caughtErrorsIgnorePattern: "^_",
         },
       ],
+      // исправить на предупреждение: интерфейс без членов эквивалентен его суперклассу
+      "@typescript-eslint/no-empty-object-type": ["warn"],
     },
   },
   globalIgnores(["dist", "out", "logs"]),
