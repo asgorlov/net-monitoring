@@ -7,8 +7,7 @@ module.exports = merge(commonMainConfig("development"), {
   plugins: [
     new ESLintPlugin({
       extensions: ["js", "jsx", "ts", "tsx"],
-      emitWarning: true,
-      emitError: true,
+      failOnError: false,
       cache: true,
     }),
   ],

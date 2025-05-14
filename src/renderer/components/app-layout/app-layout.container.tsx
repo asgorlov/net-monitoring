@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { useSelector } from "react-redux";
 import { Modal, notification } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
@@ -31,7 +31,6 @@ const AppLayoutContainer = () => {
   const settingsForm = useSettingsFormContext();
   const schemeForm = useSchemeFormContext();
   const dispatch = useAppDispatch();
-  const isInitializedRef = useRef(false);
 
   const autoPing = useSelector(selectAutoPing);
   const configLoading = useSelector(selectConfigLoading);
@@ -103,10 +102,13 @@ const AppLayoutContainer = () => {
     });
   };
 
+  useLayoutEffect(() => {
+    dispatch(getConfigAsync());
+  }, [dispatch]);
+
   useEffect(() => {
-    if (open || !isInitializedRef.current) {
+    if (open) {
       dispatch(getConfigAsync());
-      isInitializedRef.current = true;
     }
   }, [open, dispatch]);
 
