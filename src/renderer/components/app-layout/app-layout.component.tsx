@@ -11,6 +11,7 @@ import {
 import packageJson from "../../../../package.json";
 import NetSchemeContainer from "../net-scheme/net-scheme.container";
 import SettingsMenuContainer from "../settings-menu/settings-menu.container";
+import { SchemeForm, SettingsForm } from "../../models/settings.models";
 
 export interface AppLayoutComponentProps {
   open: boolean;
@@ -21,6 +22,8 @@ export interface AppLayoutComponentProps {
   toggleOpenMenu: () => void;
   pingManually: () => void;
   onLinkClick: () => void;
+  setSettingsForm: (form: SettingsForm) => void;
+  setSchemeForm: (form: SchemeForm) => void;
 }
 
 const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
@@ -32,6 +35,8 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
   toggleOpenMenu,
   pingManually,
   onLinkClick,
+  setSettingsForm,
+  setSchemeForm,
 }) => {
   const { token } = theme.useToken();
 
@@ -88,8 +93,8 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
         </div>
       </Layout.Header>
       <Layout.Content className="app-layout__content">
-        <SettingsMenuContainer />
-        <NetSchemeContainer />
+        <SettingsMenuContainer ref={setSettingsForm} />
+        <NetSchemeContainer ref={setSchemeForm} />
       </Layout.Content>
       <Layout.Footer
         className="app-layout__footer"

@@ -5,10 +5,13 @@ import NetSchemeItemContainer from "./net-scheme-item.container";
 import NetSchemeLine from "../net-scheme-line/net-scheme-line";
 import { LineProperties } from "../../../models/line.models";
 import { HostViewModel, uuid } from "../../../../shared/models/host.models";
+import { SchemeFormAction } from "../../../constants/form.constants";
 
 export interface NetSchemeItemComponentProps {
   parentId: uuid | null;
   hostViewModel: HostViewModel;
+  scheme: Record<uuid, HostViewModel>;
+  changeScheme: (value: HostViewModel, action?: SchemeFormAction) => void;
   changeHostViewModel: (value: HostViewModel, remove?: boolean) => void;
   addChildHostViewModel: () => void;
 }
@@ -26,7 +29,14 @@ const NetSchemeItemComponent = forwardRef<
   NetSchemeItemComponentProps
 >(
   (
-    { hostViewModel, parentId, changeHostViewModel, addChildHostViewModel },
+    {
+      hostViewModel,
+      parentId,
+      scheme,
+      changeScheme,
+      changeHostViewModel,
+      addChildHostViewModel,
+    },
     ref,
   ) => {
     const [lineProps, setLineProps] =
@@ -105,6 +115,8 @@ const NetSchemeItemComponent = forwardRef<
                     <NetSchemeItemContainer
                       hostId={id}
                       parentId={hostViewModel.id}
+                      scheme={scheme}
+                      changeScheme={changeScheme}
                       ref={(el) => setLastChildrenWidth(el, i)}
                     />
                   </div>

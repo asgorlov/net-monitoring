@@ -6,10 +6,11 @@ import NetSchemeLine from "./net-scheme-line/net-scheme-line";
 import { HostViewModel, uuid } from "../../../shared/models/host.models";
 import NetSchemeEmptyItem from "./net-scheme-empty-item/net-scheme-empty-item";
 import { LineDimensions } from "../../models/line.models";
+import { SchemeFormAction } from "../../constants/form.constants";
 
 export interface NetSchemeComponentProps {
-  hostViewModels: Record<uuid, HostViewModel>;
-  addHostViewModel: () => void;
+  scheme: Record<uuid, HostViewModel>;
+  changeScheme: (value: HostViewModel, action?: SchemeFormAction) => void;
   isEditable: boolean;
   openSettings: () => void;
 }
@@ -20,12 +21,12 @@ const lineDimensions: LineDimensions = {
 };
 
 const NetSchemeComponent: FC<NetSchemeComponentProps> = ({
-  hostViewModels,
-  addHostViewModel,
+  scheme,
+  changeScheme,
   isEditable,
   openSettings,
 }) => {
-  const parentHostViewModels = Object.values(hostViewModels).filter(
+  const parentHostViewModels = Object.values(scheme).filter(
     (h) => h.parentId === null,
   );
   const showEmptyMessage = !isEditable && !parentHostViewModels.length;
@@ -50,9 +51,16 @@ const NetSchemeComponent: FC<NetSchemeComponentProps> = ({
           <NetSchemeLine dimensions={lineDimensions} />
           <div className="net-scheme__hosts">
             {parentHostViewModels.map((h) => {
-              return <NetSchemeItemContainer key={h.id} hostId={h.id} />;
+              return (
+                <NetSchemeItemContainer
+                  key={h.id}
+                  hostId={h.id}
+                  scheme={scheme}
+                  changeScheme={changeScheme}
+                />
+              );
             })}
-            {isEditable && <NetSchemeEmptyItem add={addHostViewModel} />}
+            {isEditable && <NetSchemeEmptyItem changeScheme={changeScheme} />}
           </div>
         </div>
       )}

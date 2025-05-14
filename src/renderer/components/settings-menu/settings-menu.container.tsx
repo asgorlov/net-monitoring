@@ -1,4 +1,11 @@
-import React, { FC, useCallback } from "react";
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from "react";
 import { useSelector } from "react-redux";
 import { notification } from "antd";
 import {
@@ -13,24 +20,68 @@ import {
   importConfigAsync,
   resetConfigAsync,
   resetManualPingTrigger,
+  selectAutoPing,
   selectClearLogFilesLoading,
   selectConfigLoading,
+  selectInterval,
   selectIsSettingsOpened,
+  selectLogFileSizeInBytes,
+  selectLoggerLevel,
+  selectLoggerType,
+  selectNumberOfLogFiles,
+  selectTimeout,
+  setIsSettingsTouched,
 } from "../../store/main.slice";
 import SettingsMenuComponent from "./settings-menu.component";
-import { useSettingsFormContext } from "../../contexts/form.context";
 import { useAppDispatch } from "../../hooks/store.hooks";
 import { DONE_STATUS, ERROR_STATUS } from "../../constants/common.constants";
 import { CONFIG_FILE_TYPE } from "../../../shared/constants/config.constants";
 import Logger from "../../utils/renderer-logger.utils";
+import { SettingsForm, SettingsFormData } from "../../models/settings.models";
+import settingsUtil from "../../utils/settings.util";
 
-const SettingsMenuContainer: FC = () => {
+const SettingsMenuContainer = forwardRef<SettingsForm>((_props, ref) => {
   const clearLogFilesLoading = useSelector(selectClearLogFilesLoading);
   const configLoading = useSelector(selectConfigLoading);
   const open = useSelector(selectIsSettingsOpened);
+  const timeout = useSelector(selectTimeout);
+  const interval = useSelector(selectInterval);
+  const autoPing = useSelector(selectAutoPing);
+  const loggerType = useSelector(selectLoggerType);
+  const loggerLevel = useSelector(selectLoggerLevel);
+  const numberOfLogFiles = useSelector(selectNumberOfLogFiles);
+  const logFileSizeInBytes = useSelector(selectLogFileSizeInBytes);
 
   const dispatch = useAppDispatch();
-  const { data, setData } = useSettingsFormContext();
+  const initialFormData = useMemo(() => {
+    return {
+      level: loggerLevel,
+      type: loggerType,
+      numberOfLogFiles,
+      logFileSize: settingsUtil.convertToMb(logFileSizeInBytes),
+      autoPing,
+      interval,
+      timeout,
+    };
+  }, [
+    loggerLevel,
+    loggerType,
+    numberOfLogFiles,
+    logFileSizeInBytes,
+    autoPing,
+    interval,
+    timeout,
+  ]);
+
+  const [data, setData] = useState<SettingsFormData>(initialFormData);
+
+  const handleChangeFormValues = useCallback(
+    (values: SettingsFormData, isTouched: boolean = true) => {
+      setData(values);
+      dispatch(setIsSettingsTouched(isTouched));
+    },
+    [dispatch],
+  );
 
   const onClickClearLogs = useCallback(
     () => dispatch(clearLogFilesAsync()),
@@ -89,12 +140,20 @@ const SettingsMenuContainer: FC = () => {
     dispatch(resetConfigAsync());
   }, [dispatch]);
 
+  useImperativeHandle(ref, () => ({ data }), [data]);
+
+  useEffect(() => {
+    if (!open) {
+      handleChangeFormValues(initialFormData, false);
+    }
+  }, [open, initialFormData, handleChangeFormValues]);
+
   return (
     <SettingsMenuComponent
       open={open}
       configLoading={configLoading}
       formValues={data}
-      onChangeFormValues={setData}
+      onChangeFormValues={handleChangeFormValues}
       resetPingTrigger={resetPingTrigger}
       onClickClearLogs={onClickClearLogs}
       validateUploading={validateUploading}
@@ -104,6 +163,6 @@ const SettingsMenuContainer: FC = () => {
       clearLogsLoading={clearLogFilesLoading}
     />
   );
-};
+});
 
 export default SettingsMenuContainer;

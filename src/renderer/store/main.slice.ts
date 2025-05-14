@@ -41,14 +41,18 @@ export interface MainStateBase {
 
 export interface MainState extends MainStateBase {
   configLoading: boolean;
+  isSchemeTouched: boolean;
   isSettingsOpened: boolean;
+  isSettingsTouched: boolean;
   manualPingTrigger: number;
   clearLogFilesLoading: boolean;
 }
 
 const initialState: MainState = {
   configLoading: false,
+  isSchemeTouched: false,
   isSettingsOpened: false,
+  isSettingsTouched: false,
   manualPingTrigger: 0,
   clearLogFilesLoading: false,
   loggerLevel: defaultConfig.logger.level,
@@ -155,6 +159,12 @@ export const mainSlice = createSlice({
     setIsSettingsOpened: (state, action: PayloadAction<boolean>) => {
       state.isSettingsOpened = action.payload;
     },
+    setIsSettingsTouched: (state, action: PayloadAction<boolean>) => {
+      state.isSettingsTouched = action.payload;
+    },
+    setIsSchemeTouched: (state, action: PayloadAction<boolean>) => {
+      state.isSchemeTouched = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(clearLogFilesAsync.fulfilled, (state) => {
@@ -236,6 +246,8 @@ export const {
   resetManualPingTrigger,
   incrementManualPingTrigger,
   setIsSettingsOpened,
+  setIsSettingsTouched,
+  setIsSchemeTouched,
 } = mainSlice.actions;
 
 export const selectLoggerLevel = (state: RootState): LoggerLevel =>
@@ -261,5 +273,9 @@ export const selectClearLogFilesLoading = (state: RootState): boolean =>
   state.main.clearLogFilesLoading;
 export const selectIsSettingsOpened = (state: RootState): boolean =>
   state.main.isSettingsOpened;
+export const selectIsSettingsTouched = (state: RootState): boolean =>
+  state.main.isSettingsTouched;
+export const selectIsSchemeTouched = (state: RootState): boolean =>
+  state.main.isSchemeTouched;
 
 export default mainSlice.reducer;

@@ -4,6 +4,7 @@ import {
   selectAutoPing,
   selectConfigLoading,
   selectInterval,
+  selectIsSchemeTouched,
   selectIsSettingsOpened,
   selectManualPingTrigger,
 } from "../../../store/main.slice";
@@ -11,7 +12,6 @@ import NetSchemeHostComponent from "./net-scheme-host.component";
 import { HostViewModel } from "../../../../shared/models/host.models";
 import { pingHostAsync } from "../../../utils/host.util";
 import settingsUtil from "../../../utils/settings.util";
-import { useSchemeFormContext } from "../../../contexts/form.context";
 
 export interface NetSchemeHostContainerProps {
   hostViewModel: HostViewModel;
@@ -25,11 +25,11 @@ const NetSchemeHostContainer = forwardRef<
 >(({ hostViewModel, changeHostViewModel, addChildHostViewModel }, ref) => {
   const manualPingTrigger = useSelector(selectManualPingTrigger);
   const configLoading = useSelector(selectConfigLoading);
+  const isTouched = useSelector(selectIsSchemeTouched);
   const interval = useSelector(selectInterval);
   const autoPing = useSelector(selectAutoPing);
   const open = useSelector(selectIsSettingsOpened);
 
-  const { isTouched } = useSchemeFormContext();
   const controllerRef = useRef(new AbortController());
   const timerRef = useRef<NodeJS.Timeout | undefined>();
 

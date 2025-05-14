@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { Modal, notification } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
@@ -10,31 +10,40 @@ import {
   resetManualPingTrigger,
   selectAutoPing,
   selectConfigLoading,
+  selectIsSchemeTouched,
   selectIsSettingsOpened,
+  selectIsSettingsTouched,
   setBaseConfigData,
   setIsSettingsOpened,
   updateConfigAsync,
 } from "../../store/main.slice";
 import settingsUtil from "../../utils/settings.util";
 import {
-  useSchemeFormContext,
-  useSettingsFormContext,
-} from "../../contexts/form.context";
-import {
   validateAndChangeHostViewModels,
   getOnlyValidHostViewModels,
 } from "../../utils/host.util";
 import packageJson from "../../../../package.json";
+import { SchemeForm, SettingsForm } from "../../models/settings.models";
 
 const AppLayoutContainer = () => {
   const [modal, contextHolder] = Modal.useModal();
-  const settingsForm = useSettingsFormContext();
-  const schemeForm = useSchemeFormContext();
   const dispatch = useAppDispatch();
+  const settingsFormRef = useRef<SettingsForm>();
+  const schemeFormRef = useRef<SchemeForm>();
 
   const open = useSelector(selectIsSettingsOpened);
   const autoPing = useSelector(selectAutoPing);
   const configLoading = useSelector(selectConfigLoading);
+  const isSchemeTouched = useSelector(selectIsSchemeTouched);
+  const isSettingsTouched = useSelector(selectIsSettingsTouched);
+
+  const setSettingsForm = (form: SettingsForm) => {
+    settingsFormRef.current = form;
+  };
+
+  const setSchemeForm = (form: SchemeForm) => {
+    schemeFormRef.current = form;
+  };
 
   const pingManually = () => dispatch(incrementManualPingTrigger());
 
@@ -48,7 +57,8 @@ const AppLayoutContainer = () => {
   };
 
   const saveSettings = () => {
-    const settingsData = settingsForm.data;
+    const settingsData = settingsFormRef.current.data;
+    const schemeForm = schemeFormRef.current;
     const schemeData = validateAndChangeHostViewModels(schemeForm.data);
     const hasErrors = schemeData !== schemeForm.data;
     const save = () => {
@@ -86,7 +96,6 @@ const AppLayoutContainer = () => {
         cancelText: "Отменить",
         onOk: save,
       });
-
       schemeForm.setData(schemeData);
     } else {
       save();
@@ -111,24 +120,19 @@ const AppLayoutContainer = () => {
     }
   }, [open, dispatch]);
 
-  useEffect(() => {
-    if (!open) {
-      settingsForm.resetData();
-      schemeForm.resetData();
-    }
-  }, [open, settingsForm, schemeForm]);
-
   return (
     <>
       <AppLayoutComponent
         open={open}
         configLoading={configLoading}
         showManualPingBtn={!autoPing && !open}
-        isFormsTouched={settingsForm.isTouched || schemeForm.isTouched}
+        isFormsTouched={isSettingsTouched || isSchemeTouched}
         saveSettings={saveSettings}
         toggleOpenMenu={toggleOpenMenu}
         pingManually={pingManually}
         onLinkClick={onLinkClick}
+        setSettingsForm={setSettingsForm}
+        setSchemeForm={setSchemeForm}
       />
       {contextHolder}
     </>

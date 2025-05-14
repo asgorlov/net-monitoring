@@ -15,15 +15,15 @@ import {
   LoggerLevel,
   LoggerType,
 } from "../../../shared/constants/logger.constants";
-import { SettingsForm } from "../../models/settings-form.models";
+import { SettingsFormData } from "../../models/settings.models";
 import Skeleton from "../skeleton/skeleton";
 import { CONFIG_FILE_TYPE } from "../../../shared/constants/config.constants";
 
 export interface MenuProps {
   open: boolean;
   configLoading: boolean;
-  formValues: SettingsForm;
-  onChangeFormValues: (values: SettingsForm) => void;
+  formValues: SettingsFormData;
+  onChangeFormValues: (values: SettingsFormData) => void;
   resetPingTrigger: (value: boolean) => void;
   onClickClearLogs: () => void;
   validateUploading: (option: RcCustomRequestOptions) => void;
