@@ -1,5 +1,5 @@
 import "./settings-menu.scss";
-import React, { FC, memo } from "react";
+import React, { FC } from "react";
 import clsx from "clsx";
 import { UploadChangeParam } from "antd/es/upload/interface";
 import { Button, InputNumber, Select, Switch, theme, Upload } from "antd";
@@ -21,7 +21,7 @@ import { CONFIG_FILE_TYPE } from "../../../shared/constants/config.constants";
 
 export interface MenuProps {
   open: boolean;
-  configLoading: boolean;
+  configLoading?: boolean;
   formValues: SettingsFormData;
   onChangeFormValues: (values: SettingsFormData) => void;
   resetPingTrigger: (value: boolean) => void;
@@ -319,4 +319,4 @@ const SettingsMenuComponent: FC<MenuProps> = ({
   );
 };
 
-export default memo(SettingsMenuComponent);
+export default SettingsMenuComponent;

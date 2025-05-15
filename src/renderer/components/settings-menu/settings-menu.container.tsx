@@ -22,7 +22,6 @@ import {
   resetManualPingTrigger,
   selectAutoPing,
   selectClearLogFilesLoading,
-  selectConfigLoading,
   selectInterval,
   selectIsSettingsOpened,
   selectLogFileSizeInBytes,
@@ -42,7 +41,6 @@ import settingsUtil from "../../utils/settings.util";
 
 const SettingsMenuContainer = forwardRef<SettingsForm>((_props, ref) => {
   const clearLogFilesLoading = useSelector(selectClearLogFilesLoading);
-  const configLoading = useSelector(selectConfigLoading);
   const open = useSelector(selectIsSettingsOpened);
   const timeout = useSelector(selectTimeout);
   const interval = useSelector(selectInterval);
@@ -83,62 +81,47 @@ const SettingsMenuContainer = forwardRef<SettingsForm>((_props, ref) => {
     [dispatch],
   );
 
-  const onClickClearLogs = useCallback(
-    () => dispatch(clearLogFilesAsync()),
-    [dispatch],
-  );
+  const onClickClearLogs = () => dispatch(clearLogFilesAsync());
 
-  const resetPingTrigger = useCallback(
-    (autoPing: boolean) => {
-      if (autoPing) {
-        dispatch(resetManualPingTrigger());
-      }
-    },
-    [dispatch],
-  );
+  const resetPingTrigger = (autoPing: boolean) => {
+    if (autoPing) {
+      dispatch(resetManualPingTrigger());
+    }
+  };
 
-  const validateUploading = useCallback(
-    async (options: RcCustomRequestOptions): Promise<void> => {
-      const file = options.file as RcFile;
+  const validateUploading = async (
+    options: RcCustomRequestOptions,
+  ): Promise<void> => {
+    const file = options.file as RcFile;
 
-      let error = "";
-      if (file.type !== CONFIG_FILE_TYPE) {
-        error = "Неверный формат файла настроек";
-      }
+    let error = "";
+    if (file.type !== CONFIG_FILE_TYPE) {
+      error = "Неверный формат файла настроек";
+    }
 
-      if (error) {
-        options.onError?.(new Error(error));
-      } else {
-        options.onSuccess?.(file);
-      }
-    },
-    [],
-  );
+    if (error) {
+      options.onError?.(new Error(error));
+    } else {
+      options.onSuccess?.(file);
+    }
+  };
 
-  const importConfig = useCallback(
-    (info: UploadChangeParam) => {
-      const file = info.file as UploadFile;
+  const importConfig = (info: UploadChangeParam) => {
+    const file = info.file as UploadFile;
 
-      if (file.status === DONE_STATUS) {
-        dispatch(importConfigAsync(file));
-      } else if (file.status === ERROR_STATUS) {
-        notification.error({
-          message: "Не удалось загрузить файл конфигурации",
-        });
-        Logger.error(file.error);
-      }
-    },
-    [dispatch],
-  );
+    if (file.status === DONE_STATUS) {
+      dispatch(importConfigAsync(file));
+    } else if (file.status === ERROR_STATUS) {
+      notification.error({
+        message: "Не удалось загрузить файл конфигурации",
+      });
+      Logger.error(file.error);
+    }
+  };
 
-  const exportConfig = useCallback(
-    () => dispatch(exportConfigAsync()),
-    [dispatch],
-  );
+  const exportConfig = () => dispatch(exportConfigAsync());
 
-  const resetConfig = useCallback(() => {
-    dispatch(resetConfigAsync());
-  }, [dispatch]);
+  const resetConfig = () => dispatch(resetConfigAsync());
 
   useImperativeHandle(ref, () => ({ data }), [data]);
 
@@ -151,7 +134,6 @@ const SettingsMenuContainer = forwardRef<SettingsForm>((_props, ref) => {
   return (
     <SettingsMenuComponent
       open={open}
-      configLoading={configLoading}
       formValues={data}
       onChangeFormValues={handleChangeFormValues}
       resetPingTrigger={resetPingTrigger}
