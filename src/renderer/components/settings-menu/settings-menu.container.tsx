@@ -74,9 +74,9 @@ const SettingsMenuContainer = forwardRef<SettingsForm>((_props, ref) => {
   const [data, setData] = useState<SettingsFormData>(initialFormData);
 
   const handleChangeFormValues = useCallback(
-    (values: SettingsFormData, isTouched: boolean = true) => {
+    (values: SettingsFormData) => {
+      dispatch(setIsSettingsTouched(true));
       setData(values);
-      dispatch(setIsSettingsTouched(isTouched));
     },
     [dispatch],
   );
@@ -110,9 +110,7 @@ const SettingsMenuContainer = forwardRef<SettingsForm>((_props, ref) => {
     const file = info.file as UploadFile;
 
     if (file.status === DONE_STATUS) {
-      dispatch(importConfigAsync(file)).then(() => {
-        handleChangeFormValues(initialFormData, false);
-      });
+      dispatch(importConfigAsync(file));
     } else if (file.status === ERROR_STATUS) {
       notification.error({
         message: "Не удалось загрузить файл конфигурации",
@@ -123,18 +121,17 @@ const SettingsMenuContainer = forwardRef<SettingsForm>((_props, ref) => {
 
   const exportConfig = () => dispatch(exportConfigAsync());
 
-  const resetConfig = () =>
-    dispatch(resetConfigAsync()).then(() => {
-      handleChangeFormValues(initialFormData, false);
-    });
+  const resetConfig = () => dispatch(resetConfigAsync());
 
   useImperativeHandle(ref, () => ({ data }), [data]);
 
   useEffect(() => {
     if (!open) {
-      handleChangeFormValues(initialFormData, false);
+      dispatch(setIsSettingsTouched(false));
     }
-  }, [open, initialFormData, handleChangeFormValues]);
+
+    setData(initialFormData);
+  }, [open, initialFormData, dispatch]);
 
   return (
     <SettingsMenuComponent
