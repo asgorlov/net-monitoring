@@ -35,18 +35,6 @@
       }
     }
 
-    &__text {
-      padding: 0 7px;
-      border-radius: 4px;
-      background-color: #0000000a;
-      font-size: 11px;
-      font-weight: 700;
-      line-height: 20px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
     &__select {
       &__popup {
         .ant-select-item {
@@ -64,6 +52,22 @@
 
       &.ant-select {
         height: 20px;
+
+        &.ant-select-disabled {
+          &>.ant-select-selector {
+            border-color: transparent;
+            color: inherit;
+            cursor: default;
+
+            .ant-select-selection-search input{
+              cursor: default;
+            }
+          }
+
+          &>.ant-select-arrow {
+            visibility: hidden;
+          }
+        }
 
         &.ant-select-focused {
           &.ant-select-filled:not(.ant-select-disabled) {
@@ -102,6 +106,13 @@
         &:focus-visible {
           background-color: #ff220024;
         }
+      }
+
+      &.ant-input-disabled {
+        border-color: transparent;
+        color: inherit;
+        cursor: default;
+        pointer-events: none;
       }
     }
   }

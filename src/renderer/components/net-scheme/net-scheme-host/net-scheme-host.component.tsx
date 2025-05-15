@@ -137,73 +137,52 @@ const NetSchemeHostComponent = forwardRef<
           {configLoading ? (
             <Skeleton className="net-scheme-host__item__skeleton-select" />
           ) : (
-            <>
-              {isEditable ? (
-                <Select
-                  value={hostViewModel.type}
-                  onChange={onTypeChange}
-                  options={typeOptions}
-                  className="net-scheme-host__item__select"
-                  popupClassName="net-scheme-host__item__select__popup"
-                  size="small"
-                  variant="filled"
-                  title={TYPE_TITLE}
-                  placeholder={TYPE_TITLE}
-                />
-              ) : (
-                <span className="net-scheme-host__item__text">
-                  {hostViewModel.type}
-                </span>
-              )}
-            </>
+            <Select
+              value={hostViewModel.type}
+              onChange={onTypeChange}
+              options={typeOptions}
+              className="net-scheme-host__item__select"
+              popupClassName="net-scheme-host__item__select__popup"
+              size="small"
+              variant="filled"
+              title={TYPE_TITLE}
+              placeholder={TYPE_TITLE}
+              disabled={!isEditable}
+            />
           )}
         </div>
         <div className="net-scheme-host__item">
           {configLoading ? (
             <Skeleton className="net-scheme-host__item__skeleton-input" />
           ) : (
-            <>
-              {isEditable ? (
-                <Input
-                  value={hostViewModel.name}
-                  onChange={onNameChange}
-                  size="small"
-                  variant="filled"
-                  title={NAME_TITLE}
-                  status={validateInput(HostFieldError.NAME)}
-                  autoComplete="off"
-                  placeholder={NAME_TITLE}
-                />
-              ) : (
-                <span className="net-scheme-host__item__text">
-                  {hostViewModel.name}
-                </span>
-              )}
-            </>
+            <Input
+              value={hostViewModel.name}
+              onChange={onNameChange}
+              size="small"
+              variant="filled"
+              title={NAME_TITLE}
+              status={validateInput(HostFieldError.NAME)}
+              autoComplete="off"
+              placeholder={NAME_TITLE}
+              disabled={!isEditable}
+            />
           )}
         </div>
         <div className="net-scheme-host__item">
           {configLoading ? (
             <Skeleton className="net-scheme-host__item__skeleton-input" />
           ) : (
-            <>
-              {isEditable ? (
-                <Input
-                  value={hostViewModel.host}
-                  onChange={onAddressChange}
-                  size="small"
-                  variant="filled"
-                  title={HOST_TITLE}
-                  status={validateInput(HostFieldError.HOST)}
-                  autoComplete="off"
-                  placeholder={HOST_TITLE}
-                />
-              ) : (
-                <span className="net-scheme-host__item__text">
-                  {hostViewModel.host}
-                </span>
-              )}
-            </>
+            <Input
+              value={hostViewModel.host}
+              onChange={onAddressChange}
+              size="small"
+              variant="filled"
+              title={HOST_TITLE}
+              status={validateInput(HostFieldError.HOST)}
+              autoComplete="off"
+              placeholder={HOST_TITLE}
+              disabled={!isEditable}
+            />
           )}
         </div>
         <div className="net-scheme-host__footer">
