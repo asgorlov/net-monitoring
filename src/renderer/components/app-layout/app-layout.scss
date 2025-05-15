@@ -29,6 +29,20 @@
 
     &__content {
         display: flex;
+
+        &__loading {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 22px;
+
+            &>.anticon-loading {
+                font-size: 32px;
+            }
+        }
     }
 
     &__footer {

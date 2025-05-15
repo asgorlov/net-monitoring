@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { Button, Layout, theme } from "antd";
 import {
   DeleteOutlined,
+  LoadingOutlined,
   MenuOutlined,
   SaveOutlined,
   SyncOutlined,
@@ -16,6 +17,7 @@ import { SchemeForm, SettingsForm } from "../../models/settings.models";
 export interface AppLayoutComponentProps {
   open: boolean;
   configLoading: boolean;
+  isAppInitialized: boolean;
   showManualPingBtn: boolean;
   isFormsTouched: boolean;
   saveSettings: () => void;
@@ -29,6 +31,7 @@ export interface AppLayoutComponentProps {
 const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
   open,
   configLoading,
+  isAppInitialized,
   showManualPingBtn,
   isFormsTouched,
   saveSettings,
@@ -54,13 +57,14 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
             size="small"
             onClick={toggleOpenMenu}
             title="Меню настроек приложения"
+            disabled={!isAppInitialized}
           >
             <MenuOutlined />
           </Button>
           {showManualPingBtn && (
             <Button
               size="small"
-              disabled={configLoading}
+              disabled={configLoading || !isAppInitialized}
               onClick={pingManually}
               title="Ручной пинг"
             >
@@ -93,8 +97,17 @@ const AppLayoutComponent: FC<AppLayoutComponentProps> = ({
         </div>
       </Layout.Header>
       <Layout.Content className="app-layout__content">
-        <SettingsMenuContainer ref={setSettingsForm} />
-        <NetSchemeContainer ref={setSchemeForm} />
+        {isAppInitialized ? (
+          <>
+            <SettingsMenuContainer ref={setSettingsForm} />
+            <NetSchemeContainer ref={setSchemeForm} />
+          </>
+        ) : (
+          <div className="app-layout__content__loading">
+            <LoadingOutlined />
+            Загрузка приложения
+          </div>
+        )}
       </Layout.Content>
       <Layout.Footer
         className="app-layout__footer"

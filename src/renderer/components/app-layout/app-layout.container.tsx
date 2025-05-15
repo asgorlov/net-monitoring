@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Modal, notification } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
@@ -26,6 +26,8 @@ import packageJson from "../../../../package.json";
 import { SchemeForm, SettingsForm } from "../../models/settings.models";
 
 const AppLayoutContainer = () => {
+  const [isAppInitialized, setIsAppInitialized] = useState(false);
+
   const [modal, contextHolder] = Modal.useModal();
   const dispatch = useAppDispatch();
   const settingsFormRef = useRef<SettingsForm>();
@@ -111,20 +113,23 @@ const AppLayoutContainer = () => {
   };
 
   useEffect(() => {
-    dispatch(getConfigAsync());
-  }, [dispatch]);
+    if (!isAppInitialized) {
+      dispatch(getConfigAsync()).then(() => setIsAppInitialized(true));
+    }
+  }, [isAppInitialized, dispatch]);
 
   useEffect(() => {
-    if (open) {
+    if (open && isAppInitialized) {
       dispatch(getConfigAsync());
     }
-  }, [open, dispatch]);
+  }, [open, isAppInitialized, dispatch]);
 
   return (
     <>
       <AppLayoutComponent
         open={open}
         configLoading={configLoading}
+        isAppInitialized={isAppInitialized}
         showManualPingBtn={!autoPing && !open}
         isFormsTouched={isSettingsTouched || isSchemeTouched}
         saveSettings={saveSettings}
