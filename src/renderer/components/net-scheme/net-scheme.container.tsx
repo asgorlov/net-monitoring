@@ -31,10 +31,7 @@ const NetSchemeContainer = forwardRef<SchemeForm>((_props, ref) => {
 
   const dispatch = useAppDispatch();
 
-  const openSettings = useCallback(
-    () => dispatch(setIsSettingsOpened(true)),
-    [dispatch],
-  );
+  const openSettings = () => dispatch(setIsSettingsOpened(true));
 
   const changeScheme = useCallback(
     (

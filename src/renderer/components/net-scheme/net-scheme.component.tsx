@@ -1,5 +1,5 @@
 import "./net-scheme.scss";
-import React, { FC, memo } from "react";
+import React, { FC } from "react";
 import { Button } from "antd";
 import NetSchemeLine from "./net-scheme-line/net-scheme-line";
 import { HostViewModel, uuid } from "../../../shared/models/host.models";
@@ -68,4 +68,4 @@ const NetSchemeComponent: FC<NetSchemeComponentProps> = ({
   );
 };
 
-export default memo(NetSchemeComponent);
+export default NetSchemeComponent;

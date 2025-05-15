@@ -12,11 +12,15 @@ export interface NetSchemeEmptyProps {
   changeScheme: (value: HostViewModel, action?: SchemeFormAction) => void;
 }
 
+const initialLineDimensions: LineDimensions = {
+  width: "0px",
+  height: "0px",
+};
+
 const NetSchemeEmptyItem: FC<NetSchemeEmptyProps> = ({ changeScheme }) => {
-  const [lineDimensions, setLineDimensions] = useState<LineDimensions>({
-    width: "0px",
-    height: "0px",
-  });
+  const [lineDimensions, setLineDimensions] = useState<LineDimensions>(
+    initialLineDimensions,
+  );
 
   const handleClick = () =>
     changeScheme(createEmptyHost(), SchemeFormAction.ADD);

@@ -51,26 +51,30 @@ const NetSchemeItem = forwardRef<HTMLDivElement, NetSchemeItemProps>(
       [changeScheme],
     );
 
-    const addChildHostViewModel = useCallback(() => {
-      changeScheme(createEmptyHost(hostId), SchemeFormAction.ADD);
-    }, [changeScheme, hostId]);
+    const addChildHostViewModel = useCallback(
+      () => changeScheme(createEmptyHost(hostId), SchemeFormAction.ADD),
+      [changeScheme, hostId],
+    );
 
-    const setHostBlockDimensions = (element: HTMLDivElement | null) => {
-      const canBeUpdated =
-        element &&
-        (!lineProps.hostBlock ||
-          lineProps.hostBlock.height !== element.offsetHeight ||
-          lineProps.hostBlock.width !== element.offsetWidth);
-      if (canBeUpdated) {
-        setLineProps({
-          ...lineProps,
-          hostBlock: {
-            height: element!.offsetHeight,
-            width: element!.offsetWidth,
-          },
-        });
-      }
-    };
+    const setHostBlockDimensions = useCallback(
+      (element: HTMLDivElement | null) => {
+        const canBeUpdated =
+          element &&
+          (!lineProps.hostBlock ||
+            lineProps.hostBlock.height !== element.offsetHeight ||
+            lineProps.hostBlock.width !== element.offsetWidth);
+        if (canBeUpdated) {
+          setLineProps({
+            ...lineProps,
+            hostBlock: {
+              height: element!.offsetHeight,
+              width: element!.offsetWidth,
+            },
+          });
+        }
+      },
+      [lineProps],
+    );
 
     const setLastChildrenWidth = (
       element: HTMLDivElement | null,
