@@ -1,12 +1,12 @@
 import "./net-scheme.scss";
 import React, { FC, memo } from "react";
 import { Button } from "antd";
-import NetSchemeItemContainer from "./net-scheme-item/net-scheme-item.container";
 import NetSchemeLine from "./net-scheme-line/net-scheme-line";
 import { HostViewModel, uuid } from "../../../shared/models/host.models";
 import NetSchemeEmptyItem from "./net-scheme-empty-item/net-scheme-empty-item";
 import { LineDimensions } from "../../models/line.models";
 import { SchemeFormAction } from "../../constants/form.constants";
+import NetSchemeItem from "./net-scheme-item/net-scheme-item";
 
 export interface NetSchemeComponentProps {
   scheme: Record<uuid, HostViewModel>;
@@ -52,7 +52,7 @@ const NetSchemeComponent: FC<NetSchemeComponentProps> = ({
           <div className="net-scheme__hosts">
             {parentHostViewModels.map((h) => {
               return (
-                <NetSchemeItemContainer
+                <NetSchemeItem
                   key={h.id}
                   hostId={h.id}
                   scheme={scheme}

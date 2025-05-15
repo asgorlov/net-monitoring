@@ -1,19 +1,17 @@
 import "./net-scheme-item.scss";
-import React, { forwardRef, memo, useMemo, useState } from "react";
+import React, { forwardRef, useCallback, useMemo, useState } from "react";
 import NetSchemeHostContainer from "../net-scheme-host/net-scheme-host.container";
-import NetSchemeItemContainer from "./net-scheme-item.container";
 import NetSchemeLine from "../net-scheme-line/net-scheme-line";
 import { LineProperties } from "../../../models/line.models";
 import { HostViewModel, uuid } from "../../../../shared/models/host.models";
 import { SchemeFormAction } from "../../../constants/form.constants";
+import { createEmptyHost } from "../../../utils/host.util";
 
-export interface NetSchemeItemComponentProps {
-  parentId: uuid | null;
-  hostViewModel: HostViewModel;
+export interface NetSchemeItemProps {
+  hostId: uuid;
+  parentId?: uuid | null;
   scheme: Record<uuid, HostViewModel>;
   changeScheme: (value: HostViewModel, action?: SchemeFormAction) => void;
-  changeHostViewModel: (value: HostViewModel, remove?: boolean) => void;
-  addChildHostViewModel: () => void;
 }
 
 const initialLineProps: LineProperties = {
@@ -24,21 +22,8 @@ const initialLineProps: LineProperties = {
   horizontalLastChildrenWidth: 0,
 };
 
-const NetSchemeItemComponent = forwardRef<
-  HTMLDivElement,
-  NetSchemeItemComponentProps
->(
-  (
-    {
-      hostViewModel,
-      parentId,
-      scheme,
-      changeScheme,
-      changeHostViewModel,
-      addChildHostViewModel,
-    },
-    ref,
-  ) => {
+const NetSchemeItem = forwardRef<HTMLDivElement, NetSchemeItemProps>(
+  ({ hostId, parentId = null, scheme, changeScheme }, ref) => {
     const [lineProps, setLineProps] =
       useState<LineProperties>(initialLineProps);
 
@@ -53,6 +38,22 @@ const NetSchemeItemComponent = forwardRef<
         };
       }
     }, [parentId, lineProps.hostBlock]);
+
+    const hostViewModel = scheme[hostId];
+
+    const changeHostViewModel = useCallback(
+      (value: HostViewModel, remove: boolean = false) => {
+        changeScheme(
+          value,
+          remove ? SchemeFormAction.REMOVE : SchemeFormAction.MODIFY,
+        );
+      },
+      [changeScheme],
+    );
+
+    const addChildHostViewModel = useCallback(() => {
+      changeScheme(createEmptyHost(hostId), SchemeFormAction.ADD);
+    }, [changeScheme, hostId]);
 
     const setHostBlockDimensions = (element: HTMLDivElement | null) => {
       const canBeUpdated =
@@ -112,7 +113,7 @@ const NetSchemeItemComponent = forwardRef<
                     className="net-scheme-item__children-element-container"
                   >
                     <NetSchemeLine hostBlock={lineProps.hostBlock} />
-                    <NetSchemeItemContainer
+                    <NetSchemeItem
                       hostId={id}
                       parentId={hostViewModel.id}
                       scheme={scheme}
@@ -130,4 +131,4 @@ const NetSchemeItemComponent = forwardRef<
   },
 );
 
-export default memo(NetSchemeItemComponent);
+export default NetSchemeItem;

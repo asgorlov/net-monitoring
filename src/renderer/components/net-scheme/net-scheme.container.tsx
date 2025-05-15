@@ -73,9 +73,10 @@ const NetSchemeContainer = forwardRef<SchemeForm>((_props, ref) => {
 
   useEffect(() => {
     if (!open) {
-      setScheme(hostViewModels);
       dispatch(setIsSchemeTouched(false));
     }
+
+    setScheme(hostViewModels);
   }, [open, hostViewModels, dispatch]);
 
   useImperativeHandle(ref, () => ({ data: scheme, setData: setScheme }), [

@@ -1,5 +1,5 @@
 import "./net-scheme-host.scss";
-import React, { ChangeEvent, forwardRef, memo, ReactNode } from "react";
+import React, { ChangeEvent, forwardRef, ReactNode } from "react";
 import { Button, Input, Modal, Select } from "antd";
 import {
   CheckCircleOutlined,
@@ -212,4 +212,4 @@ const NetSchemeHostComponent = forwardRef<
   },
 );
 
-export default memo(NetSchemeHostComponent);
+export default NetSchemeHostComponent;

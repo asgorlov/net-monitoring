@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { Modal, notification } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
@@ -110,7 +110,7 @@ const AppLayoutContainer = () => {
     });
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     dispatch(getConfigAsync());
   }, [dispatch]);
 

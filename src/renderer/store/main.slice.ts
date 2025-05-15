@@ -206,6 +206,8 @@ export const mainSlice = createSlice({
           message: "Конфигурация обновлена.",
         });
         state.configLoading = false;
+        state.isSchemeTouched = false;
+        state.isSettingsTouched = false;
       },
     );
 

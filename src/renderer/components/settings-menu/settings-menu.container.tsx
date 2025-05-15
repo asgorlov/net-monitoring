@@ -110,7 +110,9 @@ const SettingsMenuContainer = forwardRef<SettingsForm>((_props, ref) => {
     const file = info.file as UploadFile;
 
     if (file.status === DONE_STATUS) {
-      dispatch(importConfigAsync(file));
+      dispatch(importConfigAsync(file)).then(() => {
+        handleChangeFormValues(initialFormData, false);
+      });
     } else if (file.status === ERROR_STATUS) {
       notification.error({
         message: "Не удалось загрузить файл конфигурации",
@@ -121,7 +123,10 @@ const SettingsMenuContainer = forwardRef<SettingsForm>((_props, ref) => {
 
   const exportConfig = () => dispatch(exportConfigAsync());
 
-  const resetConfig = () => dispatch(resetConfigAsync());
+  const resetConfig = () =>
+    dispatch(resetConfigAsync()).then(() => {
+      handleChangeFormValues(initialFormData, false);
+    });
 
   useImperativeHandle(ref, () => ({ data }), [data]);
 
