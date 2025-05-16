@@ -1,4 +1,5 @@
 enum ChannelName {
+  OPEN_LOGS_FOLDER = "openLogsFolder",
   OPEN_TAB = "openTab",
   SEND_MAIN_LOGS = "sendMainLogs",
   SEND_RENDERER_LOGS = "sendRendererLogs",

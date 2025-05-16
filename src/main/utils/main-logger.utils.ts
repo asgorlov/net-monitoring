@@ -243,6 +243,7 @@ const Logger = {
   info: info,
   error: error,
   clearLogDir: clearLogDir,
+  isDirExisted: isDirExisted,
 };
 
 export default Logger;

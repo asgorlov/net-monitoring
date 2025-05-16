@@ -1,6 +1,5 @@
 import React, {
   forwardRef,
-  useCallback,
   useEffect,
   useImperativeHandle,
   useMemo,
@@ -73,13 +72,17 @@ const SettingsMenuContainer = forwardRef<SettingsForm>((_props, ref) => {
 
   const [data, setData] = useState<SettingsFormData>(initialFormData);
 
-  const handleChangeFormValues = useCallback(
-    (values: SettingsFormData) => {
-      dispatch(setIsSettingsTouched(true));
-      setData(values);
-    },
-    [dispatch],
-  );
+  const handleChangeFormValues = (values: SettingsFormData) => {
+    dispatch(setIsSettingsTouched(true));
+    setData(values);
+  };
+
+  const onClickOpenLogsFolder = () =>
+    window.api.openLogsFolder().catch(() => {
+      notification.error({
+        message: "Не удалось открыть папку с логами",
+      });
+    });
 
   const onClickClearLogs = () => dispatch(clearLogFilesAsync());
 
@@ -139,6 +142,7 @@ const SettingsMenuContainer = forwardRef<SettingsForm>((_props, ref) => {
       formValues={data}
       onChangeFormValues={handleChangeFormValues}
       resetPingTrigger={resetPingTrigger}
+      onClickOpenLogsFolder={onClickOpenLogsFolder}
       onClickClearLogs={onClickClearLogs}
       validateUploading={validateUploading}
       importConfig={importConfig}

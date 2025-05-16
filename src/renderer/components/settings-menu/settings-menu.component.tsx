@@ -7,6 +7,7 @@ import { UploadRequestOption as RcCustomRequestOptions } from "rc-upload/lib/int
 import {
   ClearOutlined,
   DownloadOutlined,
+  FolderOpenOutlined,
   LoadingOutlined,
   RollbackOutlined,
   UploadOutlined,
@@ -25,6 +26,7 @@ export interface MenuProps {
   formValues: SettingsFormData;
   onChangeFormValues: (values: SettingsFormData) => void;
   resetPingTrigger: (value: boolean) => void;
+  onClickOpenLogsFolder: () => void;
   onClickClearLogs: () => void;
   validateUploading: (option: RcCustomRequestOptions) => void;
   importConfig: (info: UploadChangeParam) => void;
@@ -39,6 +41,7 @@ const SettingsMenuComponent: FC<MenuProps> = ({
   formValues,
   onChangeFormValues,
   resetPingTrigger,
+  onClickOpenLogsFolder,
   onClickClearLogs,
   validateUploading,
   importConfig,
@@ -253,16 +256,27 @@ const SettingsMenuComponent: FC<MenuProps> = ({
           )}
         </div>
         <div className="settings-menu__row__item">
-          <label htmlFor="logFileSize">Очистить папку логирования:</label>
-          <Button
-            title="Очистить папку с логами"
-            className="settings-menu__row__item__clear-logs-btn"
-            onClick={onClickClearLogs}
-            disabled={!open || clearLogsLoading}
-          >
-            {clearLogsLoading ? <LoadingOutlined /> : <ClearOutlined />}
-            Очистить
-          </Button>
+          <label htmlFor="logFileSize">Папка логирования:</label>
+          <div className="settings-menu__row__item__config-btn-group">
+            <Button
+              title="Открыть папку с логами"
+              className="settings-menu__row__item__logs-folder-btn"
+              onClick={onClickOpenLogsFolder}
+              disabled={!open}
+            >
+              <FolderOpenOutlined />
+              Открыть
+            </Button>
+            <Button
+              title="Очистить папку с логами"
+              className="settings-menu__row__item__logs-folder-btn"
+              onClick={onClickClearLogs}
+              disabled={!open || clearLogsLoading}
+            >
+              {clearLogsLoading ? <LoadingOutlined /> : <ClearOutlined />}
+              Очистить
+            </Button>
+          </div>
         </div>
       </div>
       <div className="settings-menu__row">

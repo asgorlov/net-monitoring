@@ -14,6 +14,7 @@ import {
 import { PingHostParams, uuid } from "../shared/models/host.models";
 
 const api: API = {
+  openLogsFolder: () => ipcRenderer.invoke(ChannelName.OPEN_LOGS_FOLDER),
   openTab: (url: string) => ipcRenderer.invoke(ChannelName.OPEN_TAB, url),
   listenMainLogs: (handler: MainLogsHandlerType) => {
     ipcRenderer.on(

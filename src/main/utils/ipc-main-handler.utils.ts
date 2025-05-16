@@ -17,6 +17,19 @@ import {
 } from "../../shared/models/config.models";
 import { ConfigValidationError } from "../constants/config-validation-error.constants";
 import { PingHostParams, uuid } from "../../shared/models/host.models";
+import Path from "../constants/path.constants";
+
+const openLogsFolder = async (_e: IpcMainInvokeEvent) => {
+  try {
+    if (Logger.isDirExisted()) {
+      await shell.openPath(Path.logDir);
+      Logger.debug(`The log folder was opened`);
+    }
+  } catch (e) {
+    Logger.error(e);
+    throw e;
+  }
+};
 
 const openTabExternal = async (
   _e: IpcMainInvokeEvent,
@@ -273,6 +286,7 @@ const showContextMenu = (e: IpcMainInvokeEvent) => {
 };
 
 const IpcMainHandlerUtils = {
+  openLogsFolder: openLogsFolder,
   openTab: openTabExternal,
   sendRendererLogs: sendRendererLogs,
   getConfig: getConfig,

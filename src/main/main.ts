@@ -176,6 +176,11 @@ app.on("window-all-closed", () => process.platform !== "darwin" && app.quit());
 /**
  * IPC Main Handlers
  */
+ipcMain.handle(
+  ChannelName.OPEN_LOGS_FOLDER,
+  IpcMainHandlerUtils.openLogsFolder,
+);
+
 ipcMain.handle(ChannelName.OPEN_TAB, IpcMainHandlerUtils.openTab);
 
 ipcMain.handle(

@@ -8,6 +8,7 @@ import {
 import { PingHostParams, uuid } from "./shared/models/host.models";
 
 export interface API {
+  openLogsFolder: () => Promise<void>;
   openTab: (url: string) => Promise<void>;
   listenMainLogs: (handler: MainLogsHandlerType) => void;
   writeRendererLogs: (level: LoggerLevel, logObj: Error | string) => void;
