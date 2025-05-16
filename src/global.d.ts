@@ -19,14 +19,12 @@ export interface API {
   abortPingHost: (id: uuid) => Promise<void>;
 }
 
-export interface MainGlobal {
-  sendToRenderer: (channel: string, ...args: any[]) => void;
-}
-
 declare global {
   interface Window {
     api: API;
   }
 
-  const mainGlobal: MainGlobal;
+  interface GlobalThis {
+    sendToRenderer(channel: string, ...args: any[]): void;
+  }
 }

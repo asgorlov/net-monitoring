@@ -3,9 +3,9 @@
     "outDir": "./dist",
     "module": "CommonJS",
     "target": "ES2022",
-    "jsx": "react-jsx",
+    "jsx": "react",
     "resolveJsonModule": true,
-    "esModuleInterop": true,
+    "esModuleInterop": true
   },
   "include": [
     "./src/**/*"
