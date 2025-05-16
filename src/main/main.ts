@@ -34,13 +34,13 @@ const configureMainWindow = (mainWindow: BrowserWindow) => {
       protocol: "file:",
       slashes: true,
     });
+  mainWindow.maximize();
   mainWindow.loadURL(filePath).finally(() => {
-    mainWindow.maximize();
-    mainWindow.show();
-
     if (process.env.RENDERER_URL) {
       mainWindow.webContents.openDevTools();
     }
+
+    mainWindow.show();
   });
 
   mainWindow.webContents.setWindowOpenHandler(() => ({ action: "deny" }));

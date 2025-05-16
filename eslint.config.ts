@@ -38,9 +38,9 @@ export default defineConfig([
       "@typescript-eslint/no-explicit-any": "off",
       // игнорировать обязательную установку displayName для компонентов
       "react/display-name": "off",
-      // игнорировать прокидывание компонентов через пропс
+      // игнорировать если производится установка компонентов через пропс children
       "react/no-children-prop": "off",
-      // игнорировать несипользуемые переменные, если перед ними стоить _
+      // игнорировать неиспользуемые переменные, если перед ними стоит _
       "@typescript-eslint/no-unused-vars": [
         "error",
         {
@@ -50,7 +50,14 @@ export default defineConfig([
         },
       ],
       // исправить на предупреждение: интерфейс без членов эквивалентен его суперклассу
-      "@typescript-eslint/no-empty-object-type": ["warn"],
+      "@typescript-eslint/no-empty-object-type": "warn",
+    },
+  },
+  {
+    // игнорировать правило использования var в файлах d.ts
+    files: ["**/*.d.ts"],
+    rules: {
+      "no-var": "off",
     },
   },
   globalIgnores(["dist", "out", "logs"]),

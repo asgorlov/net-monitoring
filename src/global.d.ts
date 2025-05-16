@@ -24,7 +24,7 @@ declare global {
     api: API;
   }
 
-  interface GlobalThis {
+  var global: typeof globalThis & {
     sendToRenderer(channel: string, ...args: any[]): void;
-  }
+  };
 }
