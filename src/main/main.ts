@@ -150,7 +150,7 @@ const configureApplicationMenu = (mainWindow: BrowserWindow) => {
 };
 
 const configureGlobalVariables = (mainWindow: BrowserWindow) => {
-  global.sendToRenderer = (channel: string, ...args: any[]) => {
+  mainGlobal.sendToRenderer = (channel: string, ...args: any[]) => {
     mainWindow.webContents.send(channel, ...args);
   };
 };

@@ -87,7 +87,7 @@ const clearRedundantOldLogFiles = () => {
 
 const recordRowToFile = (row: string) => {
   try {
-    currentLogFile.stream.write(row);
+    currentLogFile?.stream.write(row);
   } catch (e) {
     const date = new Date().toISOString();
     logToConsole(LoggerLevel.ERROR, e, date);
@@ -205,7 +205,7 @@ const logToConsole = (level: LoggerLevel, message: string, date: string) => {
   if (show(level, LoggerType.CONSOLE)) {
     const loggerRow = createConsoleLoggerRow(level, message, date);
     console.log(loggerRow.row, ...loggerRow.settings);
-    global.sendToRenderer(ChannelName.SEND_MAIN_LOGS, loggerRow);
+    mainGlobal.sendToRenderer(ChannelName.SEND_MAIN_LOGS, loggerRow);
   }
 };
 
